@@ -1,7 +1,7 @@
 module load R/4.4.0
 module load htslib/1.19.1
 module load bedtools2/2.29.2
-
+module load samtools/1.19.2
 
 MSMCTOOLS=~/programs/msmc-tools # directory with msmc-tools binaries
 PATH=$PATH:$MSMCTOOLS
