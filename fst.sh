@@ -38,7 +38,7 @@ if [ $# -lt 1 ]
     c) CHRLEAD=${OPTARG};;
     esac
     done
-fi
+
 
 WIN="${WIN:-10000}"
 STEP="${STEP:-10000}"
@@ -200,3 +200,5 @@ awk -F',' -v win="$WIN" 'NR>1 {print $CHRLEAD, $1, ".1" "\t" $2-(win/2) "\t" $2+
 bedtools intersect -a ${GFF} -b ${OUTDIR}/analyses/fst/${WIN}/${POP1}_${POP2}.outlierfst.bed -wa > ${OUTDIR}/analyses/genelist/${POP1}_${POP2}.relevantgenes_windowed_top.95.txt
 
 # awk '{OFS = "\t"} {split($9, arr, ";"); print(arr[1])}' ${OUTDIR}/analyses/genelist/${POP1}_${POP2}.relevantgenes_windowed_top.95.txt | sed 's/ID\=gene\-//g' | sort -u > ${OUTDIR}/analyses/genelist/${POP1}_${POP2}.relevantgenenames_windowed_top.95.txt
+
+fi
