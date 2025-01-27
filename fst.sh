@@ -13,13 +13,16 @@ if [ $# -lt 1 ]
     [-p] Path to scripts
     [-x] Name of population 1
     [-y] Name of population 2
+    [-r] Path to reference genome fasta
+    [-g] Path to reference genome gff file
 
     OPTIONAL ARGUMENTS
 
     [-w] Window size for Fst scans (defaults to 10,000)
     [-s] Step size for Fst scans (defaults to 10,000)
     [-a] Path to angsd directory, will install angsd here if it is not already installed! (defaults to ~/program/angsd/)
-    [-c] Leading text before numbers of chromosomes (include only chromosomes not scaffolds; defaults to NC_0)
+    [-c] Leading text before numbers of chromosomes (include only chromosomes not scaffolds; defaults to "NC_0")
+
   else
     while getopts i:r:t:p:b:s: option
     do
@@ -27,6 +30,8 @@ if [ $# -lt 1 ]
     in
     o) OUTDIR=${OPTARG};;
     p) scriptdir=${OPTARG};;
+    x) POP1=${OPTARG};;
+    y) POP2=${OPTARG};;
     w) WIN=${OPTARG};;
     s) STEP=${OPTARG};;
     a) ANGSD=${OPTARG};;
@@ -155,78 +160,42 @@ if [ -f "${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2)*" ]
 fi
 
 
-### EDITED UP TO HERE
-# Thinking that this next bit could be a new script, but idk
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # make relevant gene lists
 
 
+echo "Making relevant gene lists"
 
 # snps 
 
-awk 'BEGIN {FS = ","} {$1=""}1' ${OUTDIR}/analyses/fst/pyrr.outlierfst.csv | awk 'BEGIN {OFS = ","} {$1=$1}1 ' > ${OUTDIR}/analyses/fst/pyrr.outlierfst.csv.tmp
+awk 'BEGIN {FS = ","} {$1=""}1' ${OUTDIR}/analyses/fst/${POP1}_${POP2}.outlierfst.csv | awk 'BEGIN {OFS = ","} {$1=$1}1 ' > ${OUTDIR}/analyses/fst/${POP1}_${POP2}.outlierfst.csv.tmp
 
-mv ${OUTDIR}/analyses/fst/pyrr.outlierfst.csv.tmp ${OUTDIR}/analyses/fst/pyrr.outlierfst.csv
+mv ${OUTDIR}/analyses/fst/${POP1}_${POP2}.outlierfst.csv.tmp ${OUTDIR}/analyses/fst/${POP1}_${POP2}.outlierfst.csv
 
-sed -i 's/\"//g' ${OUTDIR}/analyses/fst/pyrr.outlierfst.csv
+sed -i 's/\"//g' ${OUTDIR}/analyses/fst/${POP1}_${POP2}.outlierfst.csv
 
-tail -n +2 ${OUTDIR}/analyses/fst/pyrr.outlierfst.csv  > ${OUTDIR}/analyses/fst/pyrr.outlierfst.headless.csv
+tail -n +2 ${OUTDIR}/analyses/fst/${POP1}_${POP2}.outlierfst.csv  > ${OUTDIR}/analyses/fst/${POP1}_${POP2}.outlierfst.headless.csv
 
 
-awk -F',' 'NR>1 {print $CHRLEAD, $1, ".1" "\t" $2-1 "\t" $2}' ${OUTDIR}/analyses/fst/pyrr.outlierfst.headless.csv > ${OUTDIR}/analyses/fst/pyrr.outlierfst.bed
+awk -F',' 'NR>1 {print $CHRLEAD, $1, ".1" "\t" $2-1 "\t" $2}' ${OUTDIR}/analyses/fst/${POP1}_${POP2}.outlierfst.headless.csv > ${OUTDIR}/analyses/fst/${POP1}_${POP2}.outlierfst.bed
 
-bedtools intersect -a /xdisk/mcnew/dannyjackson/cardinals_dfinch/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/genomic.gff -b ${OUTDIR}/analyses/fst/pyrr.outlierfst.bed -wa > ${OUTDIR}/analyses/genelist/relevantgenes_snps_top.95.txt
+bedtools intersect -a ${GFF} -b ${OUTDIR}/analyses/fst/${POP1}_${POP2}.outlierfst.bed -wa > ${OUTDIR}/analyses/genelist/${POP1}_${POP2}.fst.relevantgenes_snps_top.95.txt
 
-awk '{OFS = "\t"} {split($9, arr, ";"); print(arr[1])}' ${OUTDIR}/analyses/genelist/relevantgenes_snps_top.95.txt | sed 's/ID\=gene\-//g' | sort -u > ${OUTDIR}/analyses/genelist/relevantgenenames_snps_top.95.txt
+awk '{OFS = "\t"} {split($9, arr, ";"); print(arr[1])}' ${OUTDIR}/analyses/genelist/${POP1}_${POP2}.fst.relevantgenes_snps_top.95.txt | sed 's/ID\=gene\-//g' | sort -u > ${OUTDIR}/analyses/genelist/${POP1}_${POP2}.fst.relevantgenenames_snps_top.95.txt
 
 # windowed
 
-awk 'BEGIN {FS = ","} {$1=""}1' ${OUTDIR}/analyses/fst/${WIN}/pyrr.windowed.outlierfst.csv | awk 'BEGIN {OFS = ","} {$1=$1}1 ' > ${OUTDIR}/analyses/fst/${WIN}/pyrr.windowed.outlierfst.csv.tmp
+awk 'BEGIN {FS = ","} {$1=""}1' ${OUTDIR}/analyses/fst/${WIN}/${POP1}_${POP2}.windowed.outlierfst.csv | awk 'BEGIN {OFS = ","} {$1=$1}1 ' > ${OUTDIR}/analyses/fst/${WIN}/${POP1}_${POP2}.windowed.outlierfst.csv.tmp
 
-mv ${OUTDIR}/analyses/fst/${WIN}/pyrr.windowed.outlierfst.csv.tmp ${OUTDIR}/analyses/fst/${WIN}/pyrr.windowed.outlierfst.csv
+mv ${OUTDIR}/analyses/fst/${WIN}/${POP1}_${POP2}.windowed.outlierfst.csv.tmp ${OUTDIR}/analyses/fst/${WIN}/${POP1}_${POP2}.windowed.outlierfst.csv
 
-sed -i 's/\"//g' ${OUTDIR}/analyses/fst/${WIN}/pyrr.windowed.outlierfst.csv
+sed -i 's/\"//g' ${OUTDIR}/analyses/fst/${WIN}/${POP1}_${POP2}.windowed.outlierfst.csv
 
-tail -n +2 ${OUTDIR}/analyses/fst/${WIN}/pyrr.windowed.outlierfst.csv > ${OUTDIR}/analyses/fst/${WIN}/pyrr.windowed.outlierfst.headless.csv
+tail -n +2 ${OUTDIR}/analyses/fst/${WIN}/${POP1}_${POP2}.windowed.outlierfst.csv > ${OUTDIR}/analyses/fst/${WIN}/${POP1}_${POP2}.windowed.outlierfst.headless.csv
 
 
-awk -F',' -v win="$WIN" 'NR>1 {print $CHRLEAD, $1, ".1" "\t" $2-(win/2) "\t" $2+(win/2)}' ${OUTDIR}/analyses/fst/${WIN}/pyrr.windowed.outlierfst.headless.csv > ${OUTDIR}/analyses/fst/${WIN}/pyrr.outlierfst.bed
+awk -F',' -v win="$WIN" 'NR>1 {print $CHRLEAD, $1, ".1" "\t" $2-(win/2) "\t" $2+(win/2)}' ${OUTDIR}/analyses/fst/${WIN}/${POP1}_${POP2}.windowed.outlierfst.headless.csv > ${OUTDIR}/analyses/fst/${WIN}/${POP1}_${POP2}.outlierfst.bed
 
-bedtools intersect -a /xdisk/mcnew/dannyjackson/cardinals_dfinch/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/genomic.gff -b ${OUTDIR}/analyses/fst/${WIN}/pyrr.outlierfst.bed -wa > ${OUTDIR}/analyses/genelist/relevantgenes_windowed_top.95.txt
+bedtools intersect -a ${GFF} -b ${OUTDIR}/analyses/fst/${WIN}/${POP1}_${POP2}.outlierfst.bed -wa > ${OUTDIR}/analyses/genelist/${POP1}_${POP2}.relevantgenes_windowed_top.95.txt
 
-awk '{OFS = "\t"} {split($9, arr, ";"); print(arr[1])}' ${OUTDIR}/analyses/genelist/relevantgenes_windowed_top.95.txt | sed 's/ID\=gene\-//g' | sort -u > ${OUTDIR}/analyses/genelist/relevantgenenames_windowed_top.95.txt
+awk '{OFS = "\t"} {split($9, arr, ";"); print(arr[1])}' ${OUTDIR}/analyses/genelist/${POP1}_${POP2}.relevantgenes_windowed_top.95.txt | sed 's/ID\=gene\-//g' | sort -u > ${OUTDIR}/analyses/genelist/${POP1}_${POP2}.relevantgenenames_windowed_top.95.txt

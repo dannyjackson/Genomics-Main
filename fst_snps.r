@@ -1,6 +1,6 @@
+#!/usr/bin/env Rscript
+
 args = commandArgs(trailingOnly=TRUE)
-OUTDIR ="~/IntroBioinformaticsWorkshop"
-WIN = 1000
 
 OUTDIR = args[1]
 WIN = args[2]
@@ -13,7 +13,7 @@ library(dplyr)
 library(RColorBrewer)
 
 
-fst <- read.csv(file.path(OUTDIR, "analyses/fst/singlesnps_fst_pyrr.txt"), sep ='\t')
+fst <- read.csv(paste0(OUTDIR, "/analyses/fst/singlesnps_fst.", ${POP1}, "_", ${POP2}".txt"), sep ='\t')
 
 fst_noNA <- na.omit(fst)
 nrow(fst) - nrow(fst_noNA)
@@ -50,7 +50,6 @@ FSTcutoff = min(outlier_fst_disorder$fst) # print to file
 
 cat(c("FST cutoff:",FSTcutoff),file="FST_stats.txt", sep="\n", append=TRUE)
 
-
 outlier_fst_disorder2 <- subset(outlier_fst_disorder, select = -c(region))
 
 write.csv(outlier_fst_disorder2, file.path(OUTDIR, "analyses/fst/pyrr.outlierfst.csv"))
@@ -59,11 +58,11 @@ write.csv(outlier_fst_disorder2, file.path(OUTDIR, "analyses/fst/pyrr.outlierfst
 
 # draw it with cutoff line 
 
-blues <- "#082B64"
+blues <- c("#4EAFAF", "#082B64")
 
 middlechr = (max(fst$midPos) + as.numeric(WIN)/2)/2
 
-png(file = file.path(OUTDIR,"analyses/fst/pyrr.fst.snps.sigline.png"), width = 2000, height =500)
+png(file = paste0(OUTDIR,"/analyses/fst/"${POP1}_${POP2}".fst.snps.sigline.png"), width = 2000, height =500)
 
 ggplot(fst, aes(x=midPos, y=(fst))) +
   # Show all points
