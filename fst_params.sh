@@ -6,7 +6,7 @@ module load bedtools2/2.29.2
 MSMCTOOLS=~/programs/msmc-tools # directory with msmc-tools binaries
 PATH=$PATH:$MSMCTOOLS
 
-OUTDIR=</path/to/output>    # main directory for output files
+OUTDIR=/xdisk/mcnew/dannyjackson/cardinals_dfinch/analyses/    # main directory for output files
 ANGSD=~/programs/angsd/     # path to directory with angsd executables
 
 scriptdir= ~/programs/Genomics-main/
