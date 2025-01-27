@@ -44,10 +44,10 @@ if [ -f "${OUTDIR}/datafiles/safs/" ]
             echo "Files present in safs directory, assuming they are already generated and moving on!"
         else
             echo "computing safs for pop 1"
-            ~/programs/angsd/angsd -bam ${OUTDIR}/datafiles/${POP1}.bams.txt -out ${OUTDIR}/datafiles/safs/${POP1} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd 4 -minInd 2 -minQ 30 -minMapQ 30 -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads 10
+            ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP1}bams.txt -out ${OUTDIR}/datafiles/safs/${POP1} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd 4 -minInd 2 -minQ 30 -minMapQ 30 -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads 10
             
             echo "computing safs for pop 2"
-            ~/programs/angsd/angsd -bam ${OUTDIR}/datafiles/${POP2}.bams.txt -out ${OUTDIR}/datafiles/safs/${POP1} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd 4 -minInd 2 -minQ 30 -minMapQ 30 -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads 10
+            ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP2}bams.txt -out ${OUTDIR}/datafiles/safs/${POP1} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd 4 -minInd 2 -minQ 30 -minMapQ 30 -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads 10
 fi
 
 
