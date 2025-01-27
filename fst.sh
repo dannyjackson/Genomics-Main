@@ -36,6 +36,7 @@ if [ $# -lt 1 ]
     s) STEP=${OPTARG};;
     a) ANGSD=${OPTARG};;
     c) CHRLEAD=${OPTARG};;
+    
     esac
     done
 
