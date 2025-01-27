@@ -9,7 +9,7 @@ PATH=$PATH:$MSMCTOOLS
 OUTDIR=/xdisk/mcnew/dannyjackson/cardinals_dfinch/    # main directory for output files
 ANGSD=~/programs/angsd/     # path to directory with angsd executables
 
-scriptdir= ~/programs/Genomics-main/
+scriptdir= ~/programs/Genomics-Main/
 PATH=$PATH:$scriptdir # this adds the workshop script directory to our path, so that executable scripts in it can be called without using the full path
 
 # make directories for intermediate files-- will fail if these don't exist
