@@ -77,3 +77,5 @@ if [ -f "${OUTDIR}/analyses/fst/${POP1}_${POP2}.globalFST.txt" ]
             ${ANGSD}/misc/realSFS fst stats ${OUTDIR}/analyses/fst/${POP1}_${POP2}.fst.idx > ${OUTDIR}/analyses/fst/${POP1}_${POP2}.globalFST.txt
 
 fi
+
+fi
