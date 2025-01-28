@@ -102,7 +102,7 @@ png(file = paste0(outdir, "/analyses/fst/", win, "/",
 
 ggplot(df.tmp, aes(x = BPcum, y = (fst))) +
   # Show all points
-  geom_point(aes(color = as.factor(chr)), alpha = 0.8, size = .5) +
+  geom_point(aes(color = as.factor(chr)), alpha = 0.8, size = 1) +
   scale_color_manual(values = rep(blues, half_length)) +
   # custom X axis:
   # expand=c(0,0)removes space between plot area and x axis
@@ -111,7 +111,7 @@ ggplot(df.tmp, aes(x = BPcum, y = (fst))) +
   scale_y_continuous(expand <- c(0, 0), limits <- c(0, 1)) +
   # add plot and axis titles
   ggtitle(NULL) +
-  labs(x = "Chromosome", y = "fst") +
+  labs(x = "Chromosome", y = "FST") +
   # add genome-wide sig and sugg lines
   geom_hline(yintercept = fst_cutoff) +
   # Add highlighted points
