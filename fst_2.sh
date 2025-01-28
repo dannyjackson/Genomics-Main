@@ -85,7 +85,6 @@ fi
 # replace chromosome names if necessary
 
 # CHROM="/xdisk/mcnew/dannyjackson/cardinals_dfinch/referencelists/GCF_901933205_chromconversion.txt"
-nocaurban_nocarural.chrom.fst.windowed.outlierfst.csv
 
 # Check if CHROM has anything assigned
 if [[ -n "$CHROM" ]]; then
