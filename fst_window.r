@@ -71,6 +71,8 @@ blues <- c("#4EAFAF", "#082B64")
 
 middlechr <- (max(fst$midPos) + as.numeric(win) / 2) / 2
 
+fst$chr <- factor(fst$chr, levels = c(1, "1A", 2:4, "4A", 5:29, "Z"))
+
 df.tmp <- fst %>% 
   
   # Compute chromosome size
@@ -88,14 +90,15 @@ df.tmp <- fst %>%
   arrange(chr, midPos) %>%
   mutate( BPcum=midPos+tot) 
   
+
 # get chromosome center positions for x-axis
 axisdf <- df.tmp %>% group_by(chr) %>% summarize(center=( max(BPcum) + min(BPcum) ) / 2 )
 
-df.tmp$chr <- factor(df.tmp$chr, levels = c(1, "1A", 2:4, "4A", 5:29, "Z"))
+
 
 png(file = paste0(outdir, "/analyses/fst/", win, "/",
                    pop1, "_", pop2, ".chrom.fst.windowed.sigline.png"),
-    width <- 2000, height = 500)
+    width = 2000, height = 500)
 
 ggplot(df.tmp, aes(x = BPcum, y = (fst))) +
   # Show all points
