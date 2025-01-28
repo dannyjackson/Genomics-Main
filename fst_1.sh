@@ -32,7 +32,7 @@ echo "Current script: fst.sh"
 
 # Generate saf files for each population in angsd. Skip if there is any output already in ${OUTDIR}/datafiles/safs/.
 
-if [ -d "${OUTDIR}/datafiles/safs/" ]
+if [ -f "${OUTDIR}/datafiles/safs/"* ]
         then
             echo "Files present in safs directory, assuming they are already generated and moving on!"
         else
@@ -44,7 +44,7 @@ if [ -d "${OUTDIR}/datafiles/safs/" ]
 fi
 
 
-if [ -d "${OUTDIR}/datafiles/mls/" ]
+if [ -f "${OUTDIR}/datafiles/mls/"* ]
         then
             echo "Files present in mls directory, assuming they are already generated and moving on!"
         else
@@ -54,7 +54,7 @@ if [ -d "${OUTDIR}/datafiles/mls/" ]
 fi
 
 
-if [ -f "${OUTDIR}/analyses/fst/${POP1}_${POP2}*" ]
+if [ -f "${OUTDIR}/analyses/fst/${POP1}_${POP2}"* ]
         then
             echo "fst.idx file already present, assuming it is already generated and moving on!"
         else
