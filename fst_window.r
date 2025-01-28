@@ -112,7 +112,7 @@ ggplot(df.tmp, aes(x = BPcum, y = (fst))) +
   # Add highlighted points
   #geom_point(data=subset(df.tmp, is_highlight=="yes"),color="orange", size=2) +
   # Add label using ggrepel to avoid overlapping
-  geom_label_repel(data=df.tmp[df.tmp$is_annotate=="yes",], aes(label=as.factor(position), alpha=0.7), size=5, force=1.3) +
+  geom_label_repel(data=df.tmp[df.tmp$is_annotate=="yes",], aes(label=as.factor(midPos), alpha=0.7), size=5, force=1.3) +
   # Custom the theme:
   theme_bw(base_size <- 22) +
   theme(
