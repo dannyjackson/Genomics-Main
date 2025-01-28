@@ -16,7 +16,7 @@ if [ $# -lt 1 ]
     [-s] Step size for Fst scans (defaults to 10,000)"
 
   else
-    while getopts p:w:s: option
+    while getopts p:w:s:c: option
     do
     case "${option}"
     in
