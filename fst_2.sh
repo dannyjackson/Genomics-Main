@@ -58,7 +58,6 @@ fi
 echo -e 'region\tchr\tmidPos\tNsites\tfst' > ${OUTDIR}/analyses/fst/${WIN}/slidingwindow.${POP1}_${POP2}.chroms.txt
 grep ${CHRLEAD} ${OUTDIR}/analyses/fst/${WIN}/slidingwindow.${POP1}_${POP2} >> ${OUTDIR}/analyses/fst/${WIN}/slidingwindow.${POP1}_${POP2}.chroms.txt
 sed -i 's/${CHRLEAD}//g' ${OUTDIR}/analyses/fst/${WIN}/slidingwindow.${POP1}_${POP2}.chroms.txt
-sed -i 's/\.1\t/\t/g' ${OUTDIR}/analyses/fst/${WIN}/slidingwindow.${POP1}_${POP2}.chroms.txt
 
 
 # replace chromosome names if necessary
@@ -114,7 +113,7 @@ if [ -f "${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}"* ]
             #tail -n+2 slidingwindow >> slidingwindow_fst.txt 
             grep ${CHRLEAD} ${OUTDIR}/analyses/fst/singlesnps >> ${OUTDIR}/analyses/fst/singlesnps_fst.txt
             sed -i 's/${CHRLEAD}//g' ${OUTDIR}/analyses/fst/singlesnps_fst.txt 
-            sed -i 's/\.1\t/\t/g' ${OUTDIR}/analyses/fst/singlesnps_fst.txt
+
 
             Rscript ${scriptdir}/fst_snps.r ${OUTDIR} ${WIN}
 fi
