@@ -5,6 +5,7 @@ outdir <- args[1]
 win <- args[2]
 pop1 <- args[3]
 pop2 <- args[4]
+pop3 <- args[5]
 
 # Package names
 packages <- c("qqman", "readr", "ggrepel", "ggplot2", "dplyr", "RColorBrewer")
