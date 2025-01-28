@@ -1,36 +1,29 @@
 #!/bin/sh
 
-# FST script
-# This file accesses fst_window.r and fst_snps.r
+# FST script (1/3)
 
 if [ $# -lt 1 ]
   then
     echo "This script computes Fst between two groups of genomes using a genotype likelihood framework implemented in ANGSD. It requires SAF files as input, which can be generated using the <scriptname> scripts in github.com/dannyjackson/Genomics-Main. It will compute average genome-wide Fst and produce the output files necessary for sliding window Fst and fst for each SNP. Read the entire script and revise according to each project! Many parameters are not modifiable with options, including snp filtering settings in angsd. 
 
     REQUIRED ARGUMENTS
-    [-p] Path to parameter file (example is saved in github repository as fst_params.sh)
-
-    OPTIONAL ARGUMENTS
-
-    [-w] Window size for Fst scans (defaults to 10,000)
-    [-s] Step size for Fst scans (defaults to 10,000)"
+    [-p] Path to parameter file (example is saved in github repository as fst_params.sh"
 
   else
-    while getopts p:w:s: option
+    while getopts p: option
     do
     case "${option}"
     in
     p) PARAMS=${OPTARG};;
-    w) WIN=${OPTARG};;
-    s) STEP=${OPTARG};;
 
     esac
     done
 
-source ${PARAMS}
-
-WIN="${WIN:-10000}"
-STEP="${STEP:-10000}"
+if [ -z "${PARAMS}" ]; then
+    echo "Error: No parameter file provided." >&2
+    exit 1
+fi
+source "${PARAMS}"
 
 
 printf "\n \n \n \n"
@@ -39,7 +32,7 @@ echo "Current script: fst.sh"
 
 # Generate saf files for each population in angsd. Skip if there is any output already in ${OUTDIR}/datafiles/safs/.
 
-if [ -f "${OUTDIR}/datafiles/safs/" ]
+if [ -d "${OUTDIR}/datafiles/safs/" ]
         then
             echo "Files present in safs directory, assuming they are already generated and moving on!"
         else
@@ -47,11 +40,11 @@ if [ -f "${OUTDIR}/datafiles/safs/" ]
             ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP1}bams.txt -out ${OUTDIR}/datafiles/safs/${POP1} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd 4 -minInd 2 -minQ 30 -minMapQ 30 -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads 10
             
             echo "computing safs for pop 2"
-            ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP2}bams.txt -out ${OUTDIR}/datafiles/safs/${POP1} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd 4 -minInd 2 -minQ 30 -minMapQ 30 -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads 10
+            ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP2}bams.txt -out ${OUTDIR}/datafiles/safs/${POP2} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd 4 -minInd 2 -minQ 30 -minMapQ 30 -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads 10
 fi
 
 
-if [ -f "${OUTDIR}/datafiles/mls/" ]
+if [ -d "${OUTDIR}/datafiles/mls/" ]
         then
             echo "Files present in mls directory, assuming they are already generated and moving on!"
         else
