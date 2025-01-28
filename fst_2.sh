@@ -62,7 +62,7 @@ Rscript ${scriptdir}/fst_window.r ${OUTDIR} ${WIN} ${POP1} ${POP2}
 
 
 
-if [ -f "${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2)"* ]
+if [ -f "${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}"* ]
         then
             echo "SNP analysis already complete, moving on!"
         else
