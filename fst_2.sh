@@ -23,6 +23,7 @@ if [ $# -lt 1 ]
     p) PARAMS=${OPTARG};;
     w) WIN=${OPTARG};;
     s) STEP=${OPTARG};;
+    c) CHROM=${OPTARG};;
 
     esac
     done
@@ -72,14 +73,41 @@ if [ -f "${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}"* ]
             ${ANGSD}/misc/realSFS fst stats2 ${OUTDIR}/analyses/fst/${POP1}_${POP2}.fst.idx -win 1 -step 1 >${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}
 
             # single snps
-            echo -e 'region\tchr\tmidPos\tNsites\tfst' > ${OUTDIR}/analyses/fst/singlesnps_fst_pyrr.txt
+            echo -e 'region\tchr\tmidPos\tNsites\tfst' > ${OUTDIR}/analyses/fst/singlesnps_fst.txt
             #tail -n+2 slidingwindow >> slidingwindow_fst.txt 
-            grep ${CHRLEAD} ${OUTDIR}/analyses/fst/singlesnps_pyrr >> ${OUTDIR}/analyses/fst/singlesnps_fst_pyrr.txt
-            sed -i 's/${CHRLEAD}//g' ${OUTDIR}/analyses/fst/singlesnps_fst_pyrr.txt 
-            sed -i 's/\.1\t/\t/g' ${OUTDIR}/analyses/fst/singlesnps_fst_pyrr.txt
+            grep ${CHRLEAD} ${OUTDIR}/analyses/fst/singlesnps >> ${OUTDIR}/analyses/fst/singlesnps_fst.txt
+            sed -i 's/${CHRLEAD}//g' ${OUTDIR}/analyses/fst/singlesnps_fst.txt 
+            sed -i 's/\.1\t/\t/g' ${OUTDIR}/analyses/fst/singlesnps_fst.txt
 
             Rscript ${OUTDIR}/programs/Intro_Bioinformatics_Workshop/fst_snps.r ${OUTDIR} ${WIN}
 fi
 
+# replace chromosome names if necessary
+
+# CHROM="/xdisk/mcnew/dannyjackson/cardinals_dfinch/referencelists/GCF_901933205_chromconversion.txt"
+
+# Check if CHROM has anything assigned
+if [[ -n "$CHROM" ]]; then
+    echo "Processing CHROM variable..."
+    # Define the files to process
+    files=(
+        ${OUTDIR}/analyses/fst/${POP1}_${POP2}".chrom.fst.windowed.outlierfst.csv"
+        
+        ${OUTDIR}/analyses/fst/"slidingwindow."${POP1}_${POP2}
+
+         ${OUTDIR}/analyses/fst/${POP1}_${POP2}".chrom.fst.windowed.sigline.png"
+         ${OUTDIR}/analyses/fst/"slidingwindow."${POP1}_${POP2}".chroms.txt"
+    )
+
+    # Read CHROM line by line
+    while read -r first second; do
+        echo "Replacing occurrences of '$second' with '$first'..."
+        # Replace occurrences of the second column with the first column in each file
+        sed -i "s/$second/$first/g" nocaurban_nocarural.chrom.fst.windowed.outlierfst.csv
+    done < "$CHROM"
+
+else
+    echo "CHROM variable is empty or not set."
+fi
 
 fi
