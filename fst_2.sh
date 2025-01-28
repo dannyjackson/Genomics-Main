@@ -99,7 +99,7 @@ if [[ -n "$CHROM" ]]; then
     )
 
     # Read CHROM line by line
-    while IFS=' ' read -r first second; do
+    while IFS='\t' read -r first second; do
         echo "Replacing occurrences of '$second' with '$first'..."
         
         # Process each file
