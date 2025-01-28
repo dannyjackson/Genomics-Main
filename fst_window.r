@@ -91,6 +91,7 @@ df.tmp <- fst %>%
 # get chromosome center positions for x-axis
 axisdf <- df.tmp %>% group_by(chr) %>% summarize(center=( max(BPcum) + min(BPcum) ) / 2 )
 
+df.tmp$chr <- factor(df.tmp$chr, levels = c(1, "1A", 2:4, "4A", 5:29, "Z"))
 
 png(file = paste0(outdir, "/analyses/fst/", win, "/",
                    pop1, "_", pop2, ".chrom.fst.windowed.sigline.png"),
