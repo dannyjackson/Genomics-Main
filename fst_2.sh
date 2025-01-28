@@ -83,7 +83,7 @@ if [[ -n "$CHROM" ]]; then
         for file in "${files[@]}"; do
             if [[ -f "$file" ]]; then
                 echo "Processing file: $file"
-                sed -i 's/'$second'/'$first'/g' "$file"
+                sed -i "s/$second/$first/g" "$file"
             else
                 echo "Warning: File $file not found."
             fi
