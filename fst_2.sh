@@ -47,7 +47,7 @@ if [ -f "${OUTDIR}/analyses/fst/${WIN}/slidingwindow_${POP1}_${POP2}"* ]
         else
             # sliding window analysis
             echo "computing sliding window statistics"
-            ${ANGSD}/misc/realSFS fst stats2 ${OUTDIR}/analyses/fst/${POP1}_${POP2}.fst.idx -win ${WIN} -step ${STEP} > ${OUTDIR}/analyses/fst/${WIN}/slidingwindow_${POP1}_${POP2}
+            ${ANGSD}/misc/realSFS fst stats2 ${OUTDIR}/analyses/fst/${POP1}_${POP2}.fst.idx -win ${WIN} -step ${STEP} > ${OUTDIR}/analyses/fst/${WIN}/slidingwindow.${POP1}_${POP2}
 
 fi
 
