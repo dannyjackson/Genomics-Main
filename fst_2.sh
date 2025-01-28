@@ -106,6 +106,21 @@ if [[ -n "$CHROM" ]]; then
         sed -i "s/$second/$first/g" nocaurban_nocarural.chrom.fst.windowed.outlierfst.csv
     done < "$CHROM"
 
+
+    # Read CHROM line by line
+    while read -r first second; do
+        echo "Replacing occurrences of '$second' with '$first'..."
+        # Replace occurrences of the second column with the first column in each file
+        for file in "${files[@]}"; do
+            if [[ -f "$file" ]]; then
+                echo "Processing file: $file"
+                sed -i "s/$second/$first/g" "$file"
+            else
+                echo "Warning: File $file not found."
+            fi
+        done
+    done <<< "$CHROM"
+
 else
     echo "CHROM variable is empty or not set."
 fi
