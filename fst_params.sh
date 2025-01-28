@@ -31,6 +31,7 @@ POP2=nocarural
 # note that this script also assumes chromosomes will end in .1 i.e. NC_012345.1, and will remove the .1 from files where it will disrupt plotting etc
 
 CHRLEAD=NC_0
+SEXCHR=NC_044601
 # path to reference genome
 REF=/xdisk/mcnew/dannyjackson/cardinals_dfinch/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/GCF_901933205.1_STF_HiC_genomic.fna
 # path to gff file

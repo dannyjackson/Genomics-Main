@@ -56,8 +56,7 @@ fi
 
 # windowed
 echo -e 'region\tchr\tmidPos\tNsites\tfst' > ${OUTDIR}/analyses/fst/${WIN}/slidingwindow.${POP1}_${POP2}.chroms.txt
-grep ${CHRLEAD} ${OUTDIR}/analyses/fst/${WIN}/slidingwindow.${POP1}_${POP2} >> ${OUTDIR}/analyses/fst/${WIN}/slidingwindow.${POP1}_${POP2}.chroms.txt
-sed -i 's/${CHRLEAD}//g' ${OUTDIR}/analyses/fst/${WIN}/slidingwindow.${POP1}_${POP2}.chroms.txt
+grep ${CHRLEAD} ${OUTDIR}/analyses/fst/${WIN}/slidingwindow.${POP1}_${POP2} | grep -v ${SEXCHR} >> ${OUTDIR}/analyses/fst/${WIN}/slidingwindow.${POP1}_${POP2}.chroms.txt
 
 
 # replace chromosome names if necessary
