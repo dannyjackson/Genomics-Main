@@ -110,8 +110,8 @@ if [ -f "${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}"* ]
             # single snps
             echo -e 'region\tchr\tmidPos\tNsites\tfst' > ${OUTDIR}/analyses/fst/singlesnps_fst.txt
             #tail -n+2 slidingwindow >> slidingwindow_fst.txt 
-            grep ${CHRLEAD} ${OUTDIR}/analyses/fst/singlesnps >> ${OUTDIR}/analyses/fst/singlesnps_fst.txt
-            sed -i 's/${CHRLEAD}//g' ${OUTDIR}/analyses/fst/singlesnps_fst.txt 
+            grep ${CHRLEAD} ${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2} >> ${OUTDIR}/analyses/fst/singlesnps_fst.${POP1}_${POP2}.txt
+            sed -i 's/${CHRLEAD}//g' ${OUTDIR}/analyses/fst/singlesnps_fst.${POP1}_${POP2}.txt 
 
 
             Rscript ${scriptdir}/fst_snps.r ${OUTDIR} ${POP1} ${POP2}
