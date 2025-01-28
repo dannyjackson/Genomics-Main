@@ -5,7 +5,6 @@ outdir <- args[1]
 win <- args[2]
 pop1 <- args[3]
 pop2 <- args[4]
-pop3 <- args[5]
 
 # Package names
 packages <- c("qqman", "readr", "ggrepel", "ggplot2", "dplyr", "RColorBrewer")
@@ -39,8 +38,6 @@ p_values_one_tailed <- pnorm(q = fst$z, lower.tail = FALSE)
 # Calculate the -log10 of the p-value
 fst$neg_log_pvalues_one_tailed <- -log10(p_values_one_tailed)
 
-
-
 ordered_fst <- fst %>%
   # desc orders from largest to smallest
   arrange(desc(neg_log_pvalues_one_tailed))
@@ -55,7 +52,9 @@ outlier_fst <- outlier_fst_disorder %>% arrange(chr, midPos)
 fst_cutoff <- min(outlier_fst_disorder$fst) # print to file
 
 cat(c("FST cutoff windowed:", fst_cutoff),
-    file = "FST_stats.txt", sep = "\n", append = TRUE)
+    file = paste0(outdir, "/analyses/fst/FST_stats.txt"),
+    sep = "\n",
+    append = TRUE)
 
 outlier_fst_disorder2 <- subset(outlier_fst_disorder, select = -c(region))
 

@@ -114,5 +114,5 @@ if [ -f "${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}"* ]
             sed -i 's/${CHRLEAD}//g' ${OUTDIR}/analyses/fst/singlesnps_fst.txt 
 
 
-            Rscript ${scriptdir}/fst_snps.r ${OUTDIR} ${WIN}
+            Rscript ${scriptdir}/fst_snps.r ${OUTDIR} ${POP1} ${POP2}
 fi
