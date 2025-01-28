@@ -60,27 +60,6 @@ grep ${CHRLEAD} ${OUTDIR}/analyses/fst/${WIN}/slidingwindow.${POP1}_${POP2} >> $
 sed -i 's/${CHRLEAD}//g' ${OUTDIR}/analyses/fst/${WIN}/slidingwindow.${POP1}_${POP2}.chroms.txt
 sed -i 's/\.1\t/\t/g' ${OUTDIR}/analyses/fst/${WIN}/slidingwindow.${POP1}_${POP2}.chroms.txt
 
-Rscript ${scriptdir}/fst_window.r ${OUTDIR} ${WIN} ${POP1} ${POP2}
-
-
-
-if [ -f "${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}"* ]
-        then
-            echo "SNP analysis already complete, moving on!"
-        else
-            echo "computing fst on single snps"
-            
-            ${ANGSD}/misc/realSFS fst stats2 ${OUTDIR}/analyses/fst/${POP1}_${POP2}.fst.idx -win 1 -step 1 >${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}
-
-            # single snps
-            echo -e 'region\tchr\tmidPos\tNsites\tfst' > ${OUTDIR}/analyses/fst/singlesnps_fst.txt
-            #tail -n+2 slidingwindow >> slidingwindow_fst.txt 
-            grep ${CHRLEAD} ${OUTDIR}/analyses/fst/singlesnps >> ${OUTDIR}/analyses/fst/singlesnps_fst.txt
-            sed -i 's/${CHRLEAD}//g' ${OUTDIR}/analyses/fst/singlesnps_fst.txt 
-            sed -i 's/\.1\t/\t/g' ${OUTDIR}/analyses/fst/singlesnps_fst.txt
-
-            Rscript ${scriptdir}/fst_snps.r ${OUTDIR} ${WIN}
-fi
 
 # replace chromosome names if necessary
 
@@ -92,9 +71,7 @@ if [[ -n "$CHROM" ]]; then
     
     # Define the files to process
     files=(
-        "$OUTDIR/analyses/fst/$WIN/${POP1}_${POP2}.chrom.fst.windowed.outlierfst.csv"
         "$OUTDIR/analyses/fst/$WIN/slidingwindow.${POP1}_${POP2}"
-        "$OUTDIR/analyses/fst/$WIN/${POP1}_${POP2}.chrom.fst.windowed.sigline.png"
         "$OUTDIR/analyses/fst/$WIN/slidingwindow.${POP1}_${POP2}.chroms.txt"
     )
 
@@ -118,4 +95,26 @@ else
 fi
 
 
+fi
+
+Rscript ${scriptdir}/fst_window.r ${OUTDIR} ${WIN} ${POP1} ${POP2}
+
+
+
+if [ -f "${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}"* ]
+        then
+            echo "SNP analysis already complete, moving on!"
+        else
+            echo "computing fst on single snps"
+            
+            ${ANGSD}/misc/realSFS fst stats2 ${OUTDIR}/analyses/fst/${POP1}_${POP2}.fst.idx -win 1 -step 1 >${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}
+
+            # single snps
+            echo -e 'region\tchr\tmidPos\tNsites\tfst' > ${OUTDIR}/analyses/fst/singlesnps_fst.txt
+            #tail -n+2 slidingwindow >> slidingwindow_fst.txt 
+            grep ${CHRLEAD} ${OUTDIR}/analyses/fst/singlesnps >> ${OUTDIR}/analyses/fst/singlesnps_fst.txt
+            sed -i 's/${CHRLEAD}//g' ${OUTDIR}/analyses/fst/singlesnps_fst.txt 
+            sed -i 's/\.1\t/\t/g' ${OUTDIR}/analyses/fst/singlesnps_fst.txt
+
+            Rscript ${scriptdir}/fst_snps.r ${OUTDIR} ${WIN}
 fi
