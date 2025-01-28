@@ -16,7 +16,7 @@ if (any(installed_packages == FALSE)) {
 }
 
 # Packages loading
-invisible(lapply(packages, library, character.only <- TRUE))
+invisible(lapply(packages, library, character.only = TRUE))
 
 fst <- read.csv(paste0(outdir, "/analyses/fst/", win, "/slidingwindow.",
                        pop1, "_", pop2, ".chroms.txt"), sep = "\t")
