@@ -23,7 +23,7 @@ if [ $# -lt 1 ]
     p) PARAMS=${OPTARG};;
     w) WIN=${OPTARG};;
     s) STEP=${OPTARG};;
-    c) CHROM=${OPTARG};;
+    c) CHR_FILE=${OPTARG};;
 
     esac
     done
@@ -32,7 +32,7 @@ source ${PARAMS}
 
 WIN="${WIN:-10000}"
 STEP="${STEP:-10000}"
-
+CHROM=`cat $CHR_FILE`
 
 printf "\n \n \n \n"
 date
