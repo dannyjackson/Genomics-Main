@@ -88,7 +88,7 @@ df.tmp <- fst %>%
   mutate( BPcum=midPos+tot) 
   
 # get chromosome center positions for x-axis
-axisdf <- df.tmp %>% group_by(chromo) %>% summarize(center=( max(BPcum) + min(BPcum) ) / 2 )
+axisdf <- df.tmp %>% group_by(chr) %>% summarize(center=( max(BPcum) + min(BPcum) ) / 2 )
 
 
 png(file = paste0(outdir, "/analyses/fst/", win, "/",
@@ -101,7 +101,7 @@ ggplot(df.tmp, aes(x = BPcum, y = (fst))) +
   scale_color_manual(values = rep(blues, half_length)) +
   # custom X axis:
   # expand=c(0,0)removes space between plot area and x axis
-    scale_x_continuous( label = axisdf$chromo, breaks= axisdf$center, guide = guide_axis(n.dodge = 2) ) +
+    scale_x_continuous( label = axisdf$chr, breaks= axisdf$center, guide = guide_axis(n.dodge = 2) ) +
 
   scale_y_continuous(expand <- c(0, 0), limits <- c(0, 1)) +
   # add plot and axis titles
