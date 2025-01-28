@@ -28,8 +28,8 @@ fst <- fst_no_na
 
 # z transform fst values
 
-fst_xbar <- mean(fst$fst)
-fst_sd <- sd(fst$fst)
+fst_xbar <- mean(fst$fst, na.rm = TRUE)
+fst_sd <- sd(fst$fst, na.rm = TRUE)
 
 fst$z <- (fst$fst - fst_xbar) / fst_sd
 
@@ -56,7 +56,7 @@ fst_cutoff <- min(outlier_fst_disorder$fst) # print to file
 cat(c("FST cutoff windowed:", fst_cutoff),
     file = "FST_stats.txt", sep = "\n", append = TRUE)
 
-outlier_fst_disorder2 <- subset(outlier_fst_disorder, select <- -c(region))
+outlier_fst_disorder2 <- subset(outlier_fst_disorder, select = -c(region))
 
 write.csv(outlier_fst_disorder2,
           paste0(outdir, "/analyses/fst/", win, "/",
@@ -70,14 +70,14 @@ blues <- c("#4EAFAF", "#082B64")
 
 middlechr <- (max(fst$midPos) + as.numeric(win) / 2) / 2
 
-png(file <- paste0(outdir, "/analyses/fst/", win, "/",
+png(file = paste0(outdir, "/analyses/fst/", win, "/",
                    pop1, "_", pop2, ".chrom.fst.windowed.sigline.png"),
     width <- 2000, height = 500)
 
 ggplot(fst, aes(x = midPos, y = (fst))) +
   # Show all points
   geom_point(aes(color = as.factor(chr)), alpha = 0.8, size = .5) +
-  scale_color_manual(values <- rep(blues, half_length)) +
+  scale_color_manual(values = rep(blues, half_length)) +
   # custom X axis:
   # expand=c(0,0)removes space between plot area and x axis
   scale_y_continuous(expand <- c(0, 0), limits <- c(0, 1)) +
