@@ -45,7 +45,7 @@ ordered_fst <- fst %>%
   arrange(desc(neg_log_pvalues_one_tailed))
 
 nsnps <- nrow(ordered_fst)
-top_snps <- round(nsnps * 0.05)
+top_snps <- round(nsnps * 0.001)
 
 outlier_fst_disorder <- ordered_fst[1:top_snps, ]
 
@@ -106,7 +106,7 @@ ggplot(df.tmp, aes(x = BPcum, y = (fst))) +
   scale_y_continuous(expand <- c(0, 0), limits <- c(0, 1)) +
   # add plot and axis titles
   ggtitle(NULL) +
-  labs(x <- "Chromosome", y <- "fst") +
+  labs(x = "Chromosome", y = "fst") +
   # add genome-wide sig and sugg lines
   geom_hline(yintercept = fst_cutoff) +
   # Add highlighted points
