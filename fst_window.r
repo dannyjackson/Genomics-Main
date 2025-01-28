@@ -70,16 +70,39 @@ blues <- c("#4EAFAF", "#082B64")
 
 middlechr <- (max(fst$midPos) + as.numeric(win) / 2) / 2
 
+df.tmp <- fst %>% 
+  
+  # Compute chromosome size
+  group_by(chr) %>% 
+  summarise(chr_len=max(midPos)) %>% 
+  
+  # Calculate cumulative position of each chromosome
+  mutate(tot=cumsum(chr_len)-chr_len) %>%
+  select(-chr_len) %>%
+  
+  # Add this info to the initial dataset
+  left_join(fst, ., by=c("chr"="chr")) %>%
+  
+  # Add a cumulative position of each SNP
+  arrange(chr, position) %>%
+  mutate( BPcum=position+tot) 
+  
+# get chromosome center positions for x-axis
+axisdf <- df.tmp %>% group_by(chromo) %>% summarize(center=( max(BPcum) + min(BPcum) ) / 2 )
+
+
 png(file = paste0(outdir, "/analyses/fst/", win, "/",
                    pop1, "_", pop2, ".chrom.fst.windowed.sigline.png"),
     width <- 2000, height = 500)
 
-ggplot(fst, aes(x = midPos, y = (fst))) +
+ggplot(df.tmp, aes(x = BPcum, y = (fst))) +
   # Show all points
   geom_point(aes(color = as.factor(chr)), alpha = 0.8, size = .5) +
   scale_color_manual(values = rep(blues, half_length)) +
   # custom X axis:
   # expand=c(0,0)removes space between plot area and x axis
+    scale_x_continuous( label = axisdf$chromo, breaks= axisdf$center, guide = guide_axis(n.dodge = 2) ) +
+
   scale_y_continuous(expand <- c(0, 0), limits <- c(0, 1)) +
   # add plot and axis titles
   ggtitle(NULL) +
