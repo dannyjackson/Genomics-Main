@@ -39,6 +39,7 @@ echo "Current script: fst_2.sh"
 
 
 # sliding window analyses
+mkdir -p ${OUTDIR}/analyses/fst/${WIN}
 # windowed
 if [ -f "${OUTDIR}/analyses/fst/${WIN}/slidingwindow_${POP1}_${POP2}"* ]
         then
