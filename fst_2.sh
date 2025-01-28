@@ -91,12 +91,12 @@ if [[ -n "$CHROM" ]]; then
     echo "Processing CHROM variable..."
     # Define the files to process
     files=(
-        "$OUTDIR/analyses/fst/$WIN/$POP1\_$POP2.chrom.fst.windowed.outlierfst.csv"
+        "$OUTDIR/analyses/fst/$WIN/$POP1"_"$POP2.chrom.fst.windowed.outlierfst.csv"
         
-        "$OUTDIR/analyses/fst/$WIN/slidingwindow.$POP1\_$POP2"
+        "$OUTDIR/analyses/fst/$WIN/slidingwindow.$POP1"_"$POP2"
 
-         "$OUTDIR/analyses/fst/$WIN/$POP1\_$POP2.chrom.fst.windowed.sigline.png"
-         "$OUTDIR/analyses/fst/$WIN/slidingwindow.$POP1\_$POP2.chroms.txt"
+         "$OUTDIR/analyses/fst/$WIN/$POP1"_"$POP2.chrom.fst.windowed.sigline.png"
+         "$OUTDIR/analyses/fst/$WIN/slidingwindow.$POP1"_"$POP2.chroms.txt"
     )
 
 
