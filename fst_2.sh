@@ -85,18 +85,19 @@ fi
 # replace chromosome names if necessary
 
 # CHROM="/xdisk/mcnew/dannyjackson/cardinals_dfinch/referencelists/GCF_901933205_chromconversion.txt"
+nocaurban_nocarural.chrom.fst.windowed.outlierfst.csv
 
 # Check if CHROM has anything assigned
 if [[ -n "$CHROM" ]]; then
     echo "Processing CHROM variable..."
     # Define the files to process
     files=(
-        ${OUTDIR}/analyses/fst/${WIN}/${POP1}_${POP2}".chrom.fst.windowed.outlierfst.csv"
+        "$OUTDIR/analyses/fst/$WIN/$POP1_$POP2.chrom.fst.windowed.outlierfst.csv"
         
-        ${OUTDIR}/analyses/fst/${WIN}/"slidingwindow."${POP1}_${POP2}
+        "$OUTDIR/analyses/fst/$WIN/slidingwindow.$POP1_$POP2"
 
-         ${OUTDIR}/analyses/fst/${WIN}/${POP1}_${POP2}".chrom.fst.windowed.sigline.png"
-         ${OUTDIR}/analyses/fst/${WIN}/"slidingwindow."${POP1}_${POP2}".chroms.txt"
+         "$OUTDIR/analyses/fst/$WIN/$POP1_$POP2.chrom.fst.windowed.sigline.png"
+         "$OUTDIR/analyses/fst/$WIN/slidingwindow.$POP1_$POP2.chroms.txt"
     )
 
     # Read CHROM line by line
