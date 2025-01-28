@@ -99,13 +99,6 @@ if [[ -n "$CHROM" ]]; then
          "$OUTDIR/analyses/fst/$WIN/slidingwindow.$POP1_$POP2.chroms.txt"
     )
 
-    # Read CHROM line by line
-    while read -r first second; do
-        echo "Replacing occurrences of '$second' with '$first'..."
-        # Replace occurrences of the second column with the first column in each file
-        sed -i "s/$second/$first/g" nocaurban_nocarural.chrom.fst.windowed.outlierfst.csv
-    done < "$CHROM"
-
 
     # Read CHROM line by line
     while read -r first second; do
