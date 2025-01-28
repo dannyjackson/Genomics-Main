@@ -84,8 +84,8 @@ df.tmp <- fst %>%
   left_join(fst, ., by=c("chr"="chr")) %>%
   
   # Add a cumulative position of each SNP
-  arrange(chr, position) %>%
-  mutate( BPcum=position+tot) 
+  arrange(chr, midPos) %>%
+  mutate( BPcum=midPos+tot) 
   
 # get chromosome center positions for x-axis
 axisdf <- df.tmp %>% group_by(chromo) %>% summarize(center=( max(BPcum) + min(BPcum) ) / 2 )
