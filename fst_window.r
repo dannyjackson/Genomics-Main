@@ -85,7 +85,7 @@ ggplot(fst, aes(x = midPos, y = (fst))) +
   ggtitle(NULL) +
   labs(x <- "Chromosome", y <- "fst") +
   # add genome-wide sig and sugg lines
-  geom_hline(yintercept <- fst_cutoff) +
+  geom_hline(yintercept = fst_cutoff) +
   # Add highlighted points
   #geom_point(data=subset(df.tmp, is_highlight=="yes"),color="orange", size=2) +
   # Add label using ggrepel to avoid overlapping
