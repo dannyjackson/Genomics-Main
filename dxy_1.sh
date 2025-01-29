@@ -38,9 +38,45 @@ mkdir -p ${OUTDIR}/analyses/dxy/${POP1}_${POP2}
 
 cd ${OUTDIR}/analyses/dxy/${POP1}_${POP2}
 
-module load R/4.4.0
+# unzip maps files if necessary
+# Define file paths
+POP1_MAFS_GZ="${OUTDIR}/datafiles/safs/${POP1}.mafs.gz"
+POP1_MAFS="${OUTDIR}/datafiles/safs/${POP1}.mafs"
 
-total_lines=$(zcat ${OUTDIR}/datafiles/safs/${POP1}.mafs.gz | wc -l)
+# Check if the .gz file exists
+if [ -f "$POP1_MAFS_GZ" ]; then
+    # If .gz file exists, unzip it
+    echo "Found ${POP1}.mafs.gz, unzipping..."
+    gunzip "$POP1_MAFS_GZ"
+elif [ -f "$POP1_MAFS" ]; then
+    # If .gz file doesn't exist, but the .mafs file exists, continue
+    echo "Found ${POP1}.mafs, continuing..."
+else
+    # If neither file exists, break
+    echo "Neither ${POP1}.mafs.gz nor ${POP1}.mafs found. Exiting..."
+    exit 1
+fi
+
+# Define file paths
+POP2_MAFS_GZ="${OUTDIR}/datafiles/safs/${POP2}.mafs.gz"
+POP2_MAFS="${OUTDIR}/datafiles/safs/${POP2}.mafs"
+
+# Check if the .gz file exists
+if [ -f "$POP2_MAFS_GZ" ]; then
+    # If .gz file exists, unzip it
+    echo "Found ${POP2}.mafs.gz, unzipping..."
+    gunzip "$POP2_MAFS_GZ"
+elif [ -f "$POP2_MAFS" ]; then
+    # If .gz file doesn't exist, but the .mafs file exists, continue
+    echo "Found ${POP2}.mafs, continuing..."
+else
+    # If neither file exists, break
+    echo "Neither ${POP2}.mafs.gz nor ${POP2}.mafs found. Exiting..."
+    exit 1
+fi
+
+
+total_lines=$(cat ${OUTDIR}/datafiles/safs/${POP1}.mafs | wc -l)
 num_sites=$((total_lines - 1))
 
 Rscript ~/programs/ngsTools/ngsPopGen/scripts/calcDxy.R -p ${OUTDIR}/datasets/safs/${POP1}.mafs.gz -q ${OUTDIR}/datasets/safs/${POP2}.mafs.gz -t ${num_sites}
