@@ -18,7 +18,7 @@ if (any(installed_packages == FALSE)) {
 invisible(lapply(packages, library, character.only = TRUE))
 
 fst <-
-  read.csv(paste0(outdir, "/analyses/fst/singlesnps_fst.",
+  read.csv(paste0(outdir, "/analyses/fst/singlesnps.",
                   pop1, "_", pop2, ".txt"),
            sep = "\t")
 
