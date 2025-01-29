@@ -97,6 +97,8 @@ df.tmp <- fst %>%
   arrange(chr, midPos) %>%
   mutate(BPcum = midPos + tot)
 
+half_length <- ceiling(length(unique(fst$chr)) / 2)
+
 
 # get chromosome center positions for x-axis
 axisdf <- df.tmp %>%
