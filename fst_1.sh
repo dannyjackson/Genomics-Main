@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# FST script (1/3)
+# FST script (1/4)
 
 if [ $# -lt 1 ]
   then
