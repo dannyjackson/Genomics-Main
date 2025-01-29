@@ -19,7 +19,7 @@ invisible(lapply(packages, library, character.only = TRUE))
 
 fst <-
   read.csv(paste0(outdir, "/analyses/fst/singlesnps.",
-                  pop1, "_", pop2, ".txt"),
+                  pop1, "_", pop2, ".chroms.txt"),
            sep = "\t")
 
 fst_no_na <- na.omit(fst)
