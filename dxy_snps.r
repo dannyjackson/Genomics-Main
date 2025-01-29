@@ -57,7 +57,7 @@ dxy_cutoff <- min(outlier_dxy_disorder$dxy) # print to file
 
 
 cat(c("dxy cutoff snps:", dxy_cutoff),
-    file = paste0(outdir, "/analyses/dxy/", ${POP1}, "_", ${POP2}, "dxy_stats.txt"),
+    file = paste0(outdir, "/analyses/dxy/", pop1, "_", pop2, "dxy_stats.txt"),
     sep = "\n",
     append = TRUE)
 
