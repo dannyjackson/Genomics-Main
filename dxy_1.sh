@@ -40,7 +40,7 @@ cd ${OUTDIR}/analyses/dxy/${POP1}_${POP2}
 
 module load R/4.4.0
 
-total_lines=$(zcat ${OUTDIR}/datasets/safs/${POP1}.mafs.gz | wc -l)
+total_lines=$(zcat ${OUTDIR}/datafiles/safs/${POP1}.mafs.gz | wc -l)
 num_sites=$((total_lines - 1))
 
 Rscript ~/programs/ngsTools/ngsPopGen/scripts/calcDxy.R -p ${OUTDIR}/datasets/safs/${POP1}.mafs.gz -q ${OUTDIR}/datasets/safs/${POP2}.mafs.gz -t ${num_sites}
