@@ -79,7 +79,7 @@ fi
 total_lines=$(cat ${OUTDIR}/datafiles/safs/${POP1}.mafs | wc -l)
 num_sites=$((total_lines - 1))
 
-Rscript ~/programs/ngsTools/ngsPopGen/scripts/calcDxy.R -p ${OUTDIR}/datasets/safs/${POP1}.mafs.gz -q ${OUTDIR}/datasets/safs/${POP2}.mafs.gz -t ${num_sites}
+Rscript ~/programs/ngsTools/ngsPopGen/scripts/calcDxy.R -p ${OUTDIR}/datasets/safs/${POP1}.mafs -q ${OUTDIR}/datasets/safs/${POP2}.mafs -t ${num_sites}
 
 mv Dxy_persite.txt Dxy_persite_${POP1}_${POP2}.txt
 
