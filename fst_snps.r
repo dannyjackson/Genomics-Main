@@ -70,7 +70,7 @@ cat(c("FST cutoff:", fst_cutoff),
 outlier_fst_disorder2 <- subset(outlier_fst_disorder, select = -c(region))
 
 write.csv(outlier_fst_disorder2,
-          paste0(outdir, "analyses/fst/",
+          paste0(outdir, "analyses/fst/singlesnps.",
                  pop1, "_", pop2, ".outlierfst.csv"))
 
 # draw it with cutoff line
