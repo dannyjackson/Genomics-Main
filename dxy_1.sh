@@ -10,11 +10,13 @@ if [ $# -lt 1 ]
     [-p] Path to parameter file (example is saved in github repository as fst_params.sh"
 
   else
-    while getopts p: option
+    while getopts p:w:s: option
     do
     case "${option}"
     in
     p) PARAMS=${OPTARG};;
+    w) WIN=${OPTARG};;
+    s) STEP=${OPTARG};;
 
     esac
     done
