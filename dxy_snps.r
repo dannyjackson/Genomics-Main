@@ -23,7 +23,7 @@ invisible(lapply(packages, library, character.only = TRUE))
 
 # Plot dxy 
 
-dxy <- read.csv(paste0(outdir, "/analyses/dxy", pop1, "_" pop2,'/Dxy_persite_nocaurban_nocarural.txt'), sep ='\t')
+dxy <- read.csv(paste0(outdir, "/analyses/dxy/", pop1, "_" pop2,'/Dxy_persite_nocaurban_nocarural.txt'), sep ='\t')
 
 
 dxy_no_na <- na.omit(dxy)
