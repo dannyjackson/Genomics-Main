@@ -45,7 +45,8 @@ if [ -f "${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}"* ]
             # single snps
             echo -e 'region\tchr\tmidPos\tNsites\tfst' > ${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}.chroms.txt 
             #tail -n+2 slidingwindow >> slidingwindow_fst.txt 
-            grep ${CHRLEAD} ${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2} >> ${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}.chroms.txt
+            grep ${CHRLEAD} ${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2} | grep -v ${SEXCHR} >> ${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}.chroms.txt
+
             sed -i 's/${CHRLEAD}//g' ${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}.chroms.txt 
 
             # Check if CHROM has anything assigned
