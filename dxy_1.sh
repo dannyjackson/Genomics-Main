@@ -115,6 +115,7 @@ awk '{print $2}' ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${PO
 
 Rscript ~/programs/Genomics-Main/dxy_snps.r ${OUTDIR} ${POP1} ${POP2} ${COLOR1} ${COLOR2}
 
+
 python ~/programs/Genomics-Main/dxy_windows.py --outdir ${OUTDIR} --pop1 ${POP1} --pop2 ${POP2} --win ${WIN}
 
 fi

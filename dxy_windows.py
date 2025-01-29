@@ -15,7 +15,8 @@ args = parser.parse_args()
 output_prefix = f"{args.outdir}/analyses/dxy/{args.pop1}_{args.pop2}"
 
 # Load the chromosome lengths
-chroms_len = pd.read_csv("chroms.len.txt", sep="\t", header=None, names=["chromosome", "length"])
+
+chroms_len = pd.read_csv(f"{args.outdir}/referencelists/autosomes_lengths.txt", sep="\t", header=None, names=["chromosome", "length"])
 
 # Load the dxy data
 dxy_data = pd.read_csv(f"Dxy_persite_{args.pop1}_{args.pop2}.txt", sep="\t")
