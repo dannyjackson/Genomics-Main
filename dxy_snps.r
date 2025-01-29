@@ -92,7 +92,7 @@ df.tmp <- dxy %>%
   arrange(chromo, position) %>%
   mutate(BPcum = position + tot)
 
-half_length <- ceiling(length(unique(dxy$chr)) / 2)
+half_length <- ceiling(length(unique(dxy$chromo)) / 2)
 
 # get chromosome center positions for x-axis
 axisdf <- df.tmp %>%
@@ -105,11 +105,11 @@ png(file = paste0(outdir, "/analyses/dxy/",
 
 ggplot(df.tmp, aes(x = BPcum, y = (dxy))) +
   # Show all points
-  geom_point(aes(color = as.factor(chr)), alpha = 0.8, size = 1) +
+  geom_point(aes(color = as.factor(chromo)), alpha = 0.8, size = 1) +
   scale_color_manual(values = rep(colors, half_length)) +
   # custom X axis:
   # expand=c(0,0)removes space between plot area and x axis
-    scale_x_continuous( label = axisdf$chr, breaks= axisdf$center, guide = guide_axis(n.dodge = 2) ) +
+    scale_x_continuous( label = axisdf$chromo, breaks= axisdf$center, guide = guide_axis(n.dodge = 2) ) +
 
   scale_y_continuous(expand <- c(0, 0), limits <- c(0, 1)) +
   # add plot and axis titles
