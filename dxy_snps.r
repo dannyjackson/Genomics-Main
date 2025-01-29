@@ -49,7 +49,7 @@ ordered_dxy <- dxy %>%
 nsnps <- nrow(dxy)
 top_snps <- round(nsnps * 0.001)
 
-outlier_dxy_disorder <- ordered_dxy[1:topsnps, ]
+outlier_dxy_disorder <- ordered_dxy[1:top_snps, ]
 
 outlier_dxy <- outlier_dxy_disorder %>% arrange(chromo, position)
 
