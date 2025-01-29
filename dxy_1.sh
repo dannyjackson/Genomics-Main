@@ -86,6 +86,6 @@ mv ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite.txt ${OUTDIR}/analyses/dxy
 awk '{print $2}' ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt  | tail -n +2 > ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${POP1}_${POP2}_sites.txt
 
 
-Rscript ${scriptdir}/dxy_snps.r -i ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.forplot.txt -o ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${POP1}_${POP2}_windowed -p ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${POP1}_${POP2}_sites.txt -w ${WIN} -s ${STEP}
+Rscript ~/programs/Genomics-Main//dxy_snps.r -i ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.forplot.txt -o ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${POP1}_${POP2}_windowed -p ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${POP1}_${POP2}_sites.txt -w ${WIN} -s ${STEP}
 
 fi
