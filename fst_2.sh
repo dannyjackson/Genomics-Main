@@ -78,3 +78,4 @@ if [ -f "${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}"* ]
             fi
             Rscript ${scriptdir}/fst_snps.r ${OUTDIR} ${POP1} ${POP2}
 fi
+fi
