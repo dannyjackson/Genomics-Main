@@ -19,7 +19,7 @@ output_prefix = f"{args.outdir}/analyses/dxy/{args.pop1}_{args.pop2}"
 chroms_len = pd.read_csv(f"{args.outdir}/referencelists/autosomes_lengths.txt", sep="\t", header=None, names=["chromosome", "length"])
 
 # Load the dxy data
-dxy_data = pd.read_csv(f"Dxy_persite_{args.pop1}_{args.pop2}.txt", sep="\t", dtype={"chromo": str, "position": int, "dxy": int})
+dxy_data = pd.read_csv(f"Dxy_persite_{args.pop1}_{args.pop2}.txt", sep="\t", dtype={"chromo": str, "position": int, "dxy": float})
 
 # Initialize an empty list to store the window data
 window_data = []
