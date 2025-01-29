@@ -2,31 +2,51 @@
 
 # dxy script (1/N)
 
-if [ $# -lt 1 ]
-  then
-    echo "This script computes dxy between two groups of genomes using a genotype likelihood framework implemented in ANGSD. It requires SAF files as input, which can be generated using the <scriptname> scripts in github.com/dannyjackson/Genomics-Main. It will compute average genome-wide dxy and produce the output files necessary for sliding window dxy and dxy for each SNP. Read the entire script and revise according to each project! Many parameters are not modifiable with options, including snp filtering settings in angsd. 
+if [ $# -lt 1 ]; then
+    cat <<EOF
+This script computes dxy between two groups of genomes using a genotype likelihood framework implemented in ANGSD.
+It requires SAF files as input, which can be generated using the <scriptname> scripts in:
+    github.com/dannyjackson/Genomics-Main
 
-    REQUIRED ARGUMENTS
-    [-p] Path to parameter file (example is saved in github repository as fst_params.sh"
+It computes average genome-wide dxy and produces output files for:
+    - Sliding window dxy
+    - Per-SNP dxy
 
-  else
-    while getopts p:w:s:c: option
-    do
-    case "${option}"
-    in
-    p) PARAMS=${OPTARG};;
-    w) WIN=${OPTARG};;
-    s) STEP=${OPTARG};;
-    c) CHR_FILE=${OPTARG};;
+**NOTE:** Read the entire script and adjust for each project! Many parameters (e.g., SNP filtering in ANGSD) are hardcoded.
 
+REQUIRED ARGUMENTS:
+    -p  Path to parameter file (example: fst_params.sh in GitHub repo)
+EOF
+    exit 1
+fi
+
+# Parse arguments
+while getopts "p:w:s:c:" option; do
+    case "${option}" in
+        p) PARAMS=${OPTARG} ;;
+        w) WIN=${OPTARG} ;;
+        s) STEP=${OPTARG} ;;
+        c) CHR_FILE=${OPTARG} ;;
+        *) echo "Invalid option: -${OPTARG}" >&2; exit 1 ;;
     esac
-    done
+done
 
 if [ -z "${PARAMS}" ]; then
     echo "Error: No parameter file provided." >&2
     exit 1
 fi
+
 source "${PARAMS}"
+
+if [ -z "${OUTDIR}" ] || [ -z "${POP1}" ] || [ -z "${POP2}" ]; then
+    echo "Error: OUTDIR, POP1, or POP2 is not set in the parameter file." >&2
+    exit 1
+fi
+
+if [ ! -f "${CHR_FILE}" ]; then
+    echo "Error: Chromosome mapping file ${CHR_FILE} not found." >&2
+    exit 1
+fi
 
 CHROM=`cat $CHR_FILE`
 
@@ -34,88 +54,61 @@ printf "\n \n \n \n"
 date
 echo "Current script: dxy_1.sh"
 
-cd ${OUTDIR}/analyses/dxy/${POP1}_${POP2}
+cd "${OUTDIR}/analyses/dxy/${POP1}_${POP2}" || { echo "Failed to enter directory"; exit 1; }
 
 # unzip maps files if necessary
-# Define file paths
-POP1_MAFS_GZ="${OUTDIR}/datafiles/safs/${POP1}.mafs.gz"
-POP1_MAFS="${OUTDIR}/datafiles/safs/${POP1}.mafs"
+for POP in "${POP1}" "${POP2}"; do
+    MAF_GZ="${OUTDIR}/datafiles/safs/${POP}.mafs.gz"
+    MAF="${OUTDIR}/datafiles/safs/${POP}.mafs"
 
-# Check if the .gz file exists
-if [ -f "$POP1_MAFS_GZ" ]; then
-    # If .gz file exists, unzip it
-    echo "Found ${POP1}.mafs.gz, unzipping..."
-    gunzip "$POP1_MAFS_GZ"
-elif [ -f "$POP1_MAFS" ]; then
-    # If .gz file doesn't exist, but the .mafs file exists, continue
-    echo "Found ${POP1}.mafs, continuing..."
-else
-    # If neither file exists, break
-    echo "Neither ${POP1}.mafs.gz nor ${POP1}.mafs found. Exiting..."
-    exit 1
-fi
+    if [ -f "${MAF_GZ}" ]; then
+        echo "Found ${POP}.mafs.gz, unzipping..."
+        gzip -d -f "${MAF_GZ}"
+    elif [ -f "${MAF}" ]; then
+        echo "Found ${POP}.mafs, continuing..."
+    else
+        echo "Error: Neither ${POP}.mafs.gz nor ${POP}.mafs found. Exiting..."
+        exit 1
+    fi
+done
 
-# Define file paths
-POP2_MAFS_GZ="${OUTDIR}/datafiles/safs/${POP2}.mafs.gz"
-POP2_MAFS="${OUTDIR}/datafiles/safs/${POP2}.mafs"
-
-# Check if the .gz file exists
-if [ -f "$POP2_MAFS_GZ" ]; then
-    # If .gz file exists, unzip it
-    echo "Found ${POP2}.mafs.gz, unzipping..."
-    gunzip "$POP2_MAFS_GZ"
-elif [ -f "$POP2_MAFS" ]; then
-    # If .gz file doesn't exist, but the .mafs file exists, continue
-    echo "Found ${POP2}.mafs, continuing..."
-else
-    # If neither file exists, break
-    echo "Neither ${POP2}.mafs.gz nor ${POP2}.mafs found. Exiting..."
-    exit 1
-fi
-
-
-total_lines=$(cat ${OUTDIR}/datafiles/safs/${POP1}.mafs | wc -l)
+# Calculate number of sites
+total_lines=$(wc -l < "${OUTDIR}/datafiles/safs/${POP1}.mafs")
 num_sites=$((total_lines - 1))
 
-Rscript ~/programs/ngsTools/ngsPopGen/scripts/calcDxy.R -p ${OUTDIR}/datafiles/safs/${POP1}.mafs -q ${OUTDIR}/datafiles/safs/${POP2}.mafs -t ${num_sites} > ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_globalestimate_${POP1}_${POP2}.txt
+# Run Dxy calculation
+Rscript ~/programs/ngsTools/ngsPopGen/scripts/calcDxy.R \
+    -p "${OUTDIR}/datafiles/safs/${POP1}.mafs" \
+    -q "${OUTDIR}/datafiles/safs/${POP2}.mafs" \
+    -t "${num_sites}" > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_globalestimate_${POP1}_${POP2}.txt"
 
-mv ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite.txt ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt
+mv "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite.txt" \
+   "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt"
 
 # Check if CHROM has anything assigned
 if [[ -n "$CHROM" ]]; then
     echo "Processing CHROM variable..."
     
     # Define the files to process
-    files=(
-        "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt"
-    )
+    FILE="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt"
 
     # Read CHROM line by line
     while IFS=',' read -r first second; do
-        echo "Replacing occurrences of '$second' with '$first'..."
-        
-        # Process each file
-        for file in "${files[@]}"; do
-            if [[ -f "$file" ]]; then
-                echo "Processing file: $file"
-                sed -i "s/$second/$first/g" "$file"
-            else
-                echo "Warning: File $file not found."
-            fi
-        done
+        echo "Replacing occurrences of '$second' with '$first' in $FILE"
+        sed -i.bak "s/$second/$first/g" "$FILE"
     done <<< "$CHROM"
 
+    rm -f "${FILE}.bak"
 else
     echo "CHROM variable is empty or not set."
 fi
 
-
-awk '{print $2}' ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt  | tail -n +2 > ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${POP1}_${POP2}_sites.txt
-
-
-Rscript ~/programs/Genomics-Main/dxy_snps.r ${OUTDIR} ${POP1} ${POP2} ${COLOR1} ${COLOR2}
+# Extract site positions
+awk 'NR>1 {print $2}' "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt" \
+    > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${POP1}_${POP2}_sites.txt"
 
 
-python ~/programs/Genomics-Main/dxy_windows.py --outdir ${OUTDIR} --pop1 ${POP1} --pop2 ${POP2} --win ${WIN}
+# Run visualization scripts
+Rscript ~/programs/Genomics-Main/dxy_snps.r "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}"
 
-fi
+python ~/programs/Genomics-Main/dxy_windows.py --outdir "${OUTDIR}" --pop1 "${POP1}" --pop2 "${POP2}" --win "${WIN}"
