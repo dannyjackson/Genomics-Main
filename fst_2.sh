@@ -93,8 +93,6 @@ else
 fi
 
 
-fi
-
 Rscript ${scriptdir}/fst_window.r ${OUTDIR} ${WIN} ${POP1} ${POP2}
 
 
@@ -110,9 +108,36 @@ if [ -f "${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}"* ]
             # single snps
             echo -e 'region\tchr\tmidPos\tNsites\tfst' > ${OUTDIR}/analyses/fst/singlesnps_fst.${POP1}_${POP2}.txt 
             #tail -n+2 slidingwindow >> slidingwindow_fst.txt 
-            grep ${CHRLEAD} ${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2} >> ${OUTDIR}/analyses/fst/singlesnps_fst.${POP1}_${POP2}.txt
-            sed -i 's/${CHRLEAD}//g' ${OUTDIR}/analyses/fst/singlesnps_fst.${POP1}_${POP2}.txt 
+            grep ${CHRLEAD} ${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2} >> ${OUTDIR}/analyses/fst/singlesnps_fst.${POP1}_${POP2}.chroms.txt
+            sed -i 's/${CHRLEAD}//g' ${OUTDIR}/analyses/fst/singlesnps_fst.${POP1}_${POP2}.chroms.txt 
 
+            # Check if CHROM has anything assigned
+            if [[ -n "$CHROM" ]]; then
+                echo "Processing CHROM variable..."
+                
+                # Define the files to process
+                files=(
+                    "$OUTDIR/analyses/fst/singlesnps.${POP1}_${POP2}"
+                    "$OUTDIR/analyses/fst/singlesnps.${POP1}_${POP2}.chroms.txt"
+                )
 
+                # Read CHROM line by line
+                while IFS=',' read -r first second; do
+                    echo "Replacing occurrences of '$second' with '$first'..."
+                    
+                    # Process each file
+                    for file in "${files[@]}"; do
+                        if [[ -f "$file" ]]; then
+                            echo "Processing file: $file"
+                            sed -i "s/$second/$first/g" "$file"
+                        else
+                            echo "Warning: File $file not found."
+                        fi
+                    done
+                done <<< "$CHROM"
+
+            else
+                echo "CHROM variable is empty or not set."
+            fi
             Rscript ${scriptdir}/fst_snps.r ${OUTDIR} ${POP1} ${POP2}
 fi
