@@ -19,7 +19,7 @@ color1 <- args[4]
 color2 <- args[5]
 
 # Read and clean data
-dxy_file <- file.path(outdir, "analyses/dxy", paste0(pop1, "_", pop2, "/Dxy_persite_nocaurban_nocarural.txt"))
+dxy_file <- file.path(outdir, "analyses/dxy", paste0(pop1, "_", pop2, "/Dxy_persite_", pop1, "_", pop2, ".autosomes.txt"))
 dxy <- read.csv(dxy_file, sep = '\t') %>% na.omit()
 
 # Z-transform dxy values
