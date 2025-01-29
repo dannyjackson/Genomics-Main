@@ -34,10 +34,6 @@ printf "\n \n \n \n"
 date
 echo "Current script: dxy_1.sh"
 
-
-mkdir -p ${OUTDIR}/analyses/dxy/
-mkdir -p ${OUTDIR}/analyses/dxy/${POP1}_${POP2}
-
 cd ${OUTDIR}/analyses/dxy/${POP1}_${POP2}
 
 # unzip maps files if necessary
