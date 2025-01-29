@@ -27,6 +27,12 @@ mkdir -p ${OUTDIR}/analyses/genelist/${WIN}
 POP1=nocaurban
 POP2=nocarural
 
+# define two colors to be used 
+color1=#4EAFAF
+color2=#082B64
+
+
+
 # characters at the start of a chromosome number (excluding scaffolds)
 # note that this script also assumes chromosomes will end in .1 i.e. NC_012345.1, and will remove the .1 from files where it will disrupt plotting etc
 

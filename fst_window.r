@@ -5,6 +5,8 @@ outdir <- args[1]
 win <- args[2]
 pop1 <- args[3]
 pop2 <- args[4]
+color1 <- args[5]
+color2 <- args[6]
 
 # Package names
 packages <- c("qqman", "readr", "ggrepel", "ggplot2", "dplyr", "RColorBrewer")
@@ -66,7 +68,7 @@ half_length <- ceiling(length(unique(fst$chr)) / 2)
 
 # draw it with cutoff line
 
-blues <- c("#4EAFAF", "#082B64")
+colors <- c(color1, color2)
 
 middlechr <- (max(fst$midPos) + as.numeric(win) / 2) / 2
 
@@ -102,7 +104,7 @@ png(file = paste0(outdir, "/analyses/fst/", win, "/",
 ggplot(df.tmp, aes(x = BPcum, y = (fst))) +
   # Show all points
   geom_point(aes(color = as.factor(chr)), alpha = 0.8, size = 1) +
-  scale_color_manual(values = rep(blues, half_length)) +
+  scale_color_manual(values = rep(colors, half_length)) +
   # custom X axis:
   # expand=c(0,0)removes space between plot area and x axis
     scale_x_continuous( label = axisdf$chr, breaks= axisdf$center, guide = guide_axis(n.dodge = 2) ) +
