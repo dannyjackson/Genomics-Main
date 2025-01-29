@@ -12,14 +12,14 @@ parser.add_argument("--win", type=int, required=True, help="Window size")
 args = parser.parse_args()
 
 # Define output file prefix
-output_prefix = f"{args.outdir}/analyses/dxy/{args.pop1}_{args.pop2}"
+output_prefix = f"{args.outdir}/analyses/dxy/{args.pop1}_{args.pop2}/{args.pop1}_{args.pop2}"
 
 # Load the chromosome lengths
 
 chroms_len = pd.read_csv(f"{args.outdir}/referencelists/autosomes_lengths.txt", sep="\t", header=None, names=["chromosome", "length"])
 
 # Load the dxy data
-dxy_data = pd.read_csv(f"Dxy_persite_{args.pop1}_{args.pop2}.txt", sep="\t", dtype={"chromo": str, "position": int, "dxy": float})
+dxy_data = pd.read_csv(f"Dxy_persite_{args.pop1}_{args.pop2}.autosomes.txt", sep="\t", dtype={"chromo": str, "position": int, "dxy": float})
 
 # Initialize an empty list to store the window data
 window_data = []
