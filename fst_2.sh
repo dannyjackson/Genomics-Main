@@ -92,7 +92,7 @@ else
     echo "CHROM variable is empty or not set."
 fi
 
-
+fi
 Rscript ${scriptdir}/fst_window.r ${OUTDIR} ${WIN} ${POP1} ${POP2}
 
 
