@@ -67,7 +67,7 @@ cat(c("FST cutoff:", fst_cutoff),
     sep = "\n",
     append = TRUE)
 
-outlier_fst_disorder2 <- subset(outlier_fst_disorder, select <- -c(region))
+outlier_fst_disorder2 <- subset(outlier_fst_disorder, select = -c(region))
 
 write.csv(outlier_fst_disorder2,
           paste0(outdir, "analyses/fst/",
@@ -105,9 +105,9 @@ axisdf <- df.tmp %>%
   group_by(chr) %>%
   summarize(center = (max(BPcum) + min(BPcum)) / 2)
 
-png(file <- paste0(outdir, "/analyses/fst/",
+png(file = paste0(outdir, "/analyses/fst/",
                    pop1, "_", pop2, ".fst.snps.sigline.png"),
-    width <- 2000, height = 500)
+    width = 2000, height = 500)
 
 ggplot(df.tmp, aes(x = BPcum, y = (fst))) +
   # Show all points
