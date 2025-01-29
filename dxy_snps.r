@@ -19,97 +19,94 @@ if (any(installed_packages == FALSE)) {
 # Packages loading
 invisible(lapply(packages, library, character.only = TRUE))
 
-fst <-
-  read.csv(paste0(outdir, "/analyses/fst/singlesnps.",
-                  pop1, "_", pop2, ".chroms.txt"),
-           sep = "\t")
 
-fst_no_na <- na.omit(fst)
-nrow(fst) - nrow(fst_no_na)
-fst <- fst_no_na
 
-min_fst <- min(fst$fst)
-max_fst <- max(fst$fst)
+# Plot dxy 
 
-cat(c("Min FST cutoff:", min_fst),
-    file = paste0(outdir, "/analyses/fst/FST_stats.txt"),
-    sep = "\n", append = TRUE)
+echo -e 'chromo\tposition\tdxy' > slidingwindow_dxy.txt
+grep 'NC_' Dxy_persite.txt >> slidingwindow_dxy.txt
 
-cat(c("Max FST cutoff:", max_fst),
-    file = paste0(outdir, "/analyses/fst/FST_stats.txt"),
-    sep = "\n", append = TRUE)
+dxy <- read.csv(paste0(outdir, "/analyses/dxy", pop1, "_" pop2,'/Dxy_persite_nocaurban_nocarural.txt'), sep ='\t')
 
-# z transform fst values
 
-fst_xbar <- mean(fst$fst, na.rm = TRUE)
-fst_sd <- sd(fst$fst, na.rm = TRUE)
+dxy_no_na <- na.omit(dxy)
+nrow(dxy) - nrow(dxy_no_na) 
+dxy <- dxy_no_na
 
-fst$z <- (fst$fst - fst_xbar) / fst_sd
+# z transform dxy values
 
-p_values_one_tailed <- pnorm(q = fst$z, lower.tail = FALSE)
+dxy_xbar <- mean(dxy$dxy, na.rm = TRUE)
+dxy_sd <- sd(dxy$dxy, na.rm = TRUE)
 
-# Calculate -log10 of the p-value
-fst$neg_log_pvalues_one_tailed <- -log10(p_values_one_tailed)
+dxy$z <- (dxy$dxy - dxy_xbar) / dxy_sd
 
-ordered_fst <- fst %>%
-  # desc orders from largest to smallest
-  arrange(desc(neg_log_pvalues_one_tailed))
+p_values_one_tailed <- pnorm(q = dxy$z, lower.tail = FALSE)
 
-nsnps <- nrow(ordered_fst)
+# Calculate the -log10 of the p-value
+dxy$neg_log_pvalues_one_tailed <- -log10(p_values_one_tailed)
+
+ordered_dxy <- dxy %>% 
+ # desc orders from largest to smallest
+ arrange(desc(neg_log_pvalues_one_tailed)) 
+
+nsnps <- nrow(dxy)
 top_snps <- round(nsnps * 0.001)
 
-outlier_fst_disorder <- ordered_fst[1:top_snps, ]
+outlier_dxy_disorder <- ordered_dxy[1:topsnps, ]
 
-outlier_fst <- outlier_fst_disorder %>% arrange(chr, midPos)
+outlier_dxy <- outlier_dxy_disorder %>% arrange(chromo, position)
 
-fst_cutoff <- min(outlier_fst_disorder$fst) # print to file
+dxy_cutoff <- min(outlier_dxy_disorder$dxy) # print to file
 
-cat(c("FST cutoff:", fst_cutoff),
-    file = paste0(outdir, "/analyses/fst/FST_stats.txt"),
+
+cat(c("dxy cutoff windowed:", dxy_cutoff),
+    file = paste0(outdir, "/analyses/dxy/", ${POP1}, "_", ${POP2}, "dxy_stats.txt"),
     sep = "\n",
     append = TRUE)
 
-write.csv(outlier_fst,
-          paste0(outdir, "analyses/fst/singlesnps.",
-                 pop1, "_", pop2, ".outlierfst.csv"))
 
-# draw it with cutoff line
+write.csv(outlier_dxy,
+          paste0(outdir, "/analyses/dxy/",
+                 pop1, "_", pop2, "/", pop1, "_", pop2, ".chrom.dxy.windowed.outlierdxy.csv"))
+
+
+# draw it with cutoff line 
+
 
 colors <- c(color1, color2)
 
+dxy$chromo <- factor(dxy$chromo, levels = c(1, "1A", 2:4, "4A", 5:29, "Z"))
 
-fst$chr <- factor(fst$chr, levels = c(1, "1A", 2:4, "4A", 5:29, "Z"))
 
-df.tmp <- fst %>%
+df.tmp <- dxy %>%
 
   # Compute chromosome size
-  group_by(chr) %>%
-  summarise(chr_len = max(midPos)) %>%
+  group_by(chromo) %>%
+  summarise(chr_len = max(position)) %>%
 
   # Calculate cumulative position of each chromosome
   mutate(tot = cumsum(chr_len) - chr_len) %>%
   select(-chr_len) %>%
 
   # Add this info to the initial dataset
-  left_join(fst, ., by = c("chr" = "chr")) %>%
+  left_join(dxy, ., by = c("chromo" = "chromo")) %>%
 
   # Add a cumulative position of each SNP
-  arrange(chr, midPos) %>%
-  mutate(BPcum = midPos + tot)
+  arrange(chromo, position) %>%
+  mutate(BPcum = position + tot)
 
-half_length <- ceiling(length(unique(fst$chr)) / 2)
-
+half_length <- ceiling(length(unique(dxy$chr)) / 2)
 
 # get chromosome center positions for x-axis
 axisdf <- df.tmp %>%
   group_by(chr) %>%
   summarize(center = (max(BPcum) + min(BPcum)) / 2)
 
-png(file = paste0(outdir, "/analyses/fst/",
-                   pop1, "_", pop2, ".fst.snps.sigline.png"),
+png(file = paste0(outdir, "/analyses/dxy/",
+                   pop1, "_", pop2, "/", pop1, "_", pop2, ".dxy.snps.sigline.png"),
     width = 2000, height = 500)
 
-ggplot(df.tmp, aes(x = BPcum, y = (fst))) +
+ggplot(df.tmp, aes(x = BPcum, y = (dxy))) +
   # Show all points
   geom_point(aes(color = as.factor(chr)), alpha = 0.8, size = 1) +
   scale_color_manual(values = rep(colors, half_length)) +
@@ -120,9 +117,9 @@ ggplot(df.tmp, aes(x = BPcum, y = (fst))) +
   scale_y_continuous(expand <- c(0, 0), limits <- c(0, 1)) +
   # add plot and axis titles
   ggtitle(NULL) +
-  labs(x = "Chromosome", y = "FST") +
+  labs(x = "Chromosome", y = "dxy") +
   # add genome-wide sig and sugg lines
-  geom_hline(yintercept = fst_cutoff) +
+  geom_hline(yintercept = dxy_cutoff) +
   # Add highlighted points
   #geom_point(data=subset(df.tmp, is_highlight=="yes"),color="orange", size=2) +
   # Add label using ggrepel to avoid overlapping

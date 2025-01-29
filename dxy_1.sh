@@ -79,14 +79,13 @@ fi
 total_lines=$(cat ${OUTDIR}/datafiles/safs/${POP1}.mafs | wc -l)
 num_sites=$((total_lines - 1))
 
-Rscript ~/programs/ngsTools/ngsPopGen/scripts/calcDxy.R -p ${OUTDIR}/datafiles/safs/${POP1}.mafs -q ${OUTDIR}/datafiles/safs/${POP2}.mafs -t ${num_sites}
+Rscript ~/programs/ngsTools/ngsPopGen/scripts/calcDxy.R -p ${OUTDIR}/datafiles/safs/${POP1}.mafs -q ${OUTDIR}/datafiles/safs/${POP2}.mafs -t ${num_sites} > ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_globalestimate_${POP1}_${POP2}.txt
 
-mv Dxy_persite.txt Dxy_persite_${POP1}_${POP2}.txt
+mv ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite.txt ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt
 
-awk '{print $2}' Dxy_persite_${POP1}_${POP2}.txt  | tail -n +2 > ${POP1}_${POP2}_sites.txt
+awk '{print $2}' ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt  | tail -n +2 > ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${POP1}_${POP2}_sites.txt
 
-tail -n +2 Dxy_persite_${POP1}_${POP2}.txt > Dxy_persite_${POP1}_${POP2}.forplot.txt
 
-Rscript ${scriptdir}/plotDXY.R -i Dxy_persite_${POP1}_${POP2}.forplot.txt -o ${POP1}_${POP2}_windowed -p ${POP1}_${POP2}_sites.txt -w ${WIN} -s ${STEP}
+Rscript ${scriptdir}/plotDXY.R -i ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.forplot.txt -o ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${POP1}_${POP2}_windowed -p ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${POP1}_${POP2}_sites.txt -w ${WIN} -s ${STEP}
 
 fi

@@ -58,9 +58,8 @@ cat(c("FST cutoff windowed:", fst_cutoff),
     sep = "\n",
     append = TRUE)
 
-outlier_fst_disorder2 <- subset(outlier_fst_disorder, select = -c(region))
 
-write.csv(outlier_fst_disorder2,
+write.csv(outlier_fst,
           paste0(outdir, "/analyses/fst/", win, "/",
                  pop1, "_", pop2, ".chrom.fst.windowed.outlierfst.csv"))
 
