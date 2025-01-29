@@ -85,12 +85,14 @@ Rscript ~/programs/ngsTools/ngsPopGen/scripts/calcDxy.R \
 mv "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite.txt" \
    "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt"
 
+grep ${CHRLEAD} "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt" | grep -v ${SEXCHR} > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
+
 # Check if CHROM has anything assigned
 if [[ -n "$CHROM" ]]; then
     echo "Processing CHROM variable..."
     
     # Define the files to process
-    FILE="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt"
+    FILE="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
 
     # Read CHROM line by line
     while IFS=',' read -r first second; do
@@ -104,7 +106,7 @@ else
 fi
 
 # Extract site positions
-awk 'NR>1 {print $2}' "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt" \
+awk 'NR>1 {print $2}' "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.autosomes.txt" \
     > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${POP1}_${POP2}_sites.txt"
 
 
