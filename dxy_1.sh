@@ -83,6 +83,35 @@ Rscript ~/programs/ngsTools/ngsPopGen/scripts/calcDxy.R -p ${OUTDIR}/datafiles/s
 
 mv ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite.txt ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt
 
+# Check if CHROM has anything assigned
+if [[ -n "$CHROM" ]]; then
+    echo "Processing CHROM variable..."
+    
+    # Define the files to process
+    files=(
+        "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt"
+    )
+
+    # Read CHROM line by line
+    while IFS=',' read -r first second; do
+        echo "Replacing occurrences of '$second' with '$first'..."
+        
+        # Process each file
+        for file in "${files[@]}"; do
+            if [[ -f "$file" ]]; then
+                echo "Processing file: $file"
+                sed -i "s/$second/$first/g" "$file"
+            else
+                echo "Warning: File $file not found."
+            fi
+        done
+    done <<< "$CHROM"
+
+else
+    echo "CHROM variable is empty or not set."
+fi
+
+
 awk '{print $2}' ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt  | tail -n +2 > ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${POP1}_${POP2}_sites.txt
 
 

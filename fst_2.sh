@@ -55,8 +55,8 @@ if [ -f "${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}"* ]
                 
                 # Define the files to process
                 files=(
-                    "$OUTDIR/analyses/fst/singlesnps.${POP1}_${POP2}"
-                    "$OUTDIR/analyses/fst/singlesnps.${POP1}_${POP2}.chroms.txt"
+                    "${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}"
+                    "${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}.chroms.txt"
                 )
 
                 # Read CHROM line by line
