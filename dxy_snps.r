@@ -56,7 +56,7 @@ outlier_dxy <- outlier_dxy_disorder %>% arrange(chromo, position)
 dxy_cutoff <- min(outlier_dxy_disorder$dxy) # print to file
 
 
-cat(c("dxy cutoff windowed:", dxy_cutoff),
+cat(c("dxy cutoff snps:", dxy_cutoff),
     file = paste0(outdir, "/analyses/dxy/", ${POP1}, "_", ${POP2}, "dxy_stats.txt"),
     sep = "\n",
     append = TRUE)
@@ -64,7 +64,7 @@ cat(c("dxy cutoff windowed:", dxy_cutoff),
 
 write.csv(outlier_dxy,
           paste0(outdir, "/analyses/dxy/",
-                 pop1, "_", pop2, "/", pop1, "_", pop2, ".chrom.dxy.windowed.outlierdxy.csv"))
+                 pop1, "_", pop2, "/", pop1, "_", pop2, ".chrom.dxy.snps.outlierdxy.csv"))
 
 
 # draw it with cutoff line 
