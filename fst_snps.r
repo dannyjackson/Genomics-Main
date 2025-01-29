@@ -77,8 +77,6 @@ write.csv(outlier_fst_disorder2,
 
 blues <- c("#4EAFAF", "#082B64")
 
-middlechr <- (max(fst$midPos) + as.numeric(win) / 2) / 2
-
 
 fst$chr <- factor(fst$chr, levels = c(1, "1A", 2:4, "4A", 5:29, "Z"))
 
