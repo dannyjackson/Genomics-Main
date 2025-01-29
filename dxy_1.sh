@@ -53,3 +53,4 @@ tail -n +2 Dxy_persite_${POP1}_${POP2}.txt > Dxy_persite_${POP1}_${POP2}.forplot
 
 Rscript ${scriptdir}/plotDXY.R -i Dxy_persite_${POP1}_${POP2}.forplot.txt -o ${POP1}_${POP2}_windowed -p ${POP1}_${POP2}_sites.txt -w ${WIN} -s ${STEP}
 
+fi
