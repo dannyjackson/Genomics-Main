@@ -10,13 +10,14 @@ if [ $# -lt 1 ]
     [-p] Path to parameter file (example is saved in github repository as fst_params.sh"
 
   else
-    while getopts p:w:s: option
+    while getopts p:w:s:c: option
     do
     case "${option}"
     in
     p) PARAMS=${OPTARG};;
     w) WIN=${OPTARG};;
     s) STEP=${OPTARG};;
+    c) CHR_FILE=${OPTARG};;
 
     esac
     done
@@ -27,6 +28,7 @@ if [ -z "${PARAMS}" ]; then
 fi
 source "${PARAMS}"
 
+CHROM=`cat $CHR_FILE`
 
 printf "\n \n \n \n"
 date
