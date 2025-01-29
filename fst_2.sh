@@ -108,7 +108,7 @@ if [ -f "${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}"* ]
             ${ANGSD}/misc/realSFS fst stats2 ${OUTDIR}/analyses/fst/${POP1}_${POP2}.fst.idx -win 1 -step 1 >${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}
 
             # single snps
-            echo -e 'region\tchr\tmidPos\tNsites\tfst' > ${OUTDIR}/analyses/fst/singlesnps_fst.txt
+            echo -e 'region\tchr\tmidPos\tNsites\tfst' > ${OUTDIR}/analyses/fst/singlesnps_fst.${POP1}_${POP2}.txt 
             #tail -n+2 slidingwindow >> slidingwindow_fst.txt 
             grep ${CHRLEAD} ${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2} >> ${OUTDIR}/analyses/fst/singlesnps_fst.${POP1}_${POP2}.txt
             sed -i 's/${CHRLEAD}//g' ${OUTDIR}/analyses/fst/singlesnps_fst.${POP1}_${POP2}.txt 
