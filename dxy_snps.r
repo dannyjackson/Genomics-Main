@@ -96,7 +96,7 @@ half_length <- ceiling(length(unique(dxy$chr)) / 2)
 
 # get chromosome center positions for x-axis
 axisdf <- df.tmp %>%
-  group_by(chr) %>%
+  group_by(chromo) %>%
   summarize(center = (max(BPcum) + min(BPcum)) / 2)
 
 png(file = paste0(outdir, "/analyses/dxy/",
