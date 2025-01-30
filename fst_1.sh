@@ -32,19 +32,24 @@ echo "Current script: fst.sh"
 
 # Generate saf files for each population in angsd. Skip if there is any output already in ${OUTDIR}/datafiles/safs/.
 
-if [ -f "${OUTDIR}/datafiles/safs/"* ]
+if [ -f "${OUTDIR}/datafiles/safs/${POP1}"* ]
         then
-            echo "Files present in safs directory, assuming they are already generated and moving on!"
+            echo "${POP1} files present in safs directory, assuming they are already generated and moving on!"
         else
             echo "computing safs for pop 1"
             ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP1}bams.txt -out ${OUTDIR}/datafiles/safs/${POP1} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd 4 -minInd 2 -minQ 30 -minMapQ 30 -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads 10
-            
+fi
+
+if [ -f "${OUTDIR}/datafiles/safs/${POP2}"* ]
+       then
+            echo "${POP2} files present in safs directory, assuming they are already generated and moving on!"
+        else
             echo "computing safs for pop 2"
             ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP2}bams.txt -out ${OUTDIR}/datafiles/safs/${POP2} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd 4 -minInd 2 -minQ 30 -minMapQ 30 -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads 10
 fi
 
 
-if [ -f "${OUTDIR}/datafiles/mls/"* ]
+if [ -f "${OUTDIR}/datafiles/mls/${POP1}_${POP2}.ml" ]
         then
             echo "Files present in mls directory, assuming they are already generated and moving on!"
         else
