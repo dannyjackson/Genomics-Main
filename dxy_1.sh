@@ -15,7 +15,7 @@ It computes average genome-wide dxy and produces output files for:
 **NOTE:** Read the entire script and adjust for each project! Many parameters (e.g., SNP filtering in ANGSD) are hardcoded.
 
 REQUIRED ARGUMENTS:
-    -p  Path to parameter file (example: fst_params.sh in GitHub repo)
+    -p  Path to parameter file (example: params.sh in GitHub repo)
 EOF
     exit 1
 fi
