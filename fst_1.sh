@@ -1,23 +1,20 @@
-# TESTING SUBMODULARITY 
-
 #!/bin/sh
 
 # FST script (1/4)
 
 if [ $# -lt 1 ]
   then
-    echo "This script computes Fst between two groups of genomes using a genotype likelihood framework implemented in ANGSD. It requires SAF files as input, which can be generated using the <scriptname> scripts in github.com/dannyjackson/Genomics-Main. It will compute average genome-wide Fst and produce the output files necessary for sliding window Fst and fst for each SNP. Read the entire script and revise according to each project! Many parameters are not modifiable with options, including snp filtering settings in angsd. 
-
+    echo "This script computes Fst between two groups of genomes using a genotype likelihood framework implemented in ANGSD. It requires SAF files as input, which can be generated using the <scriptname> scripts in github.com/dannyjackson/Genomics-Main. It will compute average genome-wide Fst and produce the output files necessary for sliding window Fst and Fst for each SNP. 
+    
+    Read the entire script and manually set all required options before running! Many parameters are not modifiable with command-line options, including SNP filtering settings in ANGSD. These are encoded as <SET_VALUE> throughout this and all scripts.
+    
     REQUIRED ARGUMENTS
-    [-p] Path to parameter file (example is saved in github repository as params.sh"
-
+    [-p] Path to parameter file (example is saved in the GitHub repository as params.sh)."
   else
     while getopts p: option
     do
-    case "${option}"
-    in
+    case "${option}" in
     p) PARAMS=${OPTARG};;
-
     esac
     done
 
@@ -27,56 +24,51 @@ if [ -z "${PARAMS}" ]; then
 fi
 source "${PARAMS}"
 
-
 printf "\n \n \n \n"
 date
 echo "Current script: fst.sh"
 
-# Generate saf files for each population in angsd. Skip if there is any output already in ${OUTDIR}/datafiles/safs/.
+# Generate SAF files for each population in ANGSD. Skip if output already exists.
 
 if [ -f "${OUTDIR}/datafiles/safs/${POP1}"* ]
         then
-            echo "${POP1} files present in safs directory, assuming they are already generated and moving on!"
+            echo "${POP1} files present in SAFs directory, assuming they are already generated and moving on!"
         else
-            echo "computing safs for pop 1"
-            ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP1}bams.txt -out ${OUTDIR}/datafiles/safs/${POP1} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd 4 -minInd 2 -minQ 30 -minMapQ 30 -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads 10
+            echo "Computing SAFs for population 1"
+            ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP1}bams.txt -out ${OUTDIR}/datafiles/safs/${POP1} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd <SET_VALUE> -minInd <SET_VALUE> -minQ <SET_VALUE> -minMapQ <SET_VALUE> -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads ${THREADS}
 fi
 
 if [ -f "${OUTDIR}/datafiles/safs/${POP2}"* ]
        then
-            echo "${POP2} files present in safs directory, assuming they are already generated and moving on!"
+            echo "${POP2} files present in SAFs directory, assuming they are already generated and moving on!"
         else
-            echo "computing safs for pop 2"
-            ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP2}bams.txt -out ${OUTDIR}/datafiles/safs/${POP2} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd 4 -minInd 2 -minQ 30 -minMapQ 30 -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads 10
+            echo "Computing SAFs for population 2"
+            ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP2}bams.txt -out ${OUTDIR}/datafiles/safs/${POP2} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd <SET_VALUE> -minInd <SET_VALUE> -minQ <SET_VALUE> -minMapQ <SET_VALUE> -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads ${THREADS}
 fi
-
 
 if [ -f "${OUTDIR}/datafiles/mls/${POP1}_${POP2}.ml" ]
         then
-            echo "Files present in mls directory, assuming they are already generated and moving on!"
+            echo "Files present in MLS directory, assuming they are already generated and moving on!"
         else
-            echo "computing the 2dsfs prior"
+            echo "Computing the 2D SFS prior"
             ${ANGSD}/misc/realSFS ${OUTDIR}/datafiles/safs/${POP1}.saf.idx ${OUTDIR}/datafiles/safs/${POP2}.saf.idx > ${OUTDIR}/datafiles/mls/${POP1}_${POP2}.ml
-
 fi
-
 
 if [ -f "${OUTDIR}/analyses/fst/${POP1}_${POP2}"* ]
         then
-            echo "fst.idx file already present, assuming it is already generated and moving on!"
+            echo "FST index file already present, assuming it is already generated and moving on!"
         else
-            echo "prepare the fst for easy window analysis, compute fst.idx file"
+            echo "Preparing FST for window analysis, computing FST index file"
             ${ANGSD}/misc/realSFS fst index ${OUTDIR}/datafiles/safs/${POP1}.saf.idx ${OUTDIR}/datafiles/safs/${POP2}.saf.idx -sfs ${OUTDIR}/datafiles/mls/${POP1}_${POP2}.ml -fstout ${OUTDIR}/analyses/fst/${POP1}_${POP2}
 fi
 
 if [ -f "${OUTDIR}/analyses/fst/${POP1}_${POP2}.globalFST.txt" ]
         then
-            echo "global fst estimate file already present, assuming it is already generated and moving on!"
+            echo "Global FST estimate file already present, assuming it is already generated and moving on!"
         else
-            echo "computing global fst estimate"
-            echo -e "FST.Unweight\tFst.Weight" > ${OUTDIR}/analyses/fst/${POP1}_${POP2}.globalFST.txt
+            echo "Computing global FST estimate"
+            echo -e "FST.Unweight\tFST.Weight" > ${OUTDIR}/analyses/fst/${POP1}_${POP2}.globalFST.txt
             ${ANGSD}/misc/realSFS fst stats ${OUTDIR}/analyses/fst/${POP1}_${POP2}.fst.idx >> ${OUTDIR}/analyses/fst/${POP1}_${POP2}.globalFST.txt
-
 fi
 
 fi
