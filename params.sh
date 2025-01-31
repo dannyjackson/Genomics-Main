@@ -10,36 +10,49 @@ module load samtools/1.19.2
 
 # Define variables
 # all
-OUTDIR=/xdisk/mcnew/dannyjackson/cardinals_dfinch/    # main directory for output files
+OUTDIR=/path/to/project/directory/    # main directory for output files
 PROGDIR=~/programs
 BAMDIR=/path/to/bam/files
 PROJHUB=github_project_name
-scriptdir=${PROGDIR}/${PROJHUB}
+SCRIPTDIR=${PROGDIR}/${PROJHUB}
 PATH=$PATH:$scriptdir # this adds the workshop script directory to our path, so that executable scripts in it can be called without using the full path
 THREADS=4
 ID=name_of_project
-FILENAME_LIST="/xdisk/mcnew/dannyjackson/sulidae/raw_sequences/filenames_samplecodes.txt" # list with sample codes associated with each file in dataset, one per line
+FILENAME_LIST="/path/to/list.txt" # list with sample codes associated with each file in dataset, one per line
+CUTOFF=threshold_for_top_genes_or_snps_eg_0.01
 
-# define the names of the two populations that will be compared
-POP1=nocaurban
-POP2=nocarural
+
+# make main directories
+# specific to selection analyses (fst, dxy, Tajima's D, RAiSD)
+# make directories for intermediate files-- will fail if these don't exist
+
+mkdir -p ${OUTDIR}/analyses/
+mkdir -p ${OUTDIR}/datafiles/
+mkdir -p ${OUTDIR}/referencelists/
+
+
+
+# define the names of the two populations that will be compared in fst, dxy, etc
+POP1=population1name
+POP2=population2name
 # define two colors to be used 
-color1=#4EAFAF
-color2=#082B64
-# note that this script also assumes chromosomes will end in .1 i.e. NC_012345.1, and may also remove the .1 from files where it will disrupt plotting etc
+COLOR1=#XXXXXX
+COLOR2=#XXXXXX
+
+# define aspects of the reference genome
 CHRLEAD=NC_0 # characters at the start of a chromosome number (excluding scaffolds)
 SEXCHR=NC_044601
-REF=/xdisk/mcnew/dannyjackson/cardinals_dfinch/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/GCF_901933205.1_STF_HiC_genomic.fna # path to reference genome
-GFF=/xdisk/mcnew/dannyjackson/cardinals_dfinch/datafiles/referencegenome/ncbi_dataset/data/GCA_013397215.1/genomic.gff # path to gff file
+REF=/path/to/reference/genome/file.fna # path to reference genome
+GFF=/path/to/reference/genome/gff/genomic.gff # path to gff file
 
 # Generate scaffold list
 if [ -f "${scriptdir}/SCAFFOLDS.txt"]
         then
             echo "SCAFFOLDS.txt already exists, moving on!"
         else
-        awk '{print $1}' "${GENOME}.fai" > "${scriptdir}/SCAFFOLDS.all.txt"
-        grep "$CHRLEAD" "${scriptdir}/SCAFFOLDS.all.txt" > "${scriptdir}/SCAFFOLDS.chroms.txt"
-        grep -v "$SEXCHR" "${scriptdir}/SCAFFOLDS.chroms.txt" > "${scriptdir}/SCAFFOLDS.txt"
+        awk '{print $1}' "${GENOME}.fai" > "${OUTDIR}/referencelists/SCAFFOLDS.all.txt"
+        grep "$CHRLEAD" "${OUTDIR}/referencelists/SCAFFOLDS.all.txt" > "${OUTDIR}/referencelists/SCAFFOLDS.chroms.txt"
+        grep -v "$SEXCHR" "${OUTDIR}/referencelists/SCAFFOLDS.chroms.txt" > "${OUTDIR}/referencelists/SCAFFOLDS.txt"
 fi
 
 # specific to selection analyses (fst, dxy, Tajima's D, RAiSD)

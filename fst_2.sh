@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # FST script (2/4)
-# This file accesses fst_window.r and fst_snps.r
+# This file accesses fst_snps.r
 
 if [ $# -lt 1 ]
   then
@@ -79,6 +79,6 @@ if [ -f "${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}"* ]
             else
                 echo "CHROM variable is empty or not set."
             fi
-            Rscript ${scriptdir}/Genomics-Main/fst_snps.r ${OUTDIR} ${POP1} ${POP2} ${COLOR1} ${COLOR2}
+            Rscript ${SCRIPTDIR}/Genomics-Main/fst_snps.r ${OUTDIR} ${POP1} ${POP2} ${COLOR1} ${COLOR2} ${CUTOFF}
 fi
 fi

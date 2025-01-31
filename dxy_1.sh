@@ -12,7 +12,7 @@ It computes average genome-wide dxy and produces output files for:
     - Sliding window dxy
     - Per-SNP dxy
 
-**NOTE:** Read the entire script and adjust for each project! Many parameters (e.g., SNP filtering in ANGSD) are hardcoded.
+Read and understand the entire script before running it!
 
 REQUIRED ARGUMENTS:
     -p  Path to parameter file (example: params.sh in GitHub repo)
@@ -117,4 +117,4 @@ awk 'NR>1 {print $2}' "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1
 # Run visualization scripts
 Rscript ${PROGDIR}/Genomics-Main/dxy_snps.r "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}"
 
-python ${PROGDIR}//Genomics-Main/dxy_windows.py --outdir "${OUTDIR}" --pop1 "${POP1}" --pop2 "${POP2}" --win "${WIN}"
+python ${PROGDIR}/Genomics-Main/dxy_windows.py --outdir "${OUTDIR}" --pop1 "${POP1}" --pop2 "${POP2}" --win "${WIN}"

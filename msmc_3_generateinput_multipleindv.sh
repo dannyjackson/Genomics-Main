@@ -47,8 +47,8 @@ sbatch --account=mcnew \
 
 # remove sex chromosomes from scaffolds file
 # sex_chr=NC_087547.1,NC_087548.1 # name of sex chromosome to omit in analyses
-sed -i 's/NC_087547.1//g' SCAFFOLDS.txt
-sed -i 's/NC_087548.1//g' SCAFFOLDS.txt
+sed -i 's/NC_087547.1//g' ${OUTDIR}/referencelists/SCAFFOLDS.txt
+sed -i 's/NC_087548.1//g' ${OUTDIR}/referencelists/SCAFFOLDS.txt
 
 
 for POP in `cat /xdisk/mcnew/dannyjackson/sulidae/referencelists/speciescodes.txt`;
@@ -240,7 +240,7 @@ less ~/programs/msmc2_scripts/msmc_3_runMSMC.sh
 for i in `cat MABO_NABO.txt`
 do echo $i
 IND=$i
-    for s in `cat SCAFFOLDS.txt`
+    for s in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
         do echo $s
         ls /xdisk/mcnew/dannyjackson/sulidae/analyses/msmc/input/msmc_input.${IND}.${s}.txt >> /xdisk/mcnew/dannyjackson/sulidae/analyses/msmc/input/SCAFS_INPUT_MABO_NABO
     done

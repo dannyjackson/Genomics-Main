@@ -7,6 +7,7 @@ pop1 <- args[3]
 pop2 <- args[4]
 color1 <- args[5]
 color2 <- args[6]
+cutoff <- args[7]
 
 # Package names
 packages <- c("qqman", "readr", "ggrepel", "ggplot2", "dplyr", "RColorBrewer")
@@ -45,7 +46,7 @@ ordered_fst <- fst %>%
   arrange(desc(neg_log_pvalues_one_tailed))
 
 nsnps <- nrow(ordered_fst)
-top_snps <- round(nsnps * 0.001)
+top_snps <- round(nsnps * cutoff)
 
 outlier_fst_disorder <- ordered_fst[1:top_snps, ]
 

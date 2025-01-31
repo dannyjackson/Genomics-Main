@@ -44,7 +44,7 @@ while read -r IND; do
     echo "Processing individual: $IND"
 
     # Check if scaffold list file exists
-    if [ ! -f "${scriptdir}/SCAFFOLDS.txt" ]; then
+    if [ ! -f "${OUTDIR}/referencelists/SCAFFOLDS.txt" ]; then
         echo "Error: Scaffold list 'SCAFFOLDS.txt' not found." >&2
         exit 1
     fi
@@ -102,7 +102,7 @@ while read -r IND; do
         fi
 
         echo "Finished processing scaffold ${SCAFFOLD}."
-    done < ${scriptdir}/SCAFFOLDS.txt
+    done < ${OUTDIR}/referencelists/SCAFFOLDS.txt
 
     echo "Finished processing individual ${IND}."
 

@@ -6,6 +6,7 @@ pop1 <- args[2]
 pop2 <- args[3]
 color1 <- args[4]
 color2 <- args[5]
+cutoff <- args[6]
 
 # Package names
 packages <- c("qqman", "readr", "ggrepel", "ggplot2", "dplyr", "RColorBrewer")
@@ -31,11 +32,11 @@ fst <- fst_no_na
 min_fst <- min(fst$fst)
 max_fst <- max(fst$fst)
 
-cat(c("Min FST cutoff:", min_fst),
+cat(c("Min FST:", min_fst),
     file = paste0(outdir, "/analyses/fst/FST_stats.txt"),
     sep = "\n", append = TRUE)
 
-cat(c("Max FST cutoff:", max_fst),
+cat(c("Max FST:", max_fst),
     file = paste0(outdir, "/analyses/fst/FST_stats.txt"),
     sep = "\n", append = TRUE)
 
@@ -56,7 +57,7 @@ ordered_fst <- fst %>%
   arrange(desc(neg_log_pvalues_one_tailed))
 
 nsnps <- nrow(ordered_fst)
-top_snps <- round(nsnps * 0.001)
+top_snps <- round(nsnps * cutoff)
 
 outlier_fst_disorder <- ordered_fst[1:top_snps, ]
 

@@ -95,4 +95,4 @@ else
 fi
 
 fi
-Rscript ${scriptdir}/Genomics-Main/fst_window.r ${OUTDIR} ${WIN} ${POP1} ${POP2}
+Rscript ${SCRIPTDIR}/Genomics-Main/fst_window.r ${OUTDIR} ${WIN} ${POP1} ${POP2} ${COLOR1} ${COLOR2} ${CUTOFF}
