@@ -15,7 +15,7 @@ PROGDIR=~/programs
 BAMDIR=/path/to/bam/files
 PROJHUB=github_project_name
 SCRIPTDIR=${PROGDIR}/${PROJHUB}
-PATH=$PATH:$scriptdir # this adds the workshop script directory to our path, so that executable scripts in it can be called without using the full path
+PATH=$PATH:$SCRIPTDIR # this adds the workshop script directory to our path, so that executable scripts in it can be called without using the full path
 THREADS=4
 ID=name_of_project
 FILENAME_LIST="/path/to/list.txt" # list with sample codes associated with each file in dataset, one per line
@@ -46,7 +46,7 @@ REF=/path/to/reference/genome/file.fna # path to reference genome
 GFF=/path/to/reference/genome/gff/genomic.gff # path to gff file
 
 # Generate scaffold list
-if [ -f "${scriptdir}/SCAFFOLDS.txt"]
+if [ -f "${SCRIPTDIR}/SCAFFOLDS.txt"]
         then
             echo "SCAFFOLDS.txt already exists, moving on!"
         else
@@ -70,13 +70,13 @@ METHOD=samtools  # or another variant calling method
 # specific to selection analyses (fst, dxy, Tajima's D, RAiSD)
 # make directories for intermediate files-- will fail if these don't exist
 
-mkdir -p ${OUTDIR}/analyses/fst
-mkdir -p ${OUTDIR}/analyses/genelist
-mkdir -p ${OUTDIR}/datafiles/safs
-mkdir -p ${OUTDIR}/datafiles/mls/
+
+mkdir -p ${OUTDIR}/analyses/{fst,genelist,dxy}
+mkdir -p ${OUTDIR}/datafiles/{safs,mls}
 mkdir -p ${OUTDIR}/analyses/fst/${WIN}
 mkdir -p ${OUTDIR}/analyses/genelist/${WIN}
-
+mkdir -p ${OUTDIR}/analyses/dxy/${POP1}_${POP2}
+mkdir -p ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${WIN}
 
 
 
