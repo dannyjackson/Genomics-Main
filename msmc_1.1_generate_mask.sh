@@ -32,6 +32,15 @@ fi
 
 snpable_script_path="${PROGDIR}/seqbility-20091110" # Directory with snpable scripts
 
+# Check if the directory exists
+if [ ! -d "$snpable_script_path" ]; then
+    echo "Error: Snpable script directory not found at ${snpable_script_path}" >&2
+    exit 1
+fi
+
+export PATH=$PATH:$snpable_script_path
+
+
 # Check for required arguments
 if [ $# -lt 3 ]; then
     echo "Usage: $0 -p <parameter_file> -g <reference_genome> -s <sample_codes_file>"
@@ -64,8 +73,7 @@ cd "${PROGDIR}" || { echo "Error: Could not change directory to ${PROGDIR}"; exi
 [ ! -d msmc2 ] && git clone https://github.com/stschiff/msmc2
 [ ! -d msmc-tools ] && git clone https://github.com/stschiff/msmc-tools
 
-# Install required dependencies
-pip3 install --user whatshap
+echo "Environment setup completed."
 
 # Step 0: Create mappability mask
 cd "${OUTDIR}" || { echo "Error: Could not change directory to ${OUTDIR}"; exit 1; }
@@ -101,35 +109,5 @@ echo "Generating final mask..."
 gen_mask -l "${k}" -r 0.5 "${prefix}_rawMask.${k}.fa" > "${prefix}_mask.${k}.50.fa"
 
 echo "Final mask saved as ${prefix}_mask.${k}.50.fa"
-
-
-# Index reference genome
-if ! command -v bwa &> /dev/null; then
-    echo "Error: bwa is not installed." >&2
-    exit 1
-fi
-bwa index "${GENOME}"
-
-# Split genome into chunks
-echo "Splitting genome..."
-splitfa "${GENOME}" 150 | split -l 20000000
-cat snpable/x* >> "${GENOME}_split.150"
-
-# Align reads and generate mask
-echo "Aligning reads to genome with BWA..."
-bwa aln -t 8 -R 1000000 -O 3 -E 3 "${GENOME}" "${GENOME}_split.150" > "${GENOME}_split.150.sai"
-bwa samse "${GENOME}" "${GENOME}_split.150.sai" "${GENOME}_split.150" > "${GENOME}_split.150.sam"
-
-echo "Generating raw mask..."
-gen_raw_mask.pl "${GENOME}_split.150.sam" > "${GENOME}_rawMask.150.fa"
-
-echo "Generating final mask..."
-gen_mask -l 150 -r 0.5 "${GENOME}_rawMask.150.fa" > "${GENOME}_mask.150.50.fa"
-
-# Convert mask format
-sed 's/>>/>/g' "${GENOME}_mask.150.50.fa" > "${GENOME}_revised_mask.150.50.fa"
-
-# Create mappability mask
-python2 "${PROGDIR}/msmc-tools/makeMappabilityMask.py"
 
 

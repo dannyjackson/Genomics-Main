@@ -13,9 +13,6 @@ if [ ! -f "${SCRIPTDIR}/params.sh" ]; then
 fi
 source "${SCRIPTDIR}/params.sh"
 
-
-
-
 # Create the output directory for genotype calls if not present
 mkdir -p "${OUTDIR}/datafiles/genotype_calls"
 # Move to the output directory for genotype calls
@@ -79,37 +76,3 @@ if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_filtered_cleaned_zip.vcf.gz" ]
             bgzip -c "${OUTDIR}/datafiles/genotype_calls/${ID}_filtered_cleaned.vcf" > "${OUTDIR}/datafiles/genotype_calls/${ID}_filtered_cleaned_zip.vcf"
             bcftools index "${OUTDIR}/datafiles/genotype_calls/${ID}_filtered_cleaned_zip.vcf.gz"
 fi
-
-# Process each individual sample
-while read -r IND; do
-    echo "Processing individual: $IND"
-    BAMFILE="${BAMDIR}/${IND}.final.bam"
-    if [[ ! -f "$BAMFILE" ]]; then
-        echo "Warning: BAM file for $IND not found. Skipping."
-        continue
-    fi
-
-    # Iterate through scaffolds
-    while read -r SCAFFOLD; do
-        echo "Processing scaffold: $SCAFFOLD"
-        VCF_OUT="${OUTDIR}/vcf/${IND}.${SCAFFOLD}.${phasing}.samtools.vcf.gz"
-        VCF_IN="${OUTDIR}/vcf2/${IND}.${SCAFFOLD}.samtools.vcf"
-
-        if [[ -f "$VCF_OUT" ]]; then
-            echo "Phased VCF already exists for scaffold $SCAFFOLD; skipping."
-        else
-            echo "Phasing VCF for scaffold $SCAFFOLD..."
-            sed -i.bak 's/^ //g' "$VCF_IN"
-            
-            whatshap phase --reference "$GENOME" --ignore-read-groups \
-                          -o "$VCF_OUT" "$VCF_IN" "$BAMFILE"
-            
-            whatshap stats --tsv="${OUTDIR}/stats/${IND}.${SCAFFOLD}.${prefix}.minDP10.${phasing}.stats.tsv" \
-                          "$VCF_OUT"
-        fi
-    done < "${OUTDIR}/referencelists/SCAFFOLDS.txt"
-
-done < /xdisk/mcnew/dannyjackson/sulidae/raw_sequences/filenames_samplecodes.txt
-
-echo "VCF phasing completed."
-date
