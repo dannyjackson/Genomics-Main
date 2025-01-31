@@ -77,6 +77,6 @@ if [ -f "${OUTDIR}/analyses/fst/singlesnps.${POP1}_${POP2}"* ]
             else
                 echo "CHROM variable is empty or not set."
             fi
-            Rscript ${scriptdir}/fst_snps.r ${OUTDIR} ${POP1} ${POP2} ${COLOR1} ${COLOR2}
+            Rscript ${scriptdir}/Genomics-Main/fst_snps.r ${OUTDIR} ${POP1} ${POP2} ${COLOR1} ${COLOR2}
 fi
 fi
