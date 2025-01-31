@@ -7,7 +7,7 @@ This repository contains generalized scripts and codes used across my multiple g
 
 Add the repository as a submodule
 ```
-git submodule add https://github.com/dannyjackson/Genomics-Main/ path/to/project_repository
+git submodule add git@github.com:dannyjackson/Genomics-Main.git
 git submodule update --init --recursive
 ```
 Use a separate branch for local edits
