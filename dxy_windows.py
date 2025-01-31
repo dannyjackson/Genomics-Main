@@ -12,7 +12,7 @@ parser.add_argument("--win", type=int, required=True, help="Window size")
 args = parser.parse_args()
 
 # Define output file prefix
-output_prefix = f"{args.outdir}/analyses/dxy/{args.pop1}_{args.pop2}/{args.pop1}_{args.pop2}"
+output_prefix = f"{args.outdir}/analyses/dxy/{args.pop1}_{args.pop2}/{args.win}/{args.pop1}_{args.pop2}"
 
 # Load the chromosome lengths
 
