@@ -72,7 +72,7 @@ cd "${OUTDIR}" || { echo "Error: Could not change directory to ${OUTDIR}"; exit 
 export PATH=$PATH:$snpable_script_path
 
 # Source additional parameters
-source "${scriptdir}/msmc_params.sh"
+source "${SCRIPTDIR}/msmc_params.sh"
 
 mkdir -p "${OUTDIR}/snpable"
 cd "${OUTDIR}/snpable" || { echo "Error: Could not change directory to ${OUTDIR}/snpable"; exit 1; }

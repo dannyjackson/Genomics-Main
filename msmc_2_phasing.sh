@@ -1,17 +1,17 @@
 #!/bin/bash
 
 # Ensure script directory and output directory are defined
-if [ -z "$scriptdir" ]; then
-    echo "Error: scriptdir is not defined. Please set this variable."
+if [ -z "$SCRIPTDIR" ]; then
+    echo "Error: SCRIPTDIR is not defined. Please set this variable."
     exit 1
 fi
 
 # Load parameters
-if [ ! -f "${scriptdir}/params.sh" ]; then
-    echo "Error: params.sh not found in ${scriptdir}"
+if [ ! -f "${SCRIPTDIR}/params.sh" ]; then
+    echo "Error: params.sh not found in ${SCRIPTDIR}"
     exit 1
 fi
-source "${scriptdir}/params.sh"
+source "${SCRIPTDIR}/params.sh"
 
 
 
@@ -107,7 +107,7 @@ while read -r IND; do
             whatshap stats --tsv="${OUTDIR}/stats/${IND}.${SCAFFOLD}.${prefix}.minDP10.${phasing}.stats.tsv" \
                           "$VCF_OUT"
         fi
-    done < "${scriptdir}/SCAFFOLDS.txt"
+    done < "${OUTDIR}/referencelists/SCAFFOLDS.txt"
 
 done < /xdisk/mcnew/dannyjackson/sulidae/raw_sequences/filenames_samplecodes.txt
 
