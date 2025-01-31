@@ -40,10 +40,10 @@ Every script name also follows a structured format:
 **F<sub>ST</sub> scripts**  
    - These scripts compute Fst between two groups of genomes using a genotype likelihood framework implemented in ANGSD. They requires SAF files as input, which can be generated using the <scriptname> scripts. They will compute average genome-wide Fst, sliding window Fst, and fst for each SNP, including plots. 
 
-**dxy scripts**  
+**dxy scripts (in development phase)**  
    - These scripts compute dxy between two groups of genomes using a genotype likelihood framework implemented in ANGSD. They requires SAF files as input, which can be generated using the <scriptname> scripts. They will compute average genome-wide dxy, sliding window dxy, and dxy for each SNP, including plots.
 
-**MSMC scripts (in development)**  
+**MSMC scripts (in testing phase)**  
    - These scripts analyze a set of genomes using MSMC. They will generate individual plots, population level plots, estimate divergence between populations, and will assess confidence in these outputs using bootstraps
 
 
