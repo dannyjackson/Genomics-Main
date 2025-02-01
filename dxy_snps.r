@@ -17,20 +17,42 @@ pop1 <- args[2]
 pop2 <- args[3]
 color1 <- args[4]
 color2 <- args[5]
+cutoff <- args[6]
 
 # Read and clean data
 dxy_file <- file.path(outdir, "analyses/dxy", paste0(pop1, "_", pop2, "/Dxy_persite_", pop1, "_", pop2, ".autosomes.txt"))
 dxy <- read.csv(dxy_file, sep = '\t') %>% na.omit()
 
+dxy_file <-
+  read.csv(paste0(outdir, "/analyses/dxy/",
+                  pop1, "_", pop2,
+                  "/Dxy_persite_", pop1, "_", pop2, ".autosomes.txt"),
+                  sep = "\t")  %>% na.omit()
+
+min_dxy <- min(dxy$dxy)
+max_dxy <- max(dxy$dxy)
+
+cat(c("Min dxy:", min_dxy),
+    file = paste0(outdir, "/analyses/dxy/",pop1, "_", pop2, "/", pop1, "_", pop2, "dxy_stats.txt"),
+    sep = "\n", append = TRUE)
+
+cat(c("Max dxy:", max_dxy),
+    file = paste0(outdir, "/analyses/dxy/",pop1, "_", pop2, "/", pop1, "_", pop2, "dxy_stats.txt"),
+    sep = "\n", append = TRUE)
+
+
 # Z-transform dxy values
 dxy_xbar <- mean(dxy$dxy, na.rm = TRUE)
 dxy_sd <- sd(dxy$dxy, na.rm = TRUE)
 dxy$z <- (dxy$dxy - dxy_xbar) / dxy_sd
-dxy$neg_log_pvalues_one_tailed <- -log10(pnorm(dxy$z, lower.tail = FALSE))
+p_values_one_tailed <- pnorm(q = dxy$z, lower.tail = FALSE)
+
+# Calculate -log10 of the p-value
+dxy$neg_log_pvalues_one_tailed <- -log10(p_values_one_tailed)
 
 # Identify top outliers
 nsnps <- nrow(dxy)
-top_snps <- round(nsnps * 0.001)
+top_snps <- round(nsnps * cutoff)
 outlier_dxy <- dxy %>% 
   arrange(desc(neg_log_pvalues_one_tailed)) %>% 
   head(top_snps) %>% 
@@ -39,10 +61,12 @@ outlier_dxy <- dxy %>%
 dxy_cutoff <- min(outlier_dxy$dxy)
 
 # Save cutoff value
-cutoff_file <- file.path(outdir, "analyses/dxy", paste0(pop1, "_", pop2, "dxy_stats.txt"))
-writeLines(c("dxy cutoff snps:", dxy_cutoff), cutoff_file)
+cat(c("dxy cutoff:", dxy_cutoff),
+    file = paste0(outdir, "/analyses/dxy/",pop1, "_", pop2, "/", pop1, "_", pop2, "dxy_stats.txt"),
+    sep = "\n",
+    append = TRUE)
 
-# Save outliers
+# Save outlier file
 outlier_file <- file.path(outdir, "analyses/dxy", paste0(pop1, "_", pop2, "/", pop1, "_", pop2, ".chrom.dxy.snps.outlierdxy.csv"))
 write.csv(outlier_dxy, outlier_file, row.names = FALSE)
 
