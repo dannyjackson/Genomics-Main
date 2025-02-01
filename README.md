@@ -1,27 +1,14 @@
 # Repository Overview 
-This repository contains generalized scripts and codes used across my multiple genomics projects.
- - For each project, read every script and revise according to each project! Many parameters are not modifiable with options, including snp filtering settings in angsd.
- - The params.sh file is essential for all scripts in this repository. It is designed to be editable between projects, such that all downstream analysis will run if this file is up-to-date.
-   - **The params.sh file does not change all parameters!** Only major ones that change between projects, such as naming conventions, paths to the reference genome, etc! Read all scripts and edit the options/flags of each command according to the needs of your project!
+This repository contains generalized scripts and codes used across multiple genomics projects.
+ - For each project, carefully read every script and revise as needed!
+ - The base_setup.sh and params_*.sh files is essential for all scripts in this repository. Each project is associated with a single base_params.sh file that contains parameters that apply across all analyses (e.g. /path/to/reference/genome) and a base_setup.sh file that creates directories and reference lists that are relevant across all modules.
+ - Each module additionally has a unique params_*.sh file that contains parameters, options, and flags required for that specific module (i.e. params_msmc.sh).
  - This repository should be used as a template for a submodule within any particular project. To do this, we are going to branch this repository and make local edits, but never push our local edits to the parent directory. Use the following steps:
 
-Add the repository as a submodule
+Add the repository as a submodule:
 ```
 git submodule add git@github.com:dannyjackson/Genomics-Main.git
 git submodule update --init --recursive
-```
-Use a separate branch for local edits
-   - Inside the submodule (project_repository/Genomics-Main), create a new branch for each project where you make your local edits.
-```
-cd path/to/submodule
-git checkout -b cardinalis-edit
-```
-Keep the submodule up to date with the main repository
-   - Periodically pull changes from the main Genomics-Main repository into the submodule (without pushing your local changes).
-```
-cd path/to/submodule
-git checkout main
-git pull origin main
 ```
 ## Repository Conventions
 Each module within the repository contains a markdown file in the structured format: **[Module].md** These markdown files describe how the scripts can be called and provides example slurm scripts used to call them on the University of Arizona HPC. 
@@ -47,3 +34,31 @@ Every script name also follows a structured format:
    - These scripts analyze a set of genomes using MSMC. They will generate individual plots, population level plots, estimate divergence between populations, and will assess confidence in these outputs using bootstraps
 
 
+### Contributing to this respository
+
+You do not have to (and should not) edit these files to complete a genomic analysis! Local edits that differ from the Genomics-Main repository will not be reflected in the repository release that we create when we submit for publication. Changes when implementing these modules should only be made to parameter and base_setup files that have been copied to the project's repository.
+
+If you find an error OR if you develop scripts for a new analysis that can be added to this repository, these edits should be made directly to the Genomics-Main repository. This way, they will be subsequently pulled into all projects that rely on this repository. To make and submit edits, do the following:
+
+Ensure that your local submodule is up to date with the latest version of the main Genomics-Main repository:
+```
+cd path/to/submodule
+git checkout main
+git pull origin main
+```
+Inside the submodule (project_repository/Genomics-Main), create a new branch for each project where you make your local edits.
+```
+cd path/to/submodule
+git checkout -b <descriptive name of branch> # e.g. feature-new-analysis or fix-bug-filename
+```
+Make changes using your preferred text editor and save the files. Then commit any changes that you've made to your branch.
+```
+git branch # confirms that you're in the branch that you've created
+git add .  # Stages all changes
+git commit -m "Added new analysis function"
+```
+Push the branch to GitHub.
+```
+git push --set-upstream origin feature-new-analysis # if this is the first push you've made to the branch
+git push origin feature-new-analysis # if you've pushed the branch before
+```
