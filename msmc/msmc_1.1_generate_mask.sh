@@ -1,113 +1,117 @@
 #!/bin/bash
 
 # MSMC Pipeline Script
-if [ $# -lt 1 ]
-  then
-    echo " This script generates a mask for a reference genome to determine which regions are "snpable".
+# This script generates a mask for a reference genome to determine SNPable regions.
 
-    REQUIRED ARGUMENTS
-    [-p] Path to parameter file (example is saved in github repository as params.sh"
+# Function to display usage
+usage() {
+    echo "Usage: $0 -p <path_to_parameter_file>"
+    echo "This script generates a mask for a reference genome to determine SNPable regions."
+    echo
+    echo "Required Arguments:"
+    echo "  -p  Path to the parameter file (e.g., params_msmc.sh from the GitHub repository)"
+    exit 1
+}
 
-  else
-    while getopts p: option
-    do
-    case "${option}"
-    in
-    p) PARAMS=${OPTARG};;
+# Check if at least one argument is provided
+if [ $# -lt 1 ]; then
+    usage
+fi
 
+# Parse command-line arguments
+while getopts "p:" option; do
+    case "${option}" in
+        p) PARAMS=${OPTARG} ;;
+        *) usage ;;
     esac
-    done
+done
 
+# Ensure parameter file is provided
 if [ -z "${PARAMS}" ]; then
     echo "Error: No parameter file provided." >&2
+    usage
+fi
+
+# Load parameters from the provided file
+if [ ! -f "${PARAMS}" ]; then
+    echo "Error: Parameter file '${PARAMS}' not found!" >&2
     exit 1
 fi
+
 source "${PARAMS}"
 
 # Ensure required environment variables are set
 if [ -z "$PROGDIR" ] || [ -z "$PROJHUB" ] || [ -z "$OUTDIR" ]; then
-    echo "Error: PROGDIR, PROJHUB, or OUTDIR is not set." >&2
+    echo "Error: PROGDIR, PROJHUB, or OUTDIR is not set in the parameter file." >&2
     exit 1
 fi
 
-snpable_script_path="${PROGDIR}/seqbility-20091110" # Directory with snpable scripts
+# Define path for Snpable scripts
+SNPABLE_SCRIPT_PATH="${PROGDIR}/seqbility-20091110"
 
-# Check if the directory exists
-if [ ! -d "$snpable_script_path" ]; then
-    echo "Error: Snpable script directory not found at ${snpable_script_path}" >&2
+# Check if the Snpable directory exists
+if [ ! -d "$SNPABLE_SCRIPT_PATH" ]; then
+    echo "Error: Snpable script directory not found at ${SNPABLE_SCRIPT_PATH}." >&2
     exit 1
 fi
 
-export PATH=$PATH:$snpable_script_path
-
-
-# Check for required arguments
-if [ $# -lt 3 ]; then
-    echo "Usage: $0 -p <parameter_file> -g <reference_genome> -s <sample_codes_file>"
-    exit 1
-fi
-
-while getopts ":p:g:s:" option; do
-    case "${option}" in
-        p) PARAMS=${OPTARG} ;;
-        g) GENOME=${OPTARG} ;;
-        s) SAMPLES=${OPTARG} ;;
-        *) echo "Invalid option: -$OPTARG" >&2; exit 1 ;;
-    esac
-done
-
-# Ensure required arguments are provided
-if [ -z "${PARAMS}" ] || [ -z "${GENOME}" ] || [ -z "${SAMPLES}" ]; then
-    echo "Error: Missing required arguments." >&2
-    exit 1
-fi
-
-# Load parameters from external file
-source "${PARAMS}"
+# Add Snpable scripts to PATH
+export PATH="$PATH:$SNPABLE_SCRIPT_PATH"
 
 echo "Starting MSMC pipeline..."
 date
 
-# Clone necessary repositories if not already present
-cd "${PROGDIR}" || { echo "Error: Could not change directory to ${PROGDIR}"; exit 1; }
-[ ! -d msmc2 ] && git clone https://github.com/stschiff/msmc2
-[ ! -d msmc-tools ] && git clone https://github.com/stschiff/msmc-tools
+# Clone required repositories if not already present
+cd "${PROGDIR}" || { echo "Error: Could not change directory to ${PROGDIR}."; exit 1; }
+
+if [ ! -d msmc2 ]; then
+    git clone https://github.com/stschiff/msmc2 || { echo "Error: Failed to clone msmc2."; exit 1; }
+fi
+
+if [ ! -d msmc-tools ]; then
+    git clone https://github.com/stschiff/msmc-tools || { echo "Error: Failed to clone msmc-tools."; exit 1; }
+fi
 
 echo "Environment setup completed."
 
 # Step 0: Create mappability mask
-cd "${OUTDIR}" || { echo "Error: Could not change directory to ${OUTDIR}"; exit 1; }
-export PATH=$PATH:$snpable_script_path
+cd "${OUTDIR}" || { echo "Error: Could not change directory to ${OUTDIR}."; exit 1; }
 
-# Source additional parameters
-source "${SCRIPTDIR}/msmc_params.sh"
-
-mkdir -p "${OUTDIR}/snpable"
-cd "${OUTDIR}/snpable" || { echo "Error: Could not change directory to ${OUTDIR}/snpable"; exit 1; }
-
-echo "Starting extraction of overlapping ${k}-mer subsequences"
-
-splitfa "${GENOME}" "${k}" | split -l 20000000
-cat x* >> "${prefix}_split.${k}"
-
-# Check if genome is indexed before proceeding
-if [ ! -f "${GENOME}.bwt" ]; then
-    echo "Indexing ${GENOME}"
-    bwa index "${GENOME}"
+# Source additional MSMC parameters
+if [ -f "${SCRIPTDIR}/msmc_params.sh" ]; then
+    source "${SCRIPTDIR}/msmc_params.sh"
 else
-    echo "${GENOME} already indexed."
+    echo "Error: MSMC parameter file '${SCRIPTDIR}/msmc_params.sh' not found." >&2
+    exit 1
 fi
 
-echo "Aligning ${k}-mer reads to the genome with BWA, then converting to SAM file..."
-bwa aln -t 8 -R 1000000 -O 3 -E 3 "${GENOME}" "${prefix}_split.${k}" > "${prefix}_split.${k}.sai"
-bwa samse -f "${prefix}_split.${k}.sam" "${GENOME}" "${prefix}_split.${k}.sai" "${prefix}_split.${k}"
+mkdir -p "${OUTDIR}/snpable"
+cd "${OUTDIR}/snpable" || { echo "Error: Could not change directory to ${OUTDIR}/snpable."; exit 1; }
 
-echo "Reads aligned, generating raw mask..."
-gen_raw_mask.pl "${prefix}_split.${k}.sam" > "${prefix}_rawMask.${k}.fa"
+echo "Extracting overlapping ${k}-mer subsequences..."
+splitfa "${REF}" "${k}" | split -l 20000000
+cat x* > "${prefix}_split.${k}"
+
+# Check if REF is indexed before proceeding
+if [ ! -f "${REF}.bwt" ]; then
+    echo "Indexing ${REF} with BWA..."
+    bwa index "${REF}" || { echo "Error: Failed to index ${REF}."; exit 1; }
+else
+    echo "Reference genome ${REF} is already indexed."
+fi
+
+# Align k-mer reads to the reference genome
+echo "Aligning ${k}-mer reads to ${REF} with BWA..."
+bwa aln -t 8 -R 1000000 -O 3 -E 3 "${REF}" "${prefix}_split.${k}" > "${prefix}_split.${k}.sai" || { echo "Error: BWA alignment failed."; exit 1; }
+
+bwa samse -f "${prefix}_split.${k}.sam" "${REF}" "${prefix}_split.${k}.sai" "${prefix}_split.${k}" || { echo "Error: BWA SAM conversion failed."; exit 1; }
+
+echo "Reads aligned. Generating raw mask..."
+gen_raw_mask.pl "${prefix}_split.${k}.sam" > "${prefix}_rawMask.${k}.fa" || { echo "Error: Failed to generate raw mask."; exit 1; }
 
 echo "Generating final mask..."
-gen_mask -l "${k}" -r 0.5 "${prefix}_rawMask.${k}.fa" > "${prefix}_mask.${k}.50.fa"
+gen_mask -l "${k}" -r 0.5 "${prefix}_rawMask.${k}.fa" > "${prefix}_mask.${k}.50.fa" || { echo "Error: Failed to generate final mask."; exit 1; }
 
 echo "Final mask saved as ${prefix}_mask.${k}.50.fa"
-
-
+echo "MSMC pipeline completed successfully!"
+date

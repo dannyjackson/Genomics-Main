@@ -10,6 +10,7 @@ mkdir -p ${OUTDIR}/referencelists/
 
 
 # make reference files
+
 # Generate scaffold list
 if [ -f "${SCRIPTDIR}/SCAFFOLDS.txt"]
         then
@@ -19,7 +20,6 @@ if [ -f "${SCRIPTDIR}/SCAFFOLDS.txt"]
         grep "$CHRLEAD" "${OUTDIR}/referencelists/SCAFFOLDS.all.txt" > "${OUTDIR}/referencelists/SCAFFOLDS.chroms.txt"
         grep -v "$SEXCHR" "${OUTDIR}/referencelists/SCAFFOLDS.chroms.txt" > "${OUTDIR}/referencelists/SCAFFOLDS.txt"
 fi
-
 
 
 # Make a file with chromosome name and length of chromosome

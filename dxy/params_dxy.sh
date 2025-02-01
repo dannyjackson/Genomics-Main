@@ -1,4 +1,5 @@
 # params_dxy
+source /path/to/params_base.sh
 
 ANGSD=~/programs/angsd/ # path to directory with angsd executables
 
