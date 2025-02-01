@@ -1,8 +1,8 @@
 # Repository Overview 
 This repository contains generalized scripts and codes used across multiple genomics projects.
  - For each project, carefully read every script and revise as needed!
- - The base_setup.sh and params_*.sh files is essential for all scripts in this repository. Each project is associated with a single base_params.sh file that contains parameters that apply across all analyses (e.g. /path/to/reference/genome) and a base_setup.sh file that creates directories and reference lists that are relevant across all modules.
- - Each module additionally has a unique params_*.sh file that contains parameters, options, and flags required for that specific module (i.e. params_msmc.sh).
+ - The base_setup.sh and params_base.sh files are essential for all scripts in this repository. Each project is associated with a single base_params.sh file that contains parameters that apply across all analyses (e.g. /path/to/reference/genome) and a base_setup.sh file that creates directories and reference lists that are relevant across all modules. Examples are provided here, and these should be copied to your project repository, renamed (e.g. noca_base_setup.sh), and revised accordingly.
+ - Additionally, each module has a unique params_*.sh file that contains parameters, options, and flags required for that specific module (i.e. params_msmc.sh).
  - This repository should be used as a template for a submodule within any particular project. To do this, we are going to branch this repository and make local edits, but never push our local edits to the parent directory. Use the following steps:
 
 Add the repository as a submodule:
