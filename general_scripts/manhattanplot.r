@@ -57,12 +57,12 @@ metric_cutoff <- min(outlier_data[[metric]])
 
 # Save cutoff value
 cat("Saving cutoff value...\n")
-cutoff_file <- file.path(outdir, "analyses", paste0(pop1, "_", pop2, "_", metric, "_stats.txt"))
+cutoff_file <- file.path(outdir, "analyses", metric, paste0(pop1, "_", pop2, "_", metric, "_stats.txt"))
 cat(metric, "cutoff:", metric_cutoff, "\n", file = cutoff_file, append = TRUE)
 
 # Save outliers
 cat("Saving outliers data...\n")
-outlier_file <- file.path(outdir, "analyses", paste0(pop1, "_", pop2, "/", pop1, "_", pop2, ".", metric, ".snps.outlier.csv"))
+outlier_file <- file.path(outdir, "analyses", metric, paste0(pop1, "_", pop2, "/", pop1, "_", pop2, ".", metric, ".snps.outlier.csv"))
 write.csv(outlier_data, outlier_file, row.names = FALSE)
 
 # Prepare data for plotting
@@ -102,7 +102,7 @@ ggplot(plot_data, aes(x = BPcum, y = !!sym(metric))) +
     panel.grid.minor.x = element_blank()
   )
 
-ggsave(filename = file.path(outdir, "analyses", paste0(pop1, "_", pop2, "/", pop1, "_", pop2, ".", metric, ".snps.sigline.png")), 
+ggsave(filename = file.path(outdir, "analyses", metric, paste0(pop1, "_", pop2, "/", pop1, "_", pop2, ".", metric, ".snps.sigline.png")), 
        width = 20, height = 5, units = "in")
 
 cat("Script completed successfully!\n")
