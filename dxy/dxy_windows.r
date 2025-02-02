@@ -4,6 +4,7 @@
 required_packages <- c("qqman", "readr", "ggrepel", "ggplot2", "dplyr", "RColorBrewer")
 installed_packages <- rownames(installed.packages())
 
+cat("Checking required packages...\n")
 for (pkg in required_packages) {
   if (!(pkg %in% installed_packages)) {
     install.packages(pkg, repos = "http://cran.us.r-project.org")
@@ -11,6 +12,7 @@ for (pkg in required_packages) {
   library(pkg, character.only = TRUE)
 }
 
+cat("Parsing command-line arguments...\n")
 # Parse command-line arguments
 args <- commandArgs(trailingOnly = TRUE)
 outdir <- args[1]
@@ -18,13 +20,15 @@ pop1 <- args[2]
 pop2 <- args[3]
 color1 <- args[4]
 color2 <- args[5]
-cutoff <- args[6]
+cutoff <- as.numeric(args[6])  # Convert to numeric
 
 # Read and clean data
+cat("Reading and cleaning data...\n")
 dxy_file <- file.path(outdir, "analyses/dxy", paste0(pop1, "_", pop2, "/Dxy_persite_nocaurban_nocarural.txt"))
 dxy <- read.csv(dxy_file, sep = '\t') %>% na.omit()
 
 # Z-transform dxy values
+cat("Calculating Z-transform and identifying top outliers...\n")
 dxy_xbar <- mean(dxy$dxy, na.rm = TRUE)
 dxy_sd <- sd(dxy$dxy, na.rm = TRUE)
 dxy$z <- (dxy$dxy - dxy_xbar) / dxy_sd
@@ -32,7 +36,7 @@ dxy$neg_log_pvalues_one_tailed <- -log10(pnorm(dxy$z, lower.tail = FALSE))
 
 # Identify top outliers
 nsnps <- nrow(dxy)
-top_snps <- round(nsnps * 0.001)
+top_snps <- round(nsnps * cutoff)
 outlier_dxy <- dxy %>% 
   arrange(desc(neg_log_pvalues_one_tailed)) %>% 
   head(top_snps) %>% 
@@ -41,14 +45,17 @@ outlier_dxy <- dxy %>%
 dxy_cutoff <- min(outlier_dxy$dxy)
 
 # Save cutoff value
+cat("Saving cutoff value...\n")
 cutoff_file <- file.path(outdir, "analyses/dxy", paste0(pop1, "_", pop2, "dxy_stats.txt"))
 cat("dxy cutoff snps:", dxy_cutoff, "\n", file = cutoff_file, append = TRUE)
 
 # Save outliers
+cat("Saving outliers data...\n")
 outlier_file <- file.path(outdir, "analyses/dxy", paste0(pop1, "_", pop2, "/", pop1, "_", pop2, ".chrom.dxy.snps.outlierdxy.csv"))
 write.csv(outlier_dxy, outlier_file, row.names = FALSE)
 
 # Prepare data for plotting
+cat("Preparing data for plotting...\n")
 dxy$chromo <- factor(dxy$chromo, levels = c(1, "1A", 2:4, "4A", 5:29, "Z"))
 
 plot_data <- dxy %>%
@@ -65,6 +72,7 @@ axisdf <- plot_data %>%
   summarize(center = mean(BPcum))
 
 # Plot
+cat("Generating plot...\n")
 ggplot(plot_data, aes(x = BPcum, y = dxy)) +
   geom_point(aes(color = as.factor(chromo)), alpha = 0.8, size = 1) +
   scale_color_manual(values = rep(c(color1, color2), length(unique(dxy$chromo)) / 2)) +
@@ -84,3 +92,5 @@ ggplot(plot_data, aes(x = BPcum, y = dxy)) +
 
 ggsave(filename = file.path(outdir, "analyses/dxy", paste0(pop1, "_", pop2, "/", pop1, "_", pop2, ".dxy.snps.sigline.png")), 
        width = 20, height = 5, units = "in")
+
+cat("Script completed successfully!\n")

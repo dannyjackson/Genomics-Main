@@ -3,6 +3,7 @@
 required_packages <- c("qqman", "readr", "ggrepel", "ggplot2", "dplyr", "RColorBrewer")
 installed_packages <- rownames(installed.packages())
 
+cat("Checking required packages...\n")
 for (pkg in required_packages) {
   if (!(pkg %in% installed_packages)) {
     install.packages(pkg, repos = "http://cran.us.r-project.org")
@@ -10,6 +11,7 @@ for (pkg in required_packages) {
   library(pkg, character.only = TRUE)
 }
 
+cat("Parsing command-line arguments...\n")
 # Parse command-line arguments
 args <- commandArgs(trailingOnly = TRUE)
 outdir <- args[1]
@@ -17,7 +19,7 @@ pop1 <- args[2]
 pop2 <- args[3]
 color1 <- args[4]
 color2 <- args[5]
-cutoff <- args[6]
+cutoff <- as.numeric(args[6])  # Convert to numeric
 
 # Read and clean data
 dxy_file <- file.path(outdir, "analyses/dxy", paste0(pop1, "_", pop2, "/Dxy_persite_", pop1, "_", pop2, ".autosomes.txt"))
@@ -88,7 +90,9 @@ axisdf <- plot_data %>%
 
 # Plot
 ggplot(plot_data, aes(x = BPcum, y = dxy)) +
-  geom_point(aes(color = as.factor(chromo)), alpha = 0.8, size = 1) +
+  geom_hex(bins = 100) +  # Fast binning for dense regions
+  geom_point(data = outlier_dxy, aes(x = BPcum, y = dxy), +
+  scale_fill_viridis_c() +  # Heatmap coloring for density
   scale_color_manual(values = rep(c(color1, color2), length(unique(dxy$chromo)) / 2)) +
   scale_x_continuous(labels = axisdf$chromo, breaks = axisdf$center, guide = guide_axis(n.dodge = 2)) +
   scale_y_continuous(expand = c(0, 0), limits = c(0, 1)) +
