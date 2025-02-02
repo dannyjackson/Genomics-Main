@@ -82,11 +82,25 @@ axisdf <- plot_data %>%
   group_by(chromo) %>%
   summarize(center = mean(BPcum))
 
+# Merge outlier_data with plot_data to get BPcum
+
+outlier_plot <- outlier_data %>%
+  group_by(chromo) %>%
+  summarise(chr_len = max(position)) %>%
+  mutate(tot = cumsum(chr_len) - chr_len) %>%
+  select(-chr_len) %>%
+  left_join(data, by = "chromo") %>%
+  arrange(chromo, position) %>%
+  mutate(BPcum = position + tot)
+
+axisdf_outlier <- outlier_plot %>%
+  group_by(chromo) %>%
+  summarize(center = mean(BPcum))
 # Plot
 cat("Generating plot...\n")
 ggplot(plot_data, aes(x = BPcum, y = !!sym(metric))) +
   geom_hex(bins = 100) +  # Fast binning for dense regions
-  geom_point(data = outlier_data, aes(x = BPcum, y = dxy)) +
+  geom_point(data = outlier_plot, aes(x = BPcum, y = metric)) +
   scale_fill_viridis_c() +  # Heatmap coloring for density
   scale_color_manual(values = rep(c(color1, color2), length(unique(data$chromo)) / 2)) +
   scale_x_continuous(labels = axisdf$chromo, breaks = axisdf$center, guide = guide_axis(n.dodge = 2)) +
