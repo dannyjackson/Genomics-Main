@@ -82,31 +82,18 @@ axisdf <- plot_data %>%
   group_by(chromo) %>%
   summarize(center = mean(BPcum))
 
-# Merge outlier_data with plot_data to get BPcum
 
-outlier_plot <- outlier_data %>%
-  group_by(chromo) %>%
-  summarise(chr_len = max(position)) %>%
-  mutate(tot = cumsum(chr_len) - chr_len) %>%
-  select(-chr_len) %>%
-  left_join(data, by = "chromo") %>%
-  arrange(chromo, position) %>%
-  mutate(BPcum = position + tot)
-
-axisdf_outlier <- outlier_plot %>%
-  group_by(chromo) %>%
-  summarize(center = mean(BPcum))
 # Plot
 cat("Generating plot...\n")
 ggplot(plot_data, aes(x = BPcum, y = !!sym(metric))) +
-  geom_hex(bins = 100) +  # Fast binning for dense regions
-  geom_point(data = outlier_plot, aes(x = BPcum, y = !!sym(metric))) +
+  geom_hex(bins = 100, aes(color = as.factor(chromo)), alpha = 0.8, size = 1) +  # Fast binning for dense regions
   scale_fill_viridis_c() +  # Heatmap coloring for density
-  scale_color_manual(values = rep(c(color1, color2), length(unique(data$chromo)) / 2)) +
+  scale_color_manual(values = rep(c(color1, color2), length.out = length(unique(dxy$chromo)))) +
   scale_x_continuous(labels = axisdf$chromo, breaks = axisdf$center, guide = guide_axis(n.dodge = 2)) +
   scale_y_continuous(expand = c(0, 0)) +
   labs(x = "Chromosome", y = metric) +
   geom_hline(yintercept = metric_cutoff) +
+  geom_label_repel(aes(label = as.factor(position)), size = 5, force = 1.3, alpha = 0.7) +
   theme_bw(base_size = 22) +
   theme(
     plot.title = element_text(hjust = 0.5),
