@@ -21,10 +21,11 @@ pop2 <- args[3]
 color1 <- args[4]
 color2 <- args[5]
 cutoff <- as.numeric(args[6])  # Convert to numeric
+input <- args[7]
 
 # Detect file type based on header
 cat("Detecting input data type...\n")
-data_file <- list.files(path = file.path(outdir, "analyses"), pattern = paste0(pop1, "_", pop2, ".*\.txt"), full.names = TRUE)[1]
+data_file <- list.files(path = file.path(input), full.names = TRUE)[1]
 data <- read.csv(data_file, sep = '\t') %>% na.omit()
 
 if ("dxy" %in% names(data)) {
