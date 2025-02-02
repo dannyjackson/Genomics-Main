@@ -25,8 +25,8 @@ input <- args[7]
 
 # Detect file type based on header
 cat("Detecting input data type...\n")
-data_file <- list.files(path = file.path(input), full.names = TRUE)[1]
-data <- read.csv(data_file, sep = '\t') %>% na.omit()
+data <- read.delim(input, sep = '\t') %>% na.omit()
+
 
 if ("dxy" %in% names(data)) {
   metric <- "dxy"
