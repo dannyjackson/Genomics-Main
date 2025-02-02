@@ -21,6 +21,7 @@ pop2 <- args[3]
 color1 <- args[4]
 color2 <- args[5]
 cutoff <- as.numeric(args[6])  # Convert to numeric
+input <- args[7]
 
 # Read and clean data
 cat("Reading and cleaning data...\n")
