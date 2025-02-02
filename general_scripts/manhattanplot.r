@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 # Load required packages, installing if necessary
-required_packages <- c("qqman", "readr", "ggrepel", "ggplot2", "dplyr", "RColorBrewer")
+required_packages <- c("qqman", "hexbin", "readr", "ggrepel", "ggplot2", "dplyr", "RColorBrewer")
 installed_packages <- rownames(installed.packages())
 
 cat("Checking required packages...\n")
