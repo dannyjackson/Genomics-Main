@@ -100,12 +100,12 @@ axisdf_outlier <- outlier_plot %>%
 cat("Generating plot...\n")
 ggplot(plot_data, aes(x = BPcum, y = !!sym(metric))) +
   geom_hex(bins = 100) +  # Fast binning for dense regions
-  geom_point(data = outlier_plot, aes(x = BPcum, y = metric)) +
+  geom_point(data = outlier_plot, aes(x = BPcum, y = !!sym(metric))) +
   scale_fill_viridis_c() +  # Heatmap coloring for density
   scale_color_manual(values = rep(c(color1, color2), length(unique(data$chromo)) / 2)) +
   scale_x_continuous(labels = axisdf$chromo, breaks = axisdf$center, guide = guide_axis(n.dodge = 2)) +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, 1)) +
-  labs(x = "Chromosome", y = "Stat") +
+  scale_y_continuous(expand = c(0, 0)) +
+  labs(x = "Chromosome", y = metric) +
   geom_hline(yintercept = metric_cutoff) +
   theme_bw(base_size = 22) +
   theme(
