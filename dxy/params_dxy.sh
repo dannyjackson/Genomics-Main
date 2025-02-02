@@ -14,4 +14,4 @@ POP1=population1name
 POP2=population2name
 
 # source the setup file for dxy                                           
-source ${SCRIPTDIR}/Genomics-Main/setup_dxy.sh
+source ${SCRIPTDIR}/Genomics-Main/dxy/setup_dxy.sh
