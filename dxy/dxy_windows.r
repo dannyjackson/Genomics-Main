@@ -18,6 +18,7 @@ pop1 <- args[2]
 pop2 <- args[3]
 color1 <- args[4]
 color2 <- args[5]
+cutoff <- args[6]
 
 # Read and clean data
 dxy_file <- file.path(outdir, "analyses/dxy", paste0(pop1, "_", pop2, "/Dxy_persite_nocaurban_nocarural.txt"))
