@@ -41,7 +41,7 @@ dxy_cutoff <- min(outlier_dxy$dxy)
 
 # Save cutoff value
 cutoff_file <- file.path(outdir, "analyses/dxy", paste0(pop1, "_", pop2, "dxy_stats.txt"))
-writeLines(c("dxy cutoff snps:", dxy_cutoff), cutoff_file, append = TRUE)
+cat("dxy cutoff snps:", dxy_cutoff, "\n", file = cutoff_file, append = TRUE)
 
 # Save outliers
 outlier_file <- file.path(outdir, "analyses/dxy", paste0(pop1, "_", pop2, "/", pop1, "_", pop2, ".chrom.dxy.snps.outlierdxy.csv"))
