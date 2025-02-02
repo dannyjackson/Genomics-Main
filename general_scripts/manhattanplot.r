@@ -105,7 +105,7 @@ ggplot(plot_data, aes(x = BPcum, y = !!sym(metric))) +
   scale_color_manual(values = rep(c(color1, color2), length(unique(data$chromo)) / 2)) +
   scale_x_continuous(labels = axisdf$chromo, breaks = axisdf$center, guide = guide_axis(n.dodge = 2)) +
   scale_y_continuous(expand = c(0, 0)) +
-  labs(x = "Chromosome", y = metric) +
+  labs(x = "Chromosome", y = "Stat") +
   geom_hline(yintercept = metric_cutoff) +
   theme_bw(base_size = 22) +
   theme(
