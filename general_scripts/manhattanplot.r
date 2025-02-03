@@ -38,6 +38,18 @@ if ("dxy" %in% names(data)) {
   stop("Unknown data format. Ensure the input file contains dxy, fst, or tajima's D column.")
 }
 
+# standardize use of chromosome and pos in file
+
+# Define pattern and replacement
+new_names <- names(data) %>%
+  gsub("(?i)\\bchr(?:omosome)?\\b", "chromo", ., perl = TRUE) %>%
+  gsub("(?i)\\b(?:mid)?pos\\b", "position", ., perl = TRUE)
+
+# Assign new column names
+names(data) <- new_names
+
+
+
 # Z-transform metric values
 cat("Calculating Z-transform and identifying top outliers...\n")
 metric_xbar <- mean(data[[metric]], na.rm = TRUE)
