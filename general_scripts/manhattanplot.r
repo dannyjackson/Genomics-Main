@@ -116,7 +116,7 @@ ggplot(plot_data, aes(x = BPcum, y = !!sym(metric))) +
     panel.grid.minor.x = element_blank()
   )
 
-ggsave(filename = file.path(outdir, "analyses", metric, paste0(pop1, "_", pop2, "/", win, "/", pop1, "_", pop2, ".", metric, "." win, ".sigline.png")), 
+ggsave(filename = file.path(outdir, "analyses", metric, paste0(pop1, "_", pop2, "/", win, "/", pop1, "_", pop2, ".", metric, ".", win, ".sigline.png")), 
        width = 20, height = 5, units = "in")
 
 cat("Script completed successfully!\n")
