@@ -10,7 +10,5 @@ COLOR1=#XXXXXX
 COLOR2=#XXXXXX
 
 # define the names of the two populations that will be compared
-POP=population1name
+POP=populationname
 
-# source the setup file for dxy                                           
-source ${SCRIPTDIR}/Genomics-Main/dxy/setup_tajima.sh
