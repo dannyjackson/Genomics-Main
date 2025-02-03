@@ -40,10 +40,12 @@ if ("dxy" %in% names(data)) {
 
 # standardize use of chromosome and pos in file
 
-# Define pattern and replacement
+
+# Define patterns and replacements
 new_names <- names(data) %>%
-  gsub("(?i)\\bchr(?:omosome)?\\b", "chromo", ., perl = TRUE) %>%
-  gsub("(?i)\\b(?:mid)?pos\\b", "position", ., perl = TRUE)
+  gsub("(?i)\\bchr(?:omosome)?\\b", "chromo", ., perl = TRUE) %>%   # Replace chromosome variants with "chromo"
+  gsub("(?i)\\b(?:mid|pos|midpos)\\b", "position", ., perl = TRUE)  # Replace pos, mid, midpos variants with "position"
+
 
 # Assign new column names
 names(data) <- new_names
@@ -104,7 +106,6 @@ ggplot(plot_data, aes(x = BPcum, y = !!sym(metric))) +
   scale_y_continuous(expand = c(0, 0)) +
   labs(x = "Chromosome", y = metric) +
   geom_hline(yintercept = metric_cutoff) +
-  geom_label_repel(aes(label = as.factor(position)), size = 5, force = 1.3, alpha = 0.7) +
   theme_bw(base_size = 22) +
   theme(
     plot.title = element_text(hjust = 0.5),
