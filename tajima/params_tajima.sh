@@ -12,3 +12,4 @@ COLOR2=#XXXXXX
 # define the names of the two populations that will be compared
 POP=populationname
 
+source ${SCRIPTDIR}/Genomics-Main/dxy/setup_tajima.sh
