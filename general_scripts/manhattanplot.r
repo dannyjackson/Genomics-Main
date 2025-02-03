@@ -22,6 +22,7 @@ color1 <- args[4]
 color2 <- args[5]
 cutoff <- as.numeric(args[6])  # Convert to numeric
 input <- args[7]
+win <- args[8]
 
 # Detect file type based on header
 cat("Detecting input data type...\n")
@@ -115,7 +116,7 @@ ggplot(plot_data, aes(x = BPcum, y = !!sym(metric))) +
     panel.grid.minor.x = element_blank()
   )
 
-ggsave(filename = file.path(outdir, "analyses", metric, paste0(pop1, "_", pop2, "/", pop1, "_", pop2, ".", metric, ".snps.sigline.png")), 
+ggsave(filename = file.path(outdir, "analyses", metric, paste0(pop1, "_", pop2, "/", win, "/", pop1, "_", pop2, ".", metric, "." win, ".sigline.png")), 
        width = 20, height = 5, units = "in")
 
 cat("Script completed successfully!\n")

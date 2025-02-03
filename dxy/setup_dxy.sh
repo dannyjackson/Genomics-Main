@@ -6,3 +6,4 @@ mkdir -p ${OUTDIR}/analyses/genelist/${POP1}_${POP2}/
 mkdir -p ${OUTDIR}/analyses/genelist/${POP1}_${POP2}/${WIN}
 mkdir -p ${OUTDIR}/analyses/dxy/${POP1}_${POP2}
 mkdir -p ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${WIN}
+mkdir -p ${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps

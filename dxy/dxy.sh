@@ -83,20 +83,20 @@ Rscript ~/programs/ngsTools/ngsPopGen/scripts/calcDxy.R \
     -t "${num_sites}" > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_globalestimate_${POP1}_${POP2}.txt"
 
 mv "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite.txt" \
-   "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt"
+   "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.txt"
 
 # Write header to the output file
-echo -e "chromo\tposition\tdxy" > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
+echo -e "chromo\tposition\tdxy" > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
 
 # Filter the input file, excluding sex chromosomes, and append results
-grep ${CHRLEAD} "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt" | grep -v ${SEXCHR} >> "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
+grep ${CHRLEAD} "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.txt" | grep -v ${SEXCHR} >> "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
 
 # Check if CHROM has anything assigned
 if [[ -n "$CHROM" ]]; then
     echo "Processing CHROM variable..."
     
     # Define the files to process
-    FILE="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
+    FILE="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
 
     # Read CHROM line by line
     while IFS=',' read -r first second; do
@@ -110,14 +110,14 @@ else
 fi
 
 # Extract site positions
-awk 'NR>1 {print $2}' "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.autosomes.txt" \
-    > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${POP1}_${POP2}_sites.txt"
+awk 'NR>1 {print $2}' "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt" \
+    > "${OUTDIR}/analyses/dxy/snps/${POP1}_${POP2}/${POP1}_${POP2}_sites.txt"
 
 
 # Compute windows and produce manhattan plots for windows and snp data
 # Define output files
 WIN_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${WIN}/nocaurban_nocarural_average_dxy_${WIN}bp_windows.txt"
-SNP_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_nocaurban_nocarural.txt"
+SNP_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_nocaurban_nocarural.txt"
 
 # Run first two scripts in sequence if output file doesn't exist
 if [ ! -f "$WIN_OUT" ]; then
@@ -125,14 +125,14 @@ if [ ! -f "$WIN_OUT" ]; then
     python "${SCRIPTDIR}/Genomics-Main/dxy/dxy_windows.py" --outdir "${OUTDIR}" --pop1 "${POP1}" --pop2 "${POP2}" --win "${WIN}" 
 
     echo 'visualizing windows'
-    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" 
+    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}"
     echo 'finished windowed plot' &
 fi
 
 # Run the SNP visualization separately if output file doesn't exist
 if [ ! -f "$SNP_OUT" ]; then
     echo 'visualizing snps'
-    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${SNP_OUT}" 
+    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${SNP_OUT}" "snps"
     echo 'finished snp plot' &
 fi
 
