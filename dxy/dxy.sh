@@ -111,7 +111,7 @@ fi
 
 # Extract site positions
 awk 'NR>1 {print $2}' "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt" \
-    > "${OUTDIR}/analyses/dxy/snps/${POP1}_${POP2}/${POP1}_${POP2}_sites.txt"
+    > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/${POP1}_${POP2}_sites.txt"
 
 
 # Compute windows and produce manhattan plots for windows and snp data
