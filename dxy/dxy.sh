@@ -116,8 +116,8 @@ awk 'NR>1 {print $2}' "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_$
 
 # Compute windows and produce manhattan plots for windows and snp data
 # Define output files
-WIN_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${WIN}/nocaurban_nocarural_average_dxy_${WIN}bp_windows.txt"
-SNP_IN="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_nocaurban_nocarural.txt"
+WIN_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${WIN}/${POP1}_${POP2}_average_dxy_${WIN}bp_windows.txt"
+SNP_IN="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
 SNP_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/${POP1}_${POP2}.dxy.snps.sigline.png"
        
 # Run first two scripts in sequence if output file doesn't exist
