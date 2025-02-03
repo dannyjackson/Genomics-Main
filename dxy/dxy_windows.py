@@ -51,7 +51,7 @@ for _, chrom_row in chroms_len.iterrows():
         window_data.append([chrom, start, end, mid, win_len, total_sites, average_dxy])
 
 # Convert the result into a DataFrame
-output_df = pd.DataFrame(window_data, columns=["chromosome", "start", "end", "mid", "win_size", "total_sites", "average_dxy"])
+output_df = pd.DataFrame(window_data, columns=["chromosome", "start", "end", "mid", "win_size", "total_sites", "dxy"])
 
 # Ensure output directory exists
 os.makedirs(f"{args.outdir}/analyses/dxy", exist_ok=True)
