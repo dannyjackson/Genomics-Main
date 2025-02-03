@@ -1,4 +1,5 @@
 #!/usr/bin/env Rscript
+
 # Load required packages, installing if necessary
 required_packages <- c("qqman", "readr", "ggrepel", "ggplot2", "dplyr", "RColorBrewer")
 installed_packages <- rownames(installed.packages())
@@ -20,37 +21,19 @@ pop2 <- args[3]
 color1 <- args[4]
 color2 <- args[5]
 cutoff <- as.numeric(args[6])  # Convert to numeric
+input <- args[7]
 
 # Read and clean data
-dxy_file <- file.path(outdir, "analyses/dxy", paste0(pop1, "_", pop2, "/Dxy_persite_", pop1, "_", pop2, ".autosomes.txt"))
+cat("Reading and cleaning data...\n")
+dxy_file <- file.path(outdir, "analyses/dxy", paste0(pop1, "_", pop2, "/Dxy_persite_nocaurban_nocarural.txt"))
 dxy <- read.csv(dxy_file, sep = '\t') %>% na.omit()
 
-dxy_file <-
-  read.csv(paste0(outdir, "/analyses/dxy/",
-                  pop1, "_", pop2,
-                  "/Dxy_persite_", pop1, "_", pop2, ".autosomes.txt"),
-                  sep = "\t")  %>% na.omit()
-
-min_dxy <- min(dxy$dxy)
-max_dxy <- max(dxy$dxy)
-
-cat(c("Min dxy:", min_dxy),
-    file = paste0(outdir, "/analyses/dxy/",pop1, "_", pop2, "/", pop1, "_", pop2, "dxy_stats.txt"),
-    sep = "\n", append = TRUE)
-
-cat(c("Max dxy:", max_dxy),
-    file = paste0(outdir, "/analyses/dxy/",pop1, "_", pop2, "/", pop1, "_", pop2, "dxy_stats.txt"),
-    sep = "\n", append = TRUE)
-
-
 # Z-transform dxy values
+cat("Calculating Z-transform and identifying top outliers...\n")
 dxy_xbar <- mean(dxy$dxy, na.rm = TRUE)
 dxy_sd <- sd(dxy$dxy, na.rm = TRUE)
 dxy$z <- (dxy$dxy - dxy_xbar) / dxy_sd
-p_values_one_tailed <- pnorm(q = dxy$z, lower.tail = FALSE)
-
-# Calculate -log10 of the p-value
-dxy$neg_log_pvalues_one_tailed <- -log10(p_values_one_tailed)
+dxy$neg_log_pvalues_one_tailed <- -log10(pnorm(dxy$z, lower.tail = FALSE))
 
 # Identify top outliers
 nsnps <- nrow(dxy)
@@ -63,16 +46,17 @@ outlier_dxy <- dxy %>%
 dxy_cutoff <- min(outlier_dxy$dxy)
 
 # Save cutoff value
-cat(c("dxy cutoff:", dxy_cutoff),
-    file = paste0(outdir, "/analyses/dxy/",pop1, "_", pop2, "/", pop1, "_", pop2, "dxy_stats.txt"),
-    sep = "\n",
-    append = TRUE)
+cat("Saving cutoff value...\n")
+cutoff_file <- file.path(outdir, "analyses/dxy", paste0(pop1, "_", pop2, "dxy_stats.txt"))
+cat("dxy cutoff snps:", dxy_cutoff, "\n", file = cutoff_file, append = TRUE)
 
-# Save outlier file
+# Save outliers
+cat("Saving outliers data...\n")
 outlier_file <- file.path(outdir, "analyses/dxy", paste0(pop1, "_", pop2, "/", pop1, "_", pop2, ".chrom.dxy.snps.outlierdxy.csv"))
 write.csv(outlier_dxy, outlier_file, row.names = FALSE)
 
 # Prepare data for plotting
+cat("Preparing data for plotting...\n")
 dxy$chromo <- factor(dxy$chromo, levels = c(1, "1A", 2:4, "4A", 5:29, "Z"))
 
 plot_data <- dxy %>%
@@ -89,15 +73,15 @@ axisdf <- plot_data %>%
   summarize(center = mean(BPcum))
 
 # Plot
+cat("Generating plot...\n")
 ggplot(plot_data, aes(x = BPcum, y = dxy)) +
-  geom_hex(bins = 100) +  # Fast binning for dense regions
-  geom_point(data = outlier_dxy, aes(x = BPcum, y = dxy), +
-  scale_fill_viridis_c() +  # Heatmap coloring for density
+  geom_point(aes(color = as.factor(chromo)), alpha = 0.8, size = 1) +
   scale_color_manual(values = rep(c(color1, color2), length(unique(dxy$chromo)) / 2)) +
   scale_x_continuous(labels = axisdf$chromo, breaks = axisdf$center, guide = guide_axis(n.dodge = 2)) +
   scale_y_continuous(expand = c(0, 0), limits = c(0, 1)) +
   labs(x = "Chromosome", y = "dxy") +
   geom_hline(yintercept = dxy_cutoff) +
+  geom_label_repel(aes(label = as.factor(position)), size = 5, force = 1.3, alpha = 0.7) +
   theme_bw(base_size = 22) +
   theme(
     plot.title = element_text(hjust = 0.5),
@@ -109,3 +93,5 @@ ggplot(plot_data, aes(x = BPcum, y = dxy)) +
 
 ggsave(filename = file.path(outdir, "analyses/dxy", paste0(pop1, "_", pop2, "/", pop1, "_", pop2, ".dxy.snps.sigline.png")), 
        width = 20, height = 5, units = "in")
+
+cat("Script completed successfully!\n")

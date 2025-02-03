@@ -19,7 +19,7 @@ output_prefix = f"{args.outdir}/analyses/dxy/{args.pop1}_{args.pop2}/{args.win}/
 chroms_len = pd.read_csv(f"{args.outdir}/referencelists/autosomes_lengths.txt", sep="\t", header=None, names=["chromosome", "length"])
 
 # Load the dxy data
-dxy_data = pd.read_csv(f"Dxy_persite_{args.pop1}_{args.pop2}.autosomes.txt", sep="\t", dtype={"chromo": str, "position": int, "dxy": float})
+dxy_data = pd.read_csv(f"{args.outdir}/analyses/dxy/{args.pop1}_{args.pop2}/snps/Dxy_persite_{args.pop1}_{args.pop2}.autosomes.txt", sep="\t", dtype={"chromo": str, "position": int, "dxy": float})
 
 # Initialize an empty list to store the window data
 window_data = []
@@ -51,7 +51,7 @@ for _, chrom_row in chroms_len.iterrows():
         window_data.append([chrom, start, end, mid, win_len, total_sites, average_dxy])
 
 # Convert the result into a DataFrame
-output_df = pd.DataFrame(window_data, columns=["chromosome", "start", "end", "mid", "win_size", "total_sites", "average_dxy"])
+output_df = pd.DataFrame(window_data, columns=["chromosome", "start", "end", "mid", "win_size", "total_sites", "dxy"])
 
 # Ensure output directory exists
 os.makedirs(f"{args.outdir}/analyses/dxy", exist_ok=True)

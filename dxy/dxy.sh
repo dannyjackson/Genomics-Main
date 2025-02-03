@@ -1,6 +1,9 @@
 #!/bin/sh
 
-# dxy script 
+
+
+# dxy script (1/N)
+
 
 if [ $# -lt 1 ]; then
     cat <<EOF
@@ -15,7 +18,9 @@ It computes average genome-wide dxy and produces output files for:
 Read and understand the entire script before running it!
 
 REQUIRED ARGUMENTS:
+
     -p  Path to parameter file (example: params_dxy.sh in GitHub repo)
+
 EOF
     exit 1
 fi
@@ -52,7 +57,8 @@ CHROM=`cat $CHR_FILE`
 
 printf "\n \n \n \n"
 date
-echo "Current script: dxy_1.sh"
+
+echo "Current script: dxy.sh"
 
 cd "${OUTDIR}/analyses/dxy/${POP1}_${POP2}" || { echo "Failed to enter directory"; exit 1; }
 
@@ -83,20 +89,24 @@ Rscript ~/programs/ngsTools/ngsPopGen/scripts/calcDxy.R \
     -t "${num_sites}" > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_globalestimate_${POP1}_${POP2}.txt"
 
 mv "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite.txt" \
-   "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt"
+
+   "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.txt"
 
 # Write header to the output file
-echo -e "chromo\tposition\tdxy" > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
+echo -e "chromo\tposition\tdxy" > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
 
 # Filter the input file, excluding sex chromosomes, and append results
-grep ${CHRLEAD} "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt" | grep -v ${SEXCHR} >> "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
+grep ${CHRLEAD} "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.txt" | grep -v ${SEXCHR} >> "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
+
 
 # Check if CHROM has anything assigned
 if [[ -n "$CHROM" ]]; then
     echo "Processing CHROM variable..."
     
     # Define the files to process
-    FILE="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
+
+    FILE="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
+
 
     # Read CHROM line by line
     while IFS=',' read -r first second; do
@@ -110,13 +120,43 @@ else
 fi
 
 # Extract site positions
-awk 'NR>1 {print $2}' "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.autosomes.txt" \
-    > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${POP1}_${POP2}_sites.txt"
+
+awk 'NR>1 {print $2}' "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt" \
+    > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/${POP1}_${POP2}_sites.txt"
 
 
-# Run visualization scripts
-Rscript ${PROGDIR}/Genomics-Main/dxy_snps.r "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}
+# Compute windows and produce manhattan plots for windows and snp data
+# Define output files
+WIN_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${WIN}/${POP1}_${POP2}_average_dxy_${WIN}bp_windows.txt"
+SNP_IN="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
+SNP_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/${POP1}_${POP2}.dxy.snps.sigline.png"
+       
+# Run first two scripts in sequence if output file doesn't exist
+if [ ! -f "$WIN_OUT" ]; then
+    echo 'computing windows'
+    python "${SCRIPTDIR}/Genomics-Main/dxy/dxy_windows.py" --outdir "${OUTDIR}" --pop1 "${POP1}" --pop2 "${POP2}" --win "${WIN}" 
 
-python ${PROGDIR}/Genomics-Main/dxy_windows.py --outdir "${OUTDIR}" --pop1 "${POP1}" --pop2 "${POP2}" --win "${WIN}" 
+    echo 'visualizing windows'
+    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}"
+    echo 'finished windowed plot' &
+fi
 
-Rscript ${PROGDIR}/Genomics-Main/dxy_snps.r "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}
+# Run the SNP visualization separately if output file doesn't exist
+if [ ! -f "$SNP_OUT" ]; then
+    echo 'visualizing snps'
+    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${SNP_IN}" "snps"
+    echo 'finished snp plot' &
+fi
+
+# Wait for background jobs to finish
+wait
+
+
+#Rscript ${SCRIPTDIR}/Genomics-Main/dxy/dxy_snps.r "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_nocaurban_nocarural.txt"
+
+
+
+
+# Rscript ${SCRIPTDIR}/Genomics-Main/dxy/dxy_windows.r "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}"
+
+
