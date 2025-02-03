@@ -114,15 +114,31 @@ awk 'NR>1 {print $2}' "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1
     > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${POP1}_${POP2}_sites.txt"
 
 
-# Run visualization scripts
-echo 'computing windows'
-python ${SCRIPTDIR}/Genomics-Main/dxy/dxy_windows.py --outdir "${OUTDIR}" --pop1 "${POP1}" --pop2 "${POP2}" --win "${WIN}" 
+# Compute windows and produce manhattan plots for windows and snp data
+# Define output files
+WIN_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${WIN}/nocaurban_nocarural_average_dxy_${WIN}bp_windows.txt"
+SNP_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_nocaurban_nocarural.txt"
 
-echo 'visualizing windows'
-Rscript ${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${WIN}/nocaurban_nocarural_average_dxy_${WIN}bp_windows.txt"
+# Run first two scripts in sequence if output file doesn't exist
+if [ ! -f "$WIN_OUT" ]; then
+    echo 'computing windows'
+    python "${SCRIPTDIR}/Genomics-Main/dxy/dxy_windows.py" --outdir "${OUTDIR}" --pop1 "${POP1}" --pop2 "${POP2}" --win "${WIN}" 
 
-echo 'visualizing snps'
-Rscript ${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_nocaurban_nocarural.txt"
+    echo 'visualizing windows'
+    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "$WIN_OUT" 
+    echo 'finished windowed plot' &
+fi
+
+# Run the SNP visualization separately if output file doesn't exist
+if [ ! -f "$SNP_OUT" ]; then
+    echo 'visualizing snps'
+    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "$SNP_OUT" 
+    echo 'finished snp plot' &
+fi
+
+# Wait for background jobs to finish
+wait
+
 
 #Rscript ${SCRIPTDIR}/Genomics-Main/dxy/dxy_snps.r "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_nocaurban_nocarural.txt"
 
