@@ -60,4 +60,4 @@ ${ANGSD}/misc/realSFS saf2theta ${OUTDIR}/datafiles/safs/${POP}.saf.idx -outname
 ${ANGSD}/misc/thetaStat do_stat ${OUTDIR}/analyses/thetas/${POP}.thetas.idx
 
 # sliding window tajima's d
-${ANGSD}/misc/thetaStat do_stat ${OUTDIR}/datafiles/thetas/${POP}.thetas.idx -win ${WIN} -step ${STEP}  -outnames ${OUTDIR}/analyses/thetas/nocaurban.theta.thetasWindow
+${ANGSD}/misc/thetaStat do_stat ${OUTDIR}/datafiles/thetas/${POP}.thetas.idx -win ${WIN} -step ${STEP}  -outnames ${OUTDIR}/analyses/thetas/${POP}.theta.thetasWindow
