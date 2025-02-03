@@ -119,9 +119,6 @@ awk 'NR>1 {print $2}' "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_$
 WIN_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${WIN}/nocaurban_nocarural_average_dxy_${WIN}bp_windows.txt"
 SNP_IN="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_nocaurban_nocarural.txt"
 SNP_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/${POP1}_${POP2}.dxy.snps.sigline.png"
-
-ggsave(filename = file.path(outdir, "analyses", metric, paste0(pop1, "_", pop2, "/", win, "/", pop1, "_", pop2, ".", metric, ".", win, ".sigline.png")), 
-       width = 20, height = 5, units = "in")
        
 # Run first two scripts in sequence if output file doesn't exist
 if [ ! -f "$WIN_OUT" ]; then
