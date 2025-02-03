@@ -52,7 +52,7 @@ CHROM=`cat $CHR_FILE`
 
 printf "\n \n \n \n"
 date
-echo "Current script: dxy_1.sh"
+echo "Current script: dxy.sh"
 
 cd "${OUTDIR}/analyses/dxy/${POP1}_${POP2}" || { echo "Failed to enter directory"; exit 1; }
 
@@ -119,7 +119,7 @@ echo 'computing windows'
 python ${SCRIPTDIR}/Genomics-Main/dxy/dxy_windows.py --outdir "${OUTDIR}" --pop1 "${POP1}" --pop2 "${POP2}" --win "${WIN}" 
 
 echo 'visualizing windows'
-Rscript ${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${WIN}/nocaurban_nocarural_average_dxy_10000bp_windows.txt"
+Rscript ${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${WIN}/nocaurban_nocarural_average_dxy_${WIN}bp_windows.txt"
 
 echo 'visualizing snps'
 Rscript ${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_nocaurban_nocarural.txt"

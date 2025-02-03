@@ -86,8 +86,7 @@ axisdf <- plot_data %>%
 # Plot
 cat("Generating plot...\n")
 ggplot(plot_data, aes(x = BPcum, y = !!sym(metric))) +
-  geom_hex(bins = 100, aes(color = as.factor(chromo)), alpha = 0.8, size = 1) +  # Fast binning for dense regions
-  scale_fill_viridis_c() +  # Heatmap coloring for density
+  geom_point(aes(color = as.factor(chromo)), alpha = 0.8, size = 1) +
   scale_color_manual(values = rep(c(color1, color2), length.out = length(unique(plot_data$chromo)))) +
   scale_x_continuous(labels = axisdf$chromo, breaks = axisdf$center, guide = guide_axis(n.dodge = 2)) +
   scale_y_continuous(expand = c(0, 0)) +
