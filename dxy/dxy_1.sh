@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# dxy script (1/N)
+# dxy script 
 
 if [ $# -lt 1 ]; then
     cat <<EOF
@@ -15,7 +15,7 @@ It computes average genome-wide dxy and produces output files for:
 Read and understand the entire script before running it!
 
 REQUIRED ARGUMENTS:
-    -p  Path to parameter file (example: params.sh in GitHub repo)
+    -p  Path to parameter file (example: params_dxy.sh in GitHub repo)
 EOF
     exit 1
 fi
