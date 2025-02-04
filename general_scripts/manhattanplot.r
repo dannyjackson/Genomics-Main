@@ -48,7 +48,7 @@ if ("dxy" %in% names(data)) {
 # Define patterns and replacements
 new_names <- names(data) %>%
   gsub("(?i)\\bchr(?:omosome)?\\b", "chromo", ., perl = TRUE) %>%   # Replace chromosome variants with "chromo"
-  gsub("(?i)\\b(?:mid|pos|midpos)\\b", "position", ., perl = TRUE)  # Replace pos, mid, midpos variants with "position"
+  gsub("(?i)\\b(?:mid|pos|midpos|WinCenter)\\b", "position", ., perl = TRUE)  # Replace pos, mid, midpos variants with "position"
 
 
 # Assign new column names
