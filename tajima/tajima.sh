@@ -52,10 +52,10 @@ echo "Current script: tajima.sh"
 
 
 echo "Generating sfs file"
-${ANGSD}/misc/realSFS -P 24 ${OUTDIR}/datafiles/safs/${POP}.saf.idx -rf ${OUTDIR}/referencelists/SCAFFOLDS.txt > ${OUTDIR}/datafiles/safs/${POP}.sfs 
+${ANGSD}/misc/realSFS -P 24 ${OUTDIR}/datafiles/safs/${POP}.saf.idx > ${OUTDIR}/datafiles/safs/${POP}.sfs 
 
 echo "Calculating thetas for each site"
-${ANGSD}/misc/realSFS saf2theta ${OUTDIR}/datafiles/safs/${POP}.saf.idx -outname ${OUTDIR}/analyses/thetas/${POP} -sfs ${OUTDIR}/datafiles/safs/${POP}.sfs -rf ${OUTDIR}/referencelists/SCAFFOLDS.txt
+${ANGSD}/misc/realSFS saf2theta ${OUTDIR}/datafiles/safs/${POP}.saf.idx -outname ${OUTDIR}/analyses/thetas/${POP} -sfs ${OUTDIR}/datafiles/safs/${POP}.sfs
 
 echo "Estimating Tajima's D genome wide"
 ${ANGSD}/misc/thetaStat do_stat ${OUTDIR}/analyses/thetas/${POP}.thetas.idx
