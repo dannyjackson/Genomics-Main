@@ -136,7 +136,7 @@ if [ ! -f "$WIN_OUT" ]; then
     python "${SCRIPTDIR}/Genomics-Main/dxy/dxy_windows.py" --outdir "${OUTDIR}" --pop1 "${POP1}" --pop2 "${POP2}" --win "${WIN}" 
 
     # Check if CHROM has anything assigned
-if [[ -f "$CHROM" ]]; then
+if [[ -n "$CHROM" ]]; then
     echo "Processing CHROM file: $CHROM..."
     
     # Define the files to process

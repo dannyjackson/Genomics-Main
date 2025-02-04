@@ -48,11 +48,11 @@ ls ${BAMDIR}/*bam > ${OUTDIR}/referencelists/${PROJNAME}.bamlist.txt
 ${ANGSD}/angsd -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 1 -doCounts 1 -doDepth 1 -dumpCounts 1 -doIBS 1 -makematrix 1 -doCov 1 \
     -P 32 -SNP_pval ${SNPPVAL} -setMinDepthInd ${MINDEPTHIND} -minInd ${MININD} -minQ ${MINQ} -minMaf ${MINMAF} -minMapQ ${MINMAPQ} \
     -bam ${OUTDIR}/referencelists/${RUNNAME}.bamlist.txt \
-    -out {OUTDIR}/referencelists/${RUNNAME}.allsnps \
+    -out {OUTDIR}/referencelists/${RUNNAME} \
     -nThreads ${THREADS}
 
-zcat ${OUTDIR}/referencelists/${RUNNAME}.allsnps.mafs.gz | awk '{print $1, $2, $3, $4}' > ${OUTDIR}/referencelists/${RUNNAME}.sites.mafs
+zcat ${OUTDIR}/referencelists/${RUNNAME}.mafs.gz | awk '{print $1, $2, $3, $4}' > ${OUTDIR}/referencelists/${RUNNAME}.sites.mafs
 
-grep ${CHRLEAD} ${OUTDIR}/referencelists/${RUNNAME}.sites.mafs | tail -n +2 > ${OUTDIR}/referencelists/${RUNNAME}.sites_headless.mafs
+grep ${CHRLEAD} ${OUTDIR}/referencelists/${RUNNAME}.sites.mafs | grep -v ${SEXCHR} | tail -n +2 > ${OUTDIR}/referencelists/${RUNNAME}.sites_headless.mafs
 
 ${ANGSD}/angsd sites index ${OUTDIR}/referencelists/${RUNNAME}.sites_headless.mafs
