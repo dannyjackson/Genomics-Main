@@ -65,5 +65,21 @@ ${ANGSD}/misc/thetaStat do_stat ${OUTDIR}/analyses/thetas/${POP}.thetas.idx -win
 
 WIN_OUT="${OUTDIR}/analyses/thetas/${POP}/${WIN}/${POP}.theta.thetasWindow.pestPG"
 
-Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "nocaurban" 
+# Check if CHROM has anything assigned
+if [[ -n "$CHROM" ]]; then
+    echo "Processing CHROM variable..."
+
+
+    # Read CHROM line by line
+    while IFS=',' read -r first second; do
+        echo "Replacing occurrences of '$second' with '$first' in $WIN_OUT"
+        sed -i.bak "s/$second/$first/g" "$WIN_OUT"
+    done <<< "$CHROM"
+
+    rm -f "${WIN_OUT}.bak"
+else
+    echo "CHROM variable is empty or not set."
+fi
+
+Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP}" 
 
