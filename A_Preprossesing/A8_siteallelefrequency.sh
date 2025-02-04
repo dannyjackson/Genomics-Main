@@ -11,10 +11,11 @@ if [ $# -lt 1 ]
     REQUIRED ARGUMENTS
     [-p] Path to parameter file (example is saved in the GitHub repository as params.sh)."
   else
-    while getopts p: option
+    while getopts p:n: option
     do
     case "${option}" in
     p) PARAMS=${OPTARG};;
+    n) POP=${OPTARG};;
     esac
     done
 
@@ -31,20 +32,13 @@ echo "Current script: fst.sh"
 
 # Generate SAF files for each population in ANGSD. Skip if output already exists.
 
-if [ -f "${OUTDIR}/datafiles/safs/${POP1}"* ]
+if [ -f "${OUTDIR}/datafiles/safs/${POP}"* ]
         then
-            echo "${POP1} files present in SAFs directory, assuming they are already generated and moving on!"
+            echo "${POP} files present in SAFs directory, assuming they are already generated and moving on!"
         else
             echo "Computing SAFs for population 1"
-            ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP1}bams.txt -out ${OUTDIR}/datafiles/safs/${POP1} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd <SET_VALUE> -minInd <SET_VALUE> -minQ <SET_VALUE> -minMapQ <SET_VALUE> -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads ${THREADS} -rf ${OUTDIR}/referencelists/SCAFFOLDS.txt
+            ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP}bams.txt -out ${OUTDIR}/datafiles/safs/${POP} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd ${MINDEPTHIND} -minInd ${MININD} -minQ ${MINQ} -minMapQ ${MINMAPQ} -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads ${THREADS} -rf ${OUTDIR}/referencelists/SCAFFOLDS.txt
 fi
 
-if [ -f "${OUTDIR}/datafiles/safs/${POP2}"* ]
-       then
-            echo "${POP2} files present in SAFs directory, assuming they are already generated and moving on!"
-        else
-            echo "Computing SAFs for population 2"
-            ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP2}bams.txt -out ${OUTDIR}/datafiles/safs/${POP2} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd <SET_VALUE> -minInd <SET_VALUE> -minQ <SET_VALUE> -minMapQ <SET_VALUE> -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads ${THREADS} -rf ${OUTDIR}/referencelists/SCAFFOLDS.txt
-fi
 
 fi

@@ -1,5 +1,3 @@
-# This script is called in a slurm array, see github.com/dannyjackson/tutorials/runningjobs for examples
-
 module load bwa/0.7.17
 module load samtools/1.19.2
 module load bowtie2
@@ -36,3 +34,4 @@ MININD=<SET_VALUE> # minimum number of individuals required for a site to be kep
 MINQ=<SET_VALUE> # minimum quality score required for a site to be kept
 MINMAF=<SET_VALUE> # minimum minor allele frequency required for a site to be kept
 MINMAPQ=<SET_VALUE> # minimum mapping quality score required for a site to be kept
+POP=<SET_VALUE> # name of population
