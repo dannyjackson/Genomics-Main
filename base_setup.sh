@@ -12,7 +12,7 @@ mkdir -p ${OUTDIR}/referencelists/
 # make reference files
 
 # Generate scaffold list
-if [ -f "${SCRIPTDIR}/SCAFFOLDS.txt"]
+if [ -f "${OUTDIR}/referencelists//SCAFFOLDS.txt"]
         then
             echo "SCAFFOLDS.txt already exists, moving on!"
         else
