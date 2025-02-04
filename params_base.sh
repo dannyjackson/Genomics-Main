@@ -2,7 +2,7 @@ module load R/4.4.0
 module load htslib/1.19.1
 module load bedtools2/2.29.2
 module load python/3.11/3.11.4
-module load bwa/0.7.17
+module load bwa/0.7.18
 module load bcftools/1.19
 module load vcftools/0.1.16
 module load plink/1.9
