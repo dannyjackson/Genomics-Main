@@ -46,3 +46,5 @@ if [ -f "${OUTDIR}/datafiles/safs/${POP2}"* ]
             echo "Computing SAFs for population 2"
             ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP2}bams.txt -out ${OUTDIR}/datafiles/safs/${POP2} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd <SET_VALUE> -minInd <SET_VALUE> -minQ <SET_VALUE> -minMapQ <SET_VALUE> -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads ${THREADS} -rf ${OUTDIR}/referencelists/SCAFFOLDS.txt
 fi
+
+fi
