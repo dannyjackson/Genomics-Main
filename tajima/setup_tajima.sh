@@ -9,4 +9,5 @@ mkdir -p ${OUTDIR}/analyses/thetas/${POP}/${WIN}
 mkdir -p ${OUTDIR}/analyses/thetas/${POP}/snps
 mkdir -p ${OUTDIR}/analyses/Tajima/
 mkdir -p ${OUTDIR}/analyses/Tajima/${POP}
+mkdir -p ${OUTDIR}/analyses/Tajima/${POP}/${WIN}
 
