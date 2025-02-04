@@ -4,9 +4,7 @@
 
 if [ $# -lt 1 ]
   then
-    echo "This script computes Fst between two groups of genomes using a genotype likelihood framework implemented in ANGSD. It requires SAF files as input, which can be generated using the <scriptname> scripts in github.com/dannyjackson/Genomics-Main. It will compute average genome-wide Fst and produce the output files necessary for sliding window Fst and Fst for each SNP. 
-    
-    Read the entire script and manually set all required options before running! Many parameters are not modifiable with command-line options, including SNP filtering settings in ANGSD. These are encoded as <SET_VALUE> throughout this and all scripts.
+    echo "This script computes Fst between two groups of genomes using a genotype likelihood framework implemented in ANGSD. It requires SAF files as input, which can be generated using the A8_siteallelefrequency.sh script in github.com/dannyjackson/Genomics-Main/A_Preprocessing. It will compute average genome-wide Fst and produce the output files necessary for sliding window Fst and Fst for each SNP. 
     
     REQUIRED ARGUMENTS
     [-p] Path to parameter file (example is saved in the GitHub repository as params.sh)."
@@ -27,24 +25,6 @@ source "${PARAMS}"
 printf "\n \n \n \n"
 date
 echo "Current script: fst.sh"
-
-# Generate SAF files for each population in ANGSD. Skip if output already exists.
-
-if [ -f "${OUTDIR}/datafiles/safs/${POP1}"* ]
-        then
-            echo "${POP1} files present in SAFs directory, assuming they are already generated and moving on!"
-        else
-            echo "Computing SAFs for population 1"
-            ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP1}bams.txt -out ${OUTDIR}/datafiles/safs/${POP1} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd <SET_VALUE> -minInd <SET_VALUE> -minQ <SET_VALUE> -minMapQ <SET_VALUE> -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads ${THREADS} -rf ${OUTDIR}/referencelists/SCAFFOLDS.txt
-fi
-
-if [ -f "${OUTDIR}/datafiles/safs/${POP2}"* ]
-       then
-            echo "${POP2} files present in SAFs directory, assuming they are already generated and moving on!"
-        else
-            echo "Computing SAFs for population 2"
-            ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP2}bams.txt -out ${OUTDIR}/datafiles/safs/${POP2} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd <SET_VALUE> -minInd <SET_VALUE> -minQ <SET_VALUE> -minMapQ <SET_VALUE> -sites ${OUTDIR}/referencelists/sites_headless.mafs -anc ${REF} -nThreads ${THREADS} -rf ${OUTDIR}/referencelists/SCAFFOLDS.txt
-fi
 
 if [ -f "${OUTDIR}/datafiles/mls/${POP1}_${POP2}.ml" ]
         then
