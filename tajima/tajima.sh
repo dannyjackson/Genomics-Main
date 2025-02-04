@@ -50,14 +50,15 @@ date
 echo "Current script: tajima.sh"
 
 
-# generate sfs file
+
+echo "Generating sfs file"
 ${ANGSD}/misc/realSFS -P 24 ${OUTDIR}/datafiles/safs/${POP}.saf.idx > ${OUTDIR}/datafiles/safs/${POP}.sfs -rf ${OUTDIR}/referencelists/SCAFFOLDS.txt
 
-# calculate thetas for each site
+echo "Calculating thetas for each site"
 ${ANGSD}/misc/realSFS saf2theta ${OUTDIR}/datafiles/safs/${POP}.saf.idx -outname ${OUTDIR}/analyses/thetas/${POP} -sfs ${OUTDIR}/datafiles/safs/${POP}.sfs -rf ${OUTDIR}/referencelists/SCAFFOLDS.txt
 
-# estimate tajima's d genome wide
+echo "Estimating Tajima's D genome wide"
 ${ANGSD}/misc/thetaStat do_stat ${OUTDIR}/analyses/thetas/${POP}.thetas.idx
 
-# sliding window tajima's d
+echo "Estimating sliding window Tajima's D"
 ${ANGSD}/misc/thetaStat do_stat ${OUTDIR}/datafiles/thetas/${POP}.thetas.idx -win ${WIN} -step ${STEP}  -outnames ${OUTDIR}/analyses/thetas/${POP}.theta.thetasWindow
