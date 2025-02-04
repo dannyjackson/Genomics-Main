@@ -66,15 +66,14 @@ ${ANGSD}/misc/thetaStat do_stat ${OUTDIR}/analyses/thetas/${POP}.thetas.idx -win
 WIN_OUT="${OUTDIR}/analyses/thetas/${POP}/${WIN}/${POP}.theta.thetasWindow.pestPG"
 
 # Check if CHROM has anything assigned
-if [[ -n "$CHROM" ]]; then
-    echo "Processing CHROM variable..."
-
+if [[ -f "$CHROM" ]]; then
+    echo "Processing CHROM file: $CHROM..."
 
     # Read CHROM line by line
     while IFS=',' read -r first second; do
         echo "Replacing occurrences of '$second' with '$first' in $WIN_OUT"
         sed -i.bak "s/$second/$first/g" "$WIN_OUT"
-    done <<< "$CHROM"
+    done < "$CHROM"
 
     rm -f "${WIN_OUT}.bak"
 else

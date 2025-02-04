@@ -26,3 +26,8 @@ CHRLEAD=NC_0 # characters at the start of a chromosome number (excluding scaffol
 SEXCHR=NC_044601
 REF=/path/to/reference/genome/file.fna # path to reference genome
 GFF=/path/to/reference/genome/gff/genomic.gff # path to gff file
+
+# define the path for the chromosome conversion file (converts chromosome ascension names to numbers)
+CHROM=/xdisk/mcnew/dannyjackson/cardinals/referencelists/GCF_901933205_chromconversion.txt
+
+source /path/to/base_setup.sh

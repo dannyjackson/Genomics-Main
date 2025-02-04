@@ -136,8 +136,8 @@ if [ ! -f "$WIN_OUT" ]; then
     python "${SCRIPTDIR}/Genomics-Main/dxy/dxy_windows.py" --outdir "${OUTDIR}" --pop1 "${POP1}" --pop2 "${POP2}" --win "${WIN}" 
 
     # Check if CHROM has anything assigned
-if [[ -n "$CHROM" ]]; then
-    echo "Processing CHROM variable..."
+if [[ -f "$CHROM" ]]; then
+    echo "Processing CHROM file: $CHROM..."
     
     # Define the files to process
 
@@ -148,7 +148,7 @@ if [[ -n "$CHROM" ]]; then
     while IFS=',' read -r first second; do
         echo "Replacing occurrences of '$second' with '$first' in $FILE"
         sed -i.bak "s/$second/$first/g" "$FILE"
-    done <<< "$CHROM"
+    done < "$CHROM"
 
     rm -f "${FILE}.bak"
 else
