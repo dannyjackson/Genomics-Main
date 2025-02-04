@@ -58,12 +58,10 @@ echo "Calculating thetas for each site"
 ${ANGSD}/misc/realSFS saf2theta ${OUTDIR}/datafiles/safs/${POP}.saf.idx -outname ${OUTDIR}/analyses/thetas/${POP} -sfs ${OUTDIR}/datafiles/safs/${POP}.sfs
 
 echo "Estimating Tajima's D genome wide"
-${ANGSD}/misc/thetaStat do_stat ${OUTDIR}/analyses/thetas/${POP}.thetas.idx
+${ANGSD}/misc/thetaStat do_stat ${OUTDIR}/analyses/thetas/${POP}/snps/${POP}.thetas.idx
 
-echo "Estimating sliding window Tajima's D"
-${ANGSD}/misc/thetaStat do_stat ${OUTDIR}/analyses/thetas/${POP}.thetas.idx -win ${WIN} -step ${STEP}  -outnames ${OUTDIR}/analyses/thetas/${POP}/${WIN}/${POP}.theta.thetasWindow
 
-WIN_OUT="${OUTDIR}/analyses/thetas/${POP}/${WIN}/${POP}.theta.thetasWindow.pestPG"
+FILE="${OUTDIR}/analyses/thetas/${POP}/snps/${POP}.thetas.idx.pestPG"
 
 # Check if CHROM has anything assigned
 if [[ -f "$CHROM" ]]; then
@@ -71,14 +69,26 @@ if [[ -f "$CHROM" ]]; then
 
     # Read CHROM line by line
     while IFS=',' read -r first second; do
-        echo "Replacing occurrences of '$second' with '$first' in $WIN_OUT"
-        sed -i.bak "s/$second/$first/g" "$WIN_OUT"
+        echo "Replacing occurrences of '$second' with '$first' in $FILE"
+        sed -i.bak "s/$second/$first/g" "$FILE"
     done < "$CHROM"
 
-    rm -f "${WIN_OUT}.bak"
+    rm -f "${FILE}.bak"
 else
     echo "CHROM variable is empty or not set."
 fi
 
+echo "Estimating sliding window Tajima's D"
+${ANGSD}/misc/thetaStat do_stat ${OUTDIR}/analyses/thetas/${POP}/snps/${POP}.thetas.idx -win ${WIN} -step ${STEP}  -outnames ${OUTDIR}/analyses/thetas/${POP}/${WIN}/${POP}.theta.thetasWindow
+
+SNP_OUT="${OUTDIR}/analyses/thetas/${POP}/snps/${POP}.theta.thetasWindow.pestPG"
+
+echo "Plotting snps using file $SNP_OUT"
+Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${SNP_OUT}" "snps" "${POP}" 
+
+WIN_OUT="${OUTDIR}/analyses/thetas/${POP}/${WIN}/${POP}.theta.thetasWindow.pestPG"
+
+echo "Plotting windows using file $WIN_OUT"
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP}" 
 
+echo "Finished!"
