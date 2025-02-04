@@ -135,6 +135,25 @@ if [ ! -f "$WIN_OUT" ]; then
     echo 'computing windows'
     python "${SCRIPTDIR}/Genomics-Main/dxy/dxy_windows.py" --outdir "${OUTDIR}" --pop1 "${POP1}" --pop2 "${POP2}" --win "${WIN}" 
 
+    # Check if CHROM has anything assigned
+if [[ -n "$CHROM" ]]; then
+    echo "Processing CHROM variable..."
+    
+    # Define the files to process
+
+    FILE="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${WIN}/${POP1}_${POP2}_average_dxy_${WIN}bp_windows.txt"
+
+
+    # Read CHROM line by line
+    while IFS=',' read -r first second; do
+        echo "Replacing occurrences of '$second' with '$first' in $FILE"
+        sed -i.bak "s/$second/$first/g" "$FILE"
+    done <<< "$CHROM"
+
+    rm -f "${FILE}.bak"
+else
+    echo "CHROM variable is empty or not set."
+fi
     echo 'visualizing windows'
     Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}"
     echo 'finished windowed plot' &
