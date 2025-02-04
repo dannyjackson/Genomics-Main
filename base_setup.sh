@@ -16,7 +16,7 @@ if [ -f "${SCRIPTDIR}/SCAFFOLDS.txt"]
         then
             echo "SCAFFOLDS.txt already exists, moving on!"
         else
-        awk '{print $1}' "${GENOME}.fai" > "${OUTDIR}/referencelists/SCAFFOLDS.all.txt"
+        awk '{print $1}' "${REF}.fai" > "${OUTDIR}/referencelists/SCAFFOLDS.all.txt"
         grep "$CHRLEAD" "${OUTDIR}/referencelists/SCAFFOLDS.all.txt" > "${OUTDIR}/referencelists/SCAFFOLDS.chroms.txt"
         grep -v "$SEXCHR" "${OUTDIR}/referencelists/SCAFFOLDS.chroms.txt" > "${OUTDIR}/referencelists/SCAFFOLDS.txt"
 fi
