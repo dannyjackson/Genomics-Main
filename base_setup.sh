@@ -12,7 +12,7 @@ mkdir -p ${OUTDIR}/referencelists/
 # make reference files
 
 # Generate scaffold list
-if [ -f "${OUTDIR}/referencelists/SCAFFOLDS.txt"];
+if [ -f "${OUTDIR}/referencelists/SCAFFOLDS.txt" ];
         then
             echo "SCAFFOLDS.txt already exists, moving on!"
         else
@@ -31,7 +31,7 @@ done <<< "$CHROM"
 
 # Make a comma separated chromosome conversion file without a header where the first column is the name of the chromosome and the second is the name of the associated scaffold in the reference genome:
 
-if [ -f "${OUTDIR}/referencelists/GCF_901933205_chromconversion.txt"]
+if [ -f "${OUTDIR}/referencelists/GCF_901933205_chromconversion.txt" ]
         then
             echo "Chromosome conversion table already complete, moving on!"
         else
