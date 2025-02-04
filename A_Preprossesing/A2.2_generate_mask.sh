@@ -19,7 +19,7 @@ if [ $# -lt 1 ]; then
 fi
 
 # Parse command-line arguments
-while getopts "p:" option; do
+while getopts "p:" optåion; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         *) usage ;;
@@ -46,33 +46,6 @@ if [ -z "$PROGDIR" ] || [ -z "$PROJHUB" ] || [ -z "$OUTDIR" ]; then
     exit 1
 fi
 
-# Define path for Snpable scripts
-SNPABLE_SCRIPT_PATH="${PROGDIR}/seqbility-20091110"
-
-# Check if the Snpable directory exists
-if [ ! -d "$SNPABLE_SCRIPT_PATH" ]; then
-    echo "Error: Snpable script directory not found at ${SNPABLE_SCRIPT_PATH}." >&2
-    exit 1
-fi
-
-# Add Snpable scripts to PATH
-export PATH="$PATH:$SNPABLE_SCRIPT_PATH"
-
-echo "Starting MSMC pipeline..."
-date
-
-# Clone required repositories if not already present
-cd "${PROGDIR}" || { echo "Error: Could not change directory to ${PROGDIR}."; exit 1; }
-
-if [ ! -d msmc2 ]; then
-    git clone https://github.com/stschiff/msmc2 || { echo "Error: Failed to clone msmc2."; exit 1; }
-fi
-
-if [ ! -d msmc-tools ]; then
-    git clone https://github.com/stschiff/msmc-tools || { echo "Error: Failed to clone msmc-tools."; exit 1; }
-fi
-
-echo "Environment setup completed."
 
 # Step 0: Create mappability mask
 cd "${OUTDIR}" || { echo "Error: Could not change directory to ${OUTDIR}."; exit 1; }
@@ -85,7 +58,7 @@ else
     exit 1
 fi
 
-mkdir -p "${OUTDIR}/snpable"
+
 cd "${OUTDIR}/snpable" || { echo "Error: Could not change directory to ${OUTDIR}/snpable."; exit 1; }
 
 echo "Extracting overlapping ${k}-mer subsequences..."

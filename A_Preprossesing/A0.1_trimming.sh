@@ -40,9 +40,7 @@ if [ -z "$OUTDIR" ] || [ -z "$THREADS" ] || [ -z "$REF" ] || [ -z "$FASTAS" ]; t
     exit 1
 fi
 
-
-# Create necessary directories
-mkdir -p "${OUTDIR}/datafiles/condensed_fastas" "${OUTDIR}/datafiles/trimming"
+# Index reference genome
 bwa index ${REF}
 
 # create list of samples, assumes fastas are all formated with sample names as first term in an underscore separated string

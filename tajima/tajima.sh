@@ -61,4 +61,4 @@ echo "Estimating Tajima's D genome wide"
 ${ANGSD}/misc/thetaStat do_stat ${OUTDIR}/analyses/thetas/${POP}.thetas.idx
 
 echo "Estimating sliding window Tajima's D"
-${ANGSD}/misc/thetaStat do_stat ${OUTDIR}/analyses/thetas/${POP}.thetas.idx -win ${WIN} -step ${STEP}  -outnames ${OUTDIR}/analyses/thetas/${WIN}/${POP}.theta.thetasWindow
+${ANGSD}/misc/thetaStat do_stat ${OUTDIR}/analyses/thetas/${POP}.thetas.idx -win ${WIN} -step ${STEP}  -outnames ${OUTDIR}/analyses/thetas/${POP}/${WIN}/${POP}.theta.thetasWindow

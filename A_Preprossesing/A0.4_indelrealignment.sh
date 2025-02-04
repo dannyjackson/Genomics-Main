@@ -43,10 +43,6 @@ if [ -z "$OUTDIR" ] || [ -z "$THREADS" ] || [ -z "$REF" ] || [ -z "$FASTAS" ] ||
 fi
 
 
-# Create necessary directories
-mkdir -p "${OUTDIR}/datafiles/indelmaps"
-
-
 
 # Index bams
 samtools index ${OUTDIR}/datafiles/clipoverlap/$IND.all.sorted.marked.clipped.bam 

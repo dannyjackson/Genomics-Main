@@ -41,9 +41,6 @@ if [ -z "$OUTDIR" ] || [ -z "$THREADS" ] || [ -z "$REF" ] || [ -z "$FASTAS" ] ||
 fi
 
 
-# Create necessary directories
-mkdir -p "${OUTDIR}/datafiles/clipoverlap"
-
 # Clip overlapping read pairs using bamutils
 echo "clipping" "${IND}" >> ${OUTDIR}/datafiles/clipoverlap/clippingstats.txt 
 

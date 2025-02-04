@@ -61,8 +61,6 @@ for var in "${REQUIRED_VARS[@]}"; do
 echo -e "\n$(date)"
 echo "Current script: A7_likelihoods.sh"
 
-# Create necessary directories
-mkdir -p "${OUTDIR}/datafiles/geno_likelihoods"
 
 # Generate genotype likelihoods
 "${ANGSD}/angsd" -b "${OUTDIR}/referencelists/${PROJNAME}.bamlist.txt" \

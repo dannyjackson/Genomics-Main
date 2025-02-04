@@ -41,9 +41,6 @@ if [ -z "$OUTDIR" ] || [ -z "$THREADS" ] || [ -z "$REF" ] || [ -z "$FASTAS" ]; t
 fi
 
 
-# Create necessary directories
-mkdir -p "${OUTDIR}/datafiles/trimmed_fastas" "${OUTDIR}/datafiles/bamfiles/${IND}" "${OUTDIR}/datafiles/sortedbamfiles/${IND}"
-
 # Align reads using BWA MEM
 bwa mem -t "${THREADS}" "${REF}" \
     "${FASTAS}/${IND}_trimmed_1P.fq.gz" \

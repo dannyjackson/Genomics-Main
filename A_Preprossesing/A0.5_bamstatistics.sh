@@ -41,9 +41,6 @@ if [ -z "$OUTDIR" ] ; then
 fi
 
 
-# Create necessary directories
-mkdir -p "${OUTDIR}/datafiles/bamstats"
-
 ## Create a list of sample ids for this run assumes bams are all formated with sample names as first term in an underscore separated string
 ls ${BAMDIR} | awk -F "_" '{print $1}' | sort -u > "${OUTDIR}/referencelists/${RUNNAME}.sampleids.txt"
 

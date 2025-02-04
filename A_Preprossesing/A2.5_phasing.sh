@@ -13,8 +13,6 @@ if [ ! -f "${SCRIPTDIR}/params.sh" ]; then
 fi
 source "${SCRIPTDIR}/params.sh"
 
-# Install required dependencies
-pip3 install --user whatshap
 
 # Process each individual sample
 while read -r IND; do
