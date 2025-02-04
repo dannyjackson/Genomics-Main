@@ -81,7 +81,7 @@ fi
 echo "Estimating sliding window Tajima's D"
 ${ANGSD}/misc/thetaStat do_stat ${OUTDIR}/analyses/thetas/${POP}/snps/${POP}.thetas.idx -win ${WIN} -step ${STEP}  -outnames ${OUTDIR}/analyses/thetas/${POP}/${WIN}/${POP}.theta.thetasWindow
 
-SNP_OUT="${OUTDIR}/analyses/thetas/${POP}/snps/${POP}.thetas.pestPG"
+SNP_OUT="${OUTDIR}/analyses/thetas/${POP}/snps/${POP}.thetas.idx.pestPG"
 
 echo "Plotting snps using file $SNP_OUT"
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${SNP_OUT}" "snps" "${POP}" 
