@@ -12,7 +12,7 @@ mkdir -p ${OUTDIR}/referencelists/
 # make reference files
 
 # Generate scaffold list
-if [ -f "${OUTDIR}/referencelists//SCAFFOLDS.txt"]
+if [ -f "${OUTDIR}/referencelists/SCAFFOLDS.txt"];
         then
             echo "SCAFFOLDS.txt already exists, moving on!"
         else
@@ -23,7 +23,7 @@ fi
 
 
 # Make a file with chromosome name and length of chromosome
-awk 'BEGIN {OFS = "\t"} {print $1,$2}' ${REF}.fai | grep ${CHRLEAD} ${OUTDIR}/referencelists/allscaffs_lengths.txt | grep -v ${SEXCHR} ${OUTDIR}/referencelists/allchroms_lengths.txt > ${OUTDIR}/referencelists/autosomes_lengths.txt
+awk 'BEGIN {OFS = "\t"} {print $1,$2}' ${REF}.fai | grep ${CHRLEAD} | grep -v ${SEXCHR} > ${OUTDIR}/referencelists/autosomes_lengths.txt
 
 while IFS=',' read -r first second; do
     sed -i "s/$second/$first/g" ${OUTDIR}/referencelists/autosomes_lengths.txt 
