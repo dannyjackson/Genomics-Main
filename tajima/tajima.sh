@@ -36,7 +36,6 @@ while getopts "p:w:s:c:" option; do
         p) PARAMS=${OPTARG} ;;
         w) WIN=${OPTARG} ;;
         s) STEP=${OPTARG} ;;
-        c) CHR_FILE=${OPTARG} ;;
         *) echo "Error: Invalid option '-${OPTARG}'" >&2; exit 1 ;;
     esac
 done
