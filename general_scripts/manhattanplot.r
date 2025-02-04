@@ -16,13 +16,16 @@ cat("Parsing command-line arguments...\n")
 # Parse command-line arguments
 args <- commandArgs(trailingOnly = TRUE)
 outdir <- args[1]
-pop1 <- args[2]
-pop2 <- args[3]
-color1 <- args[4]
-color2 <- args[5]
-cutoff <- as.numeric(args[6])  # Convert to numeric
-input <- args[7]
-win <- args[8]
+color1 <- args[2]
+color2 <- args[3]
+cutoff <- as.numeric(args[4])  # Convert to numeric
+input <- args[5]
+win <- args[6]
+pop1 <- args[7]
+pop2 <- ifelse(length(args) > 7 && args[8] != "", args[8], NA)
+
+# Determine naming convention
+pop_name <- ifelse(is.na(pop2), pop1, paste0(pop1, "_", pop2))
 
 # Detect file type based on header
 cat("Detecting input data type...\n")
@@ -72,12 +75,12 @@ metric_cutoff <- min(outlier_data[[metric]])
 
 # Save cutoff value
 cat("Saving cutoff value...\n")
-cutoff_file <- file.path(outdir, "analyses", metric, paste0(pop1, "_", pop2, "_", metric, "_", win, "_stats.txt"))
+cutoff_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "_", metric, "_", win, "_stats.txt"))
 cat(metric, "cutoff:", metric_cutoff, "\n", file = cutoff_file, append = TRUE)
 
 # Save outliers
 cat("Saving outliers data...\n")
-outlier_file <- file.path(outdir, "analyses", metric, paste0(pop1, "_", pop2, "/", pop1, "_", pop2, ".", metric, "_", win, ".snps.outlier.csv"))
+outlier_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "/", pop_name, ".", metric, "_", win, ".snps.outlier.csv"))
 write.csv(outlier_data, outlier_file, row.names = FALSE)
 
 # Prepare data for plotting
@@ -116,7 +119,7 @@ ggplot(plot_data, aes(x = BPcum, y = !!sym(metric))) +
     panel.grid.minor.x = element_blank()
   )
 
-ggsave(filename = file.path(outdir, "analyses", metric, paste0(pop1, "_", pop2, "/", win, "/", pop1, "_", pop2, ".", metric, ".", win, ".sigline.png")), 
+ggsave(filename = file.path(outdir, "analyses", metric, paste0(pop_name, "/", win, "/", pop_name, ".", metric, ".", win, ".sigline.png")), 
        width = 20, height = 5, units = "in")
 
 cat("Script completed successfully!\n")

@@ -155,14 +155,14 @@ else
     echo "CHROM variable is empty or not set."
 fi
     echo 'visualizing windows'
-    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}"
+    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP1}" "${POP2}"
     echo 'finished windowed plot' &
 fi
 
 # Run the SNP visualization separately if output file doesn't exist
 if [ ! -f "$SNP_OUT" ]; then
     echo 'visualizing snps'
-    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${SNP_IN}" "snps"
+    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${SNP_IN}" "snps" "${POP1}" "${POP2}"
     echo 'finished snp plot' &
 fi
 
