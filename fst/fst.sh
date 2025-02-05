@@ -80,22 +80,16 @@ else
     ${ANGSD}/misc/realSFS fst stats "$FST_INDEX" >> "$GLOBAL_FST_FILE"
 fi
 
-# Create directory for sliding window analysis
-mkdir -p "${OUTDIR}/analyses/fst/${WIN}"
+
 
 # Compute sliding window FST
-SLIDING_FILE="${OUTDIR}/analyses/fst/${WIN}/slidingwindow.${POP1}_${POP2}"
+SLIDING_FILE="${OUTDIR}/analyses/fst/${POP1}_${POP2}/${WIN}/${POP1}_${POP2}.${WIN}.fst"
 if [ -f "$SLIDING_FILE" ]; then
     echo "Sliding window FST output already exists, skipping computation."
 else
     echo "Computing sliding window FST..."
     ${ANGSD}/misc/realSFS fst stats2 "$FST_INDEX" -win "$WIN" -step "$STEP" > "$SLIDING_FILE"
 fi
-
-# Generate filtered chromosome-specific output
-CHROM_FILE="${SLIDING_FILE}.chroms.txt"
-echo -e 'region\tchr\tmidPos\tNsites\tfst' > "$CHROM_FILE"
-grep "${CHRLEAD}" "$SLIDING_FILE" | grep -v "${SEXCHR}" >> "$CHROM_FILE"
 
 # Replace chromosome names if conversion file is provided
 if [ -n "$CHROM" ]; then
@@ -106,14 +100,11 @@ if [ -n "$CHROM" ]; then
     done <<< "$CHROM"
 fi
 
-# Run R script for visualization
-Rscript "${SCRIPTDIR}/Genomics-Main/fst_window.r" "${OUTDIR}" "${WIN}" "${POP1}" "${POP2}" "${COLOR1}" "${COLOR2}" "${CUTOFF}"
-
 # Generate Manhattan plot if SNP file is missing
-if [ ! -f "$SNP_OUT" ]; then
+if [ ! -f "$SLIDING_FILE" ]; then
     echo "Generating Manhattan plot..."
     Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" \
-        "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${SNP_IN}" "snps" "${POP1}" "${POP2}"
+        "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${SLIDING_FILE}" "${WIN}" "${POP1}" "${POP2}"
     echo "Manhattan plot generation complete."
 fi
 
