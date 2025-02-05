@@ -100,6 +100,9 @@ if [ -n "$CHROM" ]; then
     done <<< "$CHROM"
 fi
 
+# replace header (for whatever reason, it lacks a label for the fst column)
+sed -i '1s/^region\tchr\tmidPos\tNsites$/region\tchr\tmidPos\tNsites\tfst/' "$SLIDING_FILE"
+
 # Generate Manhattan plot 
 
 echo "Generating Manhattan plot..."
