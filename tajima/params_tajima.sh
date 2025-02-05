@@ -9,7 +9,7 @@ CUTOFF=threshold_for_top_genes_or_snps_eg_0.01
 COLOR1=#XXXXXX
 COLOR2=#XXXXXX
 
-# define the names of the two populations that will be compared
+# define the name of the population that will be analyzed
 POP=populationname
 
 source ${SCRIPTDIR}/Genomics-Main/tajima/setup_tajima.sh
