@@ -36,3 +36,8 @@ MINQ=<SET_VALUE> # minimum quality score required for a site to be kept
 MINMAF=<SET_VALUE> # minimum minor allele frequency required for a site to be kept
 MINMAPQ=<SET_VALUE> # minimum mapping quality score required for a site to be kept
 POP=<SET_VALUE> # name of population
+
+
+# generate mask
+k=<SET_VALUE>
+prefix=<SET_VALUE>
