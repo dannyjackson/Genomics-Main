@@ -9,7 +9,7 @@ usage() {
     echo "This script generates a mask for a reference genome to determine SNPable regions."
     echo
     echo "Required Arguments:"
-    echo "  -p  Path to the parameter file (e.g., params_msmc.sh from the GitHub repository)"
+    echo "  -p  Path to the parameter file (e.g., params.sh from the GitHub repository)"
     exit 1
 }
 
@@ -49,15 +49,6 @@ fi
 
 # Step 0: Create mappability mask
 cd "${OUTDIR}" || { echo "Error: Could not change directory to ${OUTDIR}."; exit 1; }
-
-# Source additional MSMC parameters
-if [ -f "${SCRIPTDIR}/msmc_params.sh" ]; then
-    source "${SCRIPTDIR}/msmc_params.sh"
-else
-    echo "Error: MSMC parameter file '${SCRIPTDIR}/msmc_params.sh' not found." >&2
-    exit 1
-fi
-
 
 cd "${OUTDIR}/snpable" || { echo "Error: Could not change directory to ${OUTDIR}/snpable."; exit 1; }
 
