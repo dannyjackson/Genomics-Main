@@ -31,6 +31,7 @@ pop_name <- ifelse(is.na(pop2), pop1, paste0(pop1, "_", pop2))
 cat("Detecting input data type...\n")
 data <- read.delim(input, sep = '\t') %>% na.omit()
 
+cat("read in input data...\n")
 
 if ("dxy" %in% names(data)) {
   metric <- "dxy"
@@ -44,6 +45,7 @@ if ("dxy" %in% names(data)) {
 
 # standardize use of chromosome and pos in file
 
+cat("renaming names...\n")
 
 # Define patterns and replacements
 new_names <- names(data) %>%
