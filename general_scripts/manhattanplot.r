@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 # Load required packages, installing if necessary
-required_packages <- c("qqman", "hexbin", "readr", "ggrepel", "ggplot2", "dplyr", "RColorBrewer")
+required_packages <- c("qqman", "hexbin", "readr", "ggrepel", "ggplot2", "dplyr", "RColorBrewer", "data.table")
 installed_packages <- rownames(installed.packages())
 
 cat("Checking required packages...\n")
@@ -29,7 +29,8 @@ pop_name <- ifelse(is.na(pop2), pop1, paste0(pop1, "_", pop2))
 
 # Detect file type based on header
 cat("Detecting input data type...\n")
-data <- read.delim(input, sep = '\t') %>% na.omit()
+
+data <- fread(input, sep = "\t", na.strings = c("", "NA"))
 
 cat("read in input data...\n")
 
