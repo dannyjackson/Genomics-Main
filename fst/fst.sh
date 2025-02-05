@@ -100,12 +100,10 @@ if [ -n "$CHROM" ]; then
     done <<< "$CHROM"
 fi
 
-# Generate Manhattan plot if SNP file is missing
-if [ ! -f "$SLIDING_FILE" ]; then
-    echo "Generating Manhattan plot..."
-    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" \
-        "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${SLIDING_FILE}" "${WIN}" "${POP1}" "${POP2}"
-    echo "Manhattan plot generation complete."
-fi
+# Generate Manhattan plot 
 
-echo "FST analysis completed successfully."
+echo "Generating Manhattan plot..."
+Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" \
+    "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${SLIDING_FILE}" "${WIN}" "${POP1}" "${POP2}"
+echo "Manhattan plot generation complete."
+
