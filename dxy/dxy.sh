@@ -99,19 +99,19 @@ grep ${CHRLEAD} "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}
 
 
 # Check if CHROM has anything assigned
-if [[ -n "$CHROM" ]]; then
-    echo "Processing CHROM variable..."
+if [[ -f "$CHROM" ]]; then
+    echo "Processing CHROM file: $CHROM..."
     
     # Define the files to process
 
-    FILE="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
+    FILE="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${WIN}/${POP1}_${POP2}_average_dxy_${WIN}bp_windows.txt"
 
 
     # Read CHROM line by line
     while IFS=',' read -r first second; do
         echo "Replacing occurrences of '$second' with '$first' in $FILE"
         sed -i.bak "s/$second/$first/g" "$FILE"
-    done <<< "$CHROM"
+    done < "$CHROM"
 
     rm -f "${FILE}.bak"
 else
@@ -136,7 +136,7 @@ if [ ! -f "$WIN_OUT" ]; then
     python "${SCRIPTDIR}/Genomics-Main/dxy/dxy_windows.py" --outdir "${OUTDIR}" --pop1 "${POP1}" --pop2 "${POP2}" --win "${WIN}" 
 
     # Check if CHROM has anything assigned
-if [[ -n "$CHROM" ]]; then
+if [[ -f "$CHROM" ]]; then
     echo "Processing CHROM file: $CHROM..."
     
     # Define the files to process
