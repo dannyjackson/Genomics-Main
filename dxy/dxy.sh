@@ -31,7 +31,6 @@ while getopts "p:w:s:c:" option; do
         p) PARAMS=${OPTARG} ;;
         w) WIN=${OPTARG} ;;
         s) STEP=${OPTARG} ;;
-        c) CHR_FILE=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1 ;;
     esac
 done
@@ -53,7 +52,6 @@ if [ ! -f "${CHR_FILE}" ]; then
     exit 1
 fi
 
-CHROM=`cat $CHR_FILE`
 
 printf "\n \n \n \n"
 date
@@ -99,8 +97,8 @@ grep ${CHRLEAD} "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}
 
 
 # Check if CHROM has anything assigned
-if [[ -f "$CHROM" ]]; then
-    echo "Processing CHROM file: $CHROM..."
+if [[ -f "$CHR_FILE" ]]; then
+    echo "Processing CHROM file: $CHR_FILE..."
     
     # Define the files to process
 
@@ -111,7 +109,7 @@ if [[ -f "$CHROM" ]]; then
     while IFS=',' read -r first second; do
         echo "Replacing occurrences of '$second' with '$first' in $FILE"
         sed -i.bak "s/$second/$first/g" "$FILE"
-    done < "$CHROM"
+    done < "$CHR_FILE"
 
     rm -f "${FILE}.bak"
 else
@@ -136,8 +134,8 @@ if [ ! -f "$WIN_OUT" ]; then
     python "${SCRIPTDIR}/Genomics-Main/dxy/dxy_windows.py" --outdir "${OUTDIR}" --pop1 "${POP1}" --pop2 "${POP2}" --win "${WIN}" 
 
     # Check if CHROM has anything assigned
-if [[ -f "$CHROM" ]]; then
-    echo "Processing CHROM file: $CHROM..."
+if [[ -f "$CHR_FILE" ]]; then
+    echo "Processing CHROM file: $CHR_FILE..."
     
     # Define the files to process
 
@@ -148,7 +146,7 @@ if [[ -f "$CHROM" ]]; then
     while IFS=',' read -r first second; do
         echo "Replacing occurrences of '$second' with '$first' in $FILE"
         sed -i.bak "s/$second/$first/g" "$FILE"
-    done < "$CHROM"
+    done < "$CHR_FILE"
 
     rm -f "${FILE}.bak"
 else
