@@ -85,19 +85,17 @@ while read -r s; do
     fi
 
     # Generate VCF and mask file if using samtools
-    if [[ "${METHOD}" == "samtools" ]]; then
-        echo "Running samtools for scaffold ${s}..."
-        bcftools mpileup -Ou -r "${s}" --threads "${THREADS}" -f "${REF}" "${BAMFILE}" | \
-        bcftools call -mv -V indels --threads "${THREADS}" | \
-        "${SCRIPTDIR}/msmc_tools/bamCaller.py" "${MEANCOV}" "${MASK_IND}" > "${VCF}"
-    fi
+
+    echo "Running samtools for scaffold ${s}..."
+    bcftools mpileup -Ou -r "${s}" --threads "${THREADS}" -f "${REF}" "${BAMFILE}" | \
+    bcftools call -mv -V indels --threads "${THREADS}" | \
+    "${SCRIPTDIR}/msmc_tools/bamCaller.py" "${MEANCOV}" "${MASK_IND}" > "${VCF}"
 
     echo "Completed scaffold ${s}."
 
-# Uncomment below to run processing in parallel (if the system supports it)
-# done < "${SCAFFOLD_FILE}" &
+# Delete the ampersand to cease parallel runs
+done < "${SCAFFOLD_FILE}" &
 
-done < "${SCAFFOLD_FILE}"
 
 # Final report
 echo "Filtered VCF and mask created for all scaffolds for ${IND}."
