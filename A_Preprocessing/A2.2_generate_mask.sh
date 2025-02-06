@@ -48,9 +48,8 @@ fi
 
 
 # Step 0: Create mappability mask
-cd "${OUTDIR}" || { echo "Error: Could not change directory to ${OUTDIR}."; exit 1; }
 
-cd "${OUTDIR}/snpable" || { echo "Error: Could not change directory to ${OUTDIR}/snpable."; exit 1; }
+cd "${OUTDIR}/datafiles/snpable" || { echo "Error: Could not change directory to ${OUTDIR}/datafiles/snpable."; exit 1; }
 
 echo "Extracting overlapping ${k}-mer subsequences..."
 splitfa "${REF}" "${k}" | split -l 20000000

@@ -13,7 +13,7 @@ mkdir -p "${OUTDIR}/datafiles/bamstats"
 # Create necessary directories
 mkdir -p "${OUTDIR}/datafiles/geno_likelihoods"
 mkdir -p "${OUTDIR}/datafiles/genotype_calls/"
-mkdir -p "${OUTDIR}/snpable"
+mkdir -p "${OUTDIR}/datafiles/snpable"
 
 # A2 
 # Define path for Snpable scripts
