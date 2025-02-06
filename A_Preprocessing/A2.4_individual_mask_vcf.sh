@@ -44,7 +44,6 @@ BAMFILE="${BAMDIR}/${IND}.realigned.bam"
 # Print script info
 echo -e "\n\n"
 date
-echo "Current script: msmc_1_call.sh"
 echo "Individual: ${IND}"
 echo "BAM file: ${BAMFILE}"
 
@@ -63,6 +62,7 @@ if [[ ! -f "${SCAFFOLD_FILE}" ]]; then
     exit 1
 fi
 
+echo "processing scaffolds" 
 # Process each scaffold
 while read -r s; do
     echo "Processing scaffold: ${s}"
@@ -93,8 +93,8 @@ while read -r s; do
 
     echo "Completed scaffold ${s}."
 
-# Delete the ampersand to cease parallel runs
-done < "${SCAFFOLD_FILE}" &
+
+done < "${SCAFFOLD_FILE}" 
 
 
 # Final report
