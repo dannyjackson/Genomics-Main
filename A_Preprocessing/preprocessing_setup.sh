@@ -14,6 +14,8 @@ mkdir -p "${OUTDIR}/datafiles/bamstats"
 mkdir -p "${OUTDIR}/datafiles/geno_likelihoods"
 mkdir -p "${OUTDIR}/datafiles/genotype_calls/"
 mkdir -p "${OUTDIR}/datafiles/snpable"
+mkdir -p "${OUTDIR}/datafiles/vcf"
+mkdir -p "${OUTDIR}/datafiles/mask"
 
 # A2 
 # Define path for Snpable scripts

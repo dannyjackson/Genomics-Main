@@ -71,12 +71,12 @@ while read -r s; do
     MEANCOV=$(samtools depth -r "${s}" "${BAMFILE}" | 
               awk '{sum += $3} END {if (NR==0) print 0; else print sum / NR}' | tr ',' '.')
 
-    echo "${IND}.${s} ${MEANCOV}" >> "${OUTDIR}/coverage_samtoolsDepth_${IND}.txt"
+    echo "${IND}.${s} ${MEANCOV}" >> "${OUTDIR}/datafiles/bamstats/coverage_samtoolsDepth_${IND}.txt"
     echo "Mean coverage for scaffold ${s}: ${MEANCOV}"
 
     # Define output file paths
-    MASK_IND="${OUTDIR}/mask/ind_mask.${IND}.${s}.${METHOD}.bed.gz"
-    VCF="${OUTDIR}/vcf/${IND}.${s}.${METHOD}.vcf"
+    MASK_IND="${OUTDIR}/datafiles/mask/ind_mask.${IND}.${s}.${METHOD}.bed.gz"
+    VCF="${OUTDIR}/datafiles/vcf/${IND}.${s}.${METHOD}.vcf"
 
     # Ensure reference genome is indexed
     if [[ ! -f "${REF}.fai" ]]; then
