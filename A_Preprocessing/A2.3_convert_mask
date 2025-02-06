@@ -34,21 +34,19 @@ snpable_script_path="${PROGDIR}/seqbility-20091110" # Directory with snpable scr
 
 # Check for required arguments
 if [ $# -lt 3 ]; then
-    echo "Usage: $0 -p <parameter_file> -g <reference_genome> -s <sample_codes_file>"
+    echo "Usage: $0 -p <parameter_file> "
     exit 1
 fi
 
-while getopts ":p:g:s:" option; do
+while getopts ":p:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
-        g) GENOME=${OPTARG} ;;
-        s) SAMPLES=${OPTARG} ;;
         *) echo "Invalid option: -$OPTARG" >&2; exit 1 ;;
     esac
 done
 
 # Ensure required arguments are provided
-if [ -z "${PARAMS}" ] || [ -z "${GENOME}" ] || [ -z "${SAMPLES}" ]; then
+if [ -z "${PARAMS}" ] " ]; then
     echo "Error: Missing required arguments." >&2
     exit 1
 fi
@@ -56,12 +54,13 @@ fi
 # Load parameters from external file
 source "${PARAMS}"
 
-echo "Starting MSMC pipeline..."
+echo "Converting mask format"
 date
 
 # Convert mask format
-sed 's/>>/>/g' "${GENOME}_mask.150.50.fa" > "${GENOME}_revised_mask.150.50.fa"
+sed 's/>>/>/g' "${REF}_mask.150.50.fa" > "${REF}_revised_mask.150.50.fa"
 
+echo "Creating mappability mask"
 # Create mappability mask
 python2 "${PROGDIR}/msmc-tools/makeMappabilityMask.py"
 
