@@ -26,7 +26,7 @@ while getopts "p:" option; do
 done
 
 # Ensure script directory and output directory are defined
-if [ -z "$SCRIPTDIR" ]; then
+if [ -z "${SCRIPTDIR}" ]; then
     echo "Error: SCRIPTDIR is not defined. Please set this variable."
     exit 1
 fi

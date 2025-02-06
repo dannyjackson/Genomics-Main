@@ -39,7 +39,7 @@ fi
 source "${PARAMS}"
 
 # Define BAM file
-BAMFILE="${BAMDIR}/${IND}.final.bam"
+BAMFILE="${BAMDIR}/${IND}.realigned.bam"
 
 # Print script info
 echo -e "\n\n"
