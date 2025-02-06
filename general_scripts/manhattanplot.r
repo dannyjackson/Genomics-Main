@@ -30,7 +30,7 @@ pop_name <- ifelse(is.na(pop2), pop1, paste0(pop1, "_", pop2))
 # Detect file type based on header
 cat("Detecting input data type...\n")
 
-data <- fread(input, sep = "\t", na.strings = c("", "NA"))
+data <- fread(input, sep = "\t", na.strings = c("", "NA"), data.table = TRUE)
 
 cat("read in input data...\n")
 
@@ -58,23 +58,32 @@ new_names <- names(data) %>%
 names(data) <- new_names
 
 
-
+# option 1
 # Z-transform metric values
-cat("Calculating Z-transform and identifying top outliers...\n")
+
+# Compute mean and SD 
+cat("Computing mean and SD...\n")
 metric_xbar <- mean(data[[metric]], na.rm = TRUE)
 metric_sd <- sd(data[[metric]], na.rm = TRUE)
-data$z <- (data[[metric]] - metric_xbar) / metric_sd
-data$neg_log_pvalues_one_tailed <- -log10(pnorm(data$z, lower.tail = FALSE))
+
+cat("Calculating Z-transform and identifying top outliers...\n")
+
+# Compute z-scores only when needed (avoiding extra column storage)
+data[, neg_log_pvalues_one_tailed := -log10(pnorm((get(metric) - metric_xbar) / metric_sd, lower.tail = FALSE))]
 
 # Identify top outliers
 ntotal <- nrow(data)
 top_snps <- round(ntotal * cutoff)
-outlier_data <- data %>% 
-  arrange(desc(neg_log_pvalues_one_tailed)) %>% 
-  head(top_snps) %>% 
-  arrange(chromo, position)
 
-metric_cutoff <- min(outlier_data[[metric]])
+outlier_data <- data[order(-neg_log_pvalues_one_tailed)][1:top_snps][order(chromo, position)]
+
+metric_cutoff <- min(outlier_data[[metric]], na.rm = TRUE)
+
+
+
+
+
+
 
 # Save cutoff value
 cat("Saving cutoff value...\n")
