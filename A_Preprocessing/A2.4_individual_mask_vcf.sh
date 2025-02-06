@@ -89,7 +89,7 @@ while read -r s; do
     echo "Running samtools for scaffold ${s}..."
     bcftools mpileup -Ou -r "${s}" --threads "${THREADS}" -f "${REF}" "${BAMFILE}" | \
     bcftools call -mv -V indels --threads "${THREADS}" | \
-    "${SCRIPTDIR}/msmc_tools/bamCaller.py" "${MEANCOV}" "${MASK_IND}" > "${VCF}"
+    "${PROGDIR}/msmc_tools/bamCaller.py" "${MEANCOV}" "${MASK_IND}" > "${VCF}"
 
     echo "Completed scaffold ${s}."
 
