@@ -25,6 +25,8 @@ while getopts "p:" option; do
     esac
 done
 
+source ${PARAMS}
+
 # Ensure script directory and output directory are defined
 if [ -z "${SCRIPTDIR}" ]; then
     echo "Error: SCRIPTDIR is not defined. Please set this variable."
