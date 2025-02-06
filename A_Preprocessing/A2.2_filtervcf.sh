@@ -1,5 +1,30 @@
 #!/bin/bash
 
+# This script filters a vcf s.
+
+# Function to display usage
+usage() {
+    echo "Usage: $0 -p <path_to_parameter_file>"
+    echo "This script generates a mask for a reference genome to determine SNPable regions."
+    echo
+    echo "Required Arguments:"
+    echo "  -p  Path to the parameter file (e.g., params.sh from the GitHub repository)"
+    exit 1
+}
+
+# Check if at least one argument is provided
+if [ $# -lt 1 ]; then
+    usage
+fi
+
+# Parse command-line arguments
+while getopts "p:" option; do
+    case "${option}" in
+        p) PARAMS=${OPTARG} ;;
+        *) usage ;;
+    esac
+done
+
 # Ensure script directory and output directory are defined
 if [ -z "$SCRIPTDIR" ]; then
     echo "Error: SCRIPTDIR is not defined. Please set this variable."
