@@ -71,11 +71,20 @@ cat("Calculating Z-transform and identifying top outliers...\n")
 # Compute z-scores only when needed (avoiding extra column storage)
 chunk_size <- 1e6  # Adjust based on available memory
 num_rows <- nrow(data)
+num_chunks <- ceiling(num_rows / chunk_size)
 
-for (start in seq(1, num_rows, by = chunk_size)) {
-  end <- min(start + chunk_size - 1, num_rows)
+for (i in seq_len(num_chunks)) {
+  start <- (i - 1) * chunk_size + 1
+  end <- min(i * chunk_size, num_rows)
+  
   data[start:end, neg_log_pvalues_one_tailed := 
     -log10(pnorm((get(metric) - metric_xbar) / metric_sd, lower.tail = FALSE))]
+  
+  # Print an update every 100 chunks
+  if (i %% 100 == 0 || i == num_chunks) {
+    cat(sprintf("Processed %d/%d chunks (%.2f%% complete)\n", i, num_chunks, (i / num_chunks) * 100))
+    flush.console()  # Ensure the output is printed immediately
+  }
 }
 
 # Identify top outliers
