@@ -1,67 +1,82 @@
 #!/bin/bash
 
-# MSMC Pipeline Script
-if [ $# -lt 1 ]
-  then
-    echo " This script generates a mask for a reference genome to determine which regions are "snpable".
-
-    REQUIRED ARGUMENTS
-    [-p] Path to parameter file (example is saved in github repository as params.sh"
-
-  else
-    while getopts p: option
-    do
-    case "${option}"
-    in
-    p) PARAMS=${OPTARG};;
-
-    esac
-    done
-
-if [ -z "${PARAMS}" ]; then
-    echo "Error: No parameter file provided." >&2
+# Function to display usage information
+usage() {
+    echo "Usage: $0 -p <parameter_file>"
+    echo "This script converts a mask for a reference genome to determine which regions are SNPable."
+    echo
+    echo "Required Arguments:"
+    echo "  -p    Path to the parameter file (example provided in the GitHub repository as params.sh)"
     exit 1
-fi
-source "${PARAMS}"
+}
 
-# Ensure required environment variables are set
-if [ -z "$PROGDIR" ] || [ -z "$PROJHUB" ] || [ -z "$OUTDIR" ]; then
-    echo "Error: PROGDIR, PROJHUB, or OUTDIR is not set." >&2
-    exit 1
+# Ensure at least one argument is provided
+if [ $# -lt 1 ]; then
+    usage
 fi
 
-snpable_script_path="${PROGDIR}/seqbility-20091110" # Directory with snpable scripts
-
-# Check for required arguments
-if [ $# -lt 3 ]; then
-    echo "Usage: $0 -p <parameter_file> "
-    exit 1
-fi
-
+# Parse arguments
 while getopts ":p:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
-        *) echo "Invalid option: -$OPTARG" >&2; exit 1 ;;
+        *) echo "Error: Invalid option -${OPTARG}" >&2; usage ;;
     esac
 done
 
-# Ensure required arguments are provided
-if [ -z "${PARAMS}" ] " ]; then
-    echo "Error: Missing required arguments." >&2
+# Ensure a parameter file is provided
+if [ -z "${PARAMS}" ]; then
+    echo "Error: No parameter file provided." >&2
+    usage
+fi
+
+# Load parameters
+if [ ! -f "${PARAMS}" ]; then
+    echo "Error: Parameter file '${PARAMS}' not found." >&2
     exit 1
 fi
 
-# Load parameters from external file
 source "${PARAMS}"
 
-echo "Converting mask format"
+# Ensure required environment variables are set
+for var in PROGDIR PROJHUB OUTDIR REF; do
+    if [ -z "${!var}" ]; then
+        echo "Error: ${var} is not set in the parameter file." >&2
+        exit 1
+    fi
+done
+
+SNPABLE_SCRIPT_PATH="${PROGDIR}/seqbility-20091110"  # Directory with SNPable scripts
+
+echo "Converting mask format..."
 date
 
 # Convert mask format
-sed 's/>>/>/g' "${REF}_mask.150.50.fa" > "${REF}_revised_mask.150.50.fa"
+INPUT_MASK="${REF}_mask.150.50.fa"
+OUTPUT_MASK="${REF}_revised_mask.150.50.fa"
 
-echo "Creating mappability mask"
+if [ ! -f "${INPUT_MASK}" ]; then
+    echo "Error: Input mask file '${INPUT_MASK}' not found." >&2
+    exit 1
+fi
+
+sed 's/>>/>/g' "${INPUT_MASK}" > "${OUTPUT_MASK}"
+
+echo "Creating mappability mask..."
+date
+
 # Create mappability mask
+if [ ! -x "$(command -v python2)" ]; then
+    echo "Error: python2 is not installed or not in PATH." >&2
+    exit 1
+fi
+
+if [ ! -f "${PROGDIR}/msmc-tools/makeMappabilityMask.py" ]; then
+    echo "Error: makeMappabilityMask.py not found in '${PROGDIR}/msmc-tools/'." >&2
+    exit 1
+fi
+
 python2 "${PROGDIR}/msmc-tools/makeMappabilityMask.py"
 
 echo "Mappability mask conversion completed."
+date
+
