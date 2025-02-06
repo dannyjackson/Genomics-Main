@@ -69,7 +69,14 @@ metric_sd <- sd(data[[metric]], na.rm = TRUE)
 cat("Calculating Z-transform and identifying top outliers...\n")
 
 # Compute z-scores only when needed (avoiding extra column storage)
-data[, neg_log_pvalues_one_tailed := -log10(pnorm((get(metric) - metric_xbar) / metric_sd, lower.tail = FALSE))]
+chunk_size <- 1e6  # Adjust based on available memory
+num_rows <- nrow(data)
+
+for (start in seq(1, num_rows, by = chunk_size)) {
+  end <- min(start + chunk_size - 1, num_rows)
+  data[start:end, neg_log_pvalues_one_tailed := 
+    -log10(pnorm((get(metric) - metric_xbar) / metric_sd, lower.tail = FALSE))]
+}
 
 # Identify top outliers
 ntotal <- nrow(data)
