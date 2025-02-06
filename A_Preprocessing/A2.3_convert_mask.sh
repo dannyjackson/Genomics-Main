@@ -51,8 +51,8 @@ echo "Converting mask format..."
 date
 
 # Convert mask format
-INPUT_MASK="${OUTDIR}/datafiles/${REF}_mask.150.50.fa"
-OUTPUT_MASK="${OUTDIR}/datafiles/${REF}_revised_mask.150.50.fa"
+INPUT_MASK="${OUTDIR}/datafiles/${prefix}_mask.150.50.fa"
+OUTPUT_MASK="${OUTDIR}/datafiles/${prefix}_revised_mask.150.50.fa"
 
 if [ ! -f "${INPUT_MASK}" ]; then
     echo "Error: Input mask file '${INPUT_MASK}' not found." >&2
