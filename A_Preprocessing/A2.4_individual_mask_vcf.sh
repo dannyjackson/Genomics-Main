@@ -75,8 +75,8 @@ while read -r s; do
     echo "Mean coverage for scaffold ${s}: ${MEANCOV}"
 
     # Define output file paths
-    MASK_IND="${OUTDIR}/datafiles/mask/ind_mask.${IND}.${s}.${METHOD}.bed.gz"
-    VCF="${OUTDIR}/datafiles/vcf/${IND}.${s}.${METHOD}.vcf"
+    MASK_IND="${OUTDIR}/datafiles/mask/ind_mask.${IND}.${s}.bed.gz"
+    VCF="${OUTDIR}/datafiles/vcf/${IND}.${s}.vcf"
 
     # Ensure reference genome is indexed
     if [[ ! -f "${REF}.fai" ]]; then

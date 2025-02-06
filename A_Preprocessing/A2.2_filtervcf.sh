@@ -27,32 +27,6 @@ done
 
 source ${PARAMS}
 
-# Ensure script directory and output directory are defined
-if [ -z "${SCRIPTDIR}" ]; then
-    echo "Error: SCRIPTDIR is not defined. Please set this variable."
-    exit 1
-fi
-
-
-# Create the output directory for genotype calls if not present
-mkdir -p "${OUTDIR}/datafiles/genotype_calls"
-# Move to the output directory for genotype calls
-cd "${OUTDIR}/datafiles/genotype_calls" || {
-    echo "Error: Cannot change to output directory. Exiting."
-    exit 1
-}
-
-# Generate VCF file with SNP calling
-if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_snps_multiallelic.vcf" ]
-        then
-            echo "snps_multiallelic vcf file is present in genotype_calls directory, assuming it is already generated and moving on!"
-        else
-            echo "generating VCF file using bcftools"
-            bcftools mpileup -Ou -f "$REF" -a FORMAT/AD,DP,INFO/AD,SP "$BAMDIR"/*.final.bam | \
-                bcftools call -mv -V indels > "${OUTDIR}/datafiles/genotype_calls/${ID}_snps_multiallelic.vcf"
-fi
-
-
 
 # Filter VCF based on quality
 if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_qualitysort.vcf" ]
