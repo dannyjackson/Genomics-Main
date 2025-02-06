@@ -61,13 +61,3 @@ if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_filtered_mind2.vcf" ]
             --recode vcf-iid --out "${OUTDIR}/datafiles/genotype_calls/${ID}_filtered_mind2"
 fi
 
-
-# Compress and index the cleaned VCF
-if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_filtered_cleaned_zip.vcf.gz" ]
-        then
-            echo "filtered and cleaned and zipped vcf file is present in genotype_calls directory, assuming it is already generated and indexed and moving on!"
-        else
-            echo "compressing and indexing the final vcf"
-            bgzip -c "${OUTDIR}/datafiles/genotype_calls/${ID}_filtered_cleaned.vcf" > "${OUTDIR}/datafiles/genotype_calls/${ID}_filtered_cleaned_zip.vcf"
-            bcftools index "${OUTDIR}/datafiles/genotype_calls/${ID}_filtered_cleaned_zip.vcf.gz"
-fi
