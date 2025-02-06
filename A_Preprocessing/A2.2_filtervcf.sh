@@ -33,12 +33,6 @@ if [ -z "${SCRIPTDIR}" ]; then
     exit 1
 fi
 
-# Load parameters
-if [ ! -f "${SCRIPTDIR}/params.sh" ]; then
-    echo "Error: params.sh not found in ${SCRIPTDIR}"
-    exit 1
-fi
-source "${SCRIPTDIR}/params.sh"
 
 # Create the output directory for genotype calls if not present
 mkdir -p "${OUTDIR}/datafiles/genotype_calls"
