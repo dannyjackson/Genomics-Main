@@ -67,7 +67,7 @@ while read -r SCAFFOLD; do
     echo "Processing scaffold: $SCAFFOLD"
     
     VCF_IN="${OUTDIR}/datafiles/vcf/${IND}.${SCAFFOLD}.vcf"
-    VCF_OUT="${OUTDIR}/datafiles/vcf2/${IND}.${SCAFFOLD}.${phasing}.vcf.gz"
+    VCF_OUT="${OUTDIR}/datafiles/vcf2/${IND}.${SCAFFOLD}.phased.vcf.gz"
 
     if [[ ! -f "$VCF_IN" ]]; then
         echo "Warning: Input VCF file for scaffold $SCAFFOLD not found. Skipping."
@@ -94,7 +94,7 @@ while read -r SCAFFOLD; do
     fi
 
     # Run whatshap stats
-    STATS_OUT="${OUTDIR}/datafiles/stats/${IND}.${SCAFFOLD}.${prefix}.minDP10.${phasing}.stats.tsv"
+    STATS_OUT="${OUTDIR}/datafiles/stats/${IND}.${SCAFFOLD}.${prefix}.phased.stats.tsv"
     whatshap stats --tsv="$STATS_OUT" "$VCF_OUT"
 
     if [[ $? -ne 0 ]]; then
