@@ -13,29 +13,25 @@ It requires a gzipped vcf file as input, which can be generated using the <scrip
     github.com/dannyjackson/Genomics-Main
 
 REQUIRED ARGUMENTS:
-    -p  Path to parameter file (example: params_raisd.sh in GitHub repo)
-    -g  Population name
+    -w  Window size
+    -p population name
 EOF
     exit 1
 }
 
 
 # Parse command-line arguments
-while getopts "p:" option; do
+while getopts "p:w:" option; do
     case "${option}" in
-        p) PARAMS=${OPTARG} ;;
+        p) POP=${OPTARG} ;;
+        w) WIN=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}" >&2; usage ;;
     esac
 done
 
-# Check if the parameter file is provided
-if [ -z "${PARAMS:-}" ]; then
-    echo "Error: No parameter file provided." >&2
-    exit 1
-fi
 
 # Source the parameter file 
-source "${PARAMS}"
+source ~/programs/CardinalisGenomics/params_base.sh
 
 # Ensure that necessary parameters are set in the parameter file
 if [ -z "${OUTDIR:-}" ] ]; then
@@ -76,7 +72,7 @@ while read -r SCAFFOLD; do
     ${PROGDIR}/RAiSD/raisd-master/RAiSD \
         -n "${OUTDIR}/raisd/output/${POP}.${SCAFFOLD}" \
         -I "${VCF_IN}" \
-        -f -O -R -P -a 1500 -C "${REF}"
+        -f -O -R -P -a 1500 -C "${REF}" -w ${WIN}
 
 done < "$SCAFFOLD_LIST"
 
