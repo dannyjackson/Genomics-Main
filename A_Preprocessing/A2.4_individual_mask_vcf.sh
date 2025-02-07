@@ -4,7 +4,7 @@
 usage() {
     echo "Usage: $0 -p <parameter_file> -i <individual> -b <bam_directory>"
     echo ""
-    echo "This script computes average depth statistics of each BAM file in a directory."
+    echo "This script creates a masking file and a vcf file for each chromosome of an individual."
     echo ""
     echo "Required arguments:"
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository)."
