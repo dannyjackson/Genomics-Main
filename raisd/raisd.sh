@@ -23,13 +23,19 @@ EOF
 # Parse command-line arguments
 while getopts "p:w:" option; do
     case "${option}" in
+        p) PARAMS=${OPTARG} ;;
         p) POP=${OPTARG} ;;
         w) WIN=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}" >&2; usage ;;
     esac
 done
 
+if [ -z "${PARAMS}" ]; then
+    echo "Error: No parameter file provided." >&2
+    exit 1
+fi
 
+source "${PARAMS}"
 
 cd ${OUTDIR}/analyses/raisd/${POP}
 
