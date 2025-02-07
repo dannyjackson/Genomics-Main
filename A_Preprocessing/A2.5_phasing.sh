@@ -54,8 +54,6 @@ if [[ ! -f "$BAMFILE" ]]; then
     exit 1
 fi
 
-# Ensure required directories exist
-mkdir -p "${OUTDIR}/vcf2" "${OUTDIR}/stats"
 
 # Ensure the scaffold list exists
 SCAFFOLD_LIST="${OUTDIR}/referencelists/SCAFFOLDS.txt"
@@ -68,8 +66,8 @@ fi
 while read -r SCAFFOLD; do
     echo "Processing scaffold: $SCAFFOLD"
     
-    VCF_IN="${OUTDIR}/vcf/${IND}.${SCAFFOLD}.vcf"
-    VCF_OUT="${OUTDIR}/vcf2/${IND}.${SCAFFOLD}.${phasing}.vcf.gz"
+    VCF_IN="${OUTDIR}/datafiles/vcf/${IND}.${SCAFFOLD}.vcf"
+    VCF_OUT="${OUTDIR}/datafiles/vcf2/${IND}.${SCAFFOLD}.${phasing}.vcf.gz"
 
     if [[ ! -f "$VCF_IN" ]]; then
         echo "Warning: Input VCF file for scaffold $SCAFFOLD not found. Skipping."
@@ -96,7 +94,7 @@ while read -r SCAFFOLD; do
     fi
 
     # Run whatshap stats
-    STATS_OUT="${OUTDIR}/stats/${IND}.${SCAFFOLD}.${prefix}.minDP10.${phasing}.stats.tsv"
+    STATS_OUT="${OUTDIR}/datafiles/stats/${IND}.${SCAFFOLD}.${prefix}.minDP10.${phasing}.stats.tsv"
     whatshap stats --tsv="$STATS_OUT" "$VCF_OUT"
 
     if [[ $? -ne 0 ]]; then

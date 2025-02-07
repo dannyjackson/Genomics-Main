@@ -17,6 +17,7 @@ mkdir -p "${OUTDIR}/datafiles/snpable"
 mkdir -p "${OUTDIR}/datafiles/vcf"
 mkdir -p "${OUTDIR}/datafiles/vcf2"
 mkdir -p "${OUTDIR}/datafiles/mask"
+mkdir -p "${OUTDIR}/datafiles/stats"
 
 # A2 
 # Define path for Snpable scripts
