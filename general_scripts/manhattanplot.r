@@ -68,34 +68,64 @@ metric_sd <- sd(data[[metric]], na.rm = TRUE)
 
 cat("Calculating Z-transform and identifying top outliers...\n")
 
-# Compute z-scores only when needed (avoiding extra column storage)
-chunk_size <- 1e6  # Adjust based on available memory
-num_rows <- nrow(data)
-num_chunks <- ceiling(num_rows / chunk_size)
+metric_xbar <- mean(data[[metric]], na.rm = TRUE)
+metric_sd <- sd(data[[metric]], na.rm = TRUE)
+data$z <- (data[[metric]] - metric_xbar) / metric_sd
+data$neg_log_pvalues_one_tailed <- -log10(pnorm(data$z, lower.tail = FALSE))
 
-for (i in seq_len(num_chunks)) {
-  start <- (i - 1) * chunk_size + 1
-  end <- min(i * chunk_size, num_rows)
+# save file
+cat("Saving Z-transformed data...\n")
+outlier_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "/", pop_name, ".", metric, "_", win, ".Ztransformed.csv"))
+write.csv(outlier_data, outlier_file, row.names = FALSE)
+
+rm(list = ls())
+
+
+# Identify top outliers using chunking approach
+# Define parameters
+chunk_size <- 1e6  # Adjust based on available memory
+cutoff <- 0.01  # Adjust based on your needs
+file_path <- "your_large_file.csv"
+
+# Read header to get column names
+header <- fread(file_path, nrows = 0)
+col_names <- names(header)
+
+# Initialize an empty data.table for top SNPs
+top_snps_dt <- NULL
+
+# Read file in chunks
+con <- file(file_path, "r")
+readLines(con, n = 1)  # Skip header
+
+chunk_num <- 1
+repeat {
+  # Read a chunk of data
+  chunk <- fread(file_path, skip = (chunk_num - 1) * chunk_size + 1, nrows = chunk_size, header = FALSE)
+  if (nrow(chunk) == 0) break  # Stop if no more data
   
-  data[start:end, neg_log_pvalues_one_tailed := 
-    -log10(pnorm((get(metric) - metric_xbar) / metric_sd, lower.tail = FALSE))]
+  # Assign column names
+  setnames(chunk, col_names)
   
-  # Print an update every 100 chunks
-  if (i %% 100 == 0 || i == num_chunks) {
-    cat(sprintf("Processed %d/%d chunks (%.2f%% complete)\n", i, num_chunks, (i / num_chunks) * 100))
-    flush.console()  # Ensure the output is printed immediately
+  # Combine current chunk with previous top SNPs
+  if (!is.null(top_snps_dt)) {
+    chunk <- rbind(top_snps_dt, chunk)
   }
+  
+  # Identify top SNPs
+  top_snps_count <- round(nrow(chunk) * cutoff)
+  top_snps_dt <- chunk[order(-neg_log_pvalues_one_tailed)][1:top_snps_count]
+  
+  chunk_num <- chunk_num + 1
 }
 
-# Identify top outliers
-ntotal <- nrow(data)
-top_snps <- round(ntotal * cutoff)
+close(con)
 
-outlier_data <- data[order(-neg_log_pvalues_one_tailed)][1:top_snps][order(chromo, position)]
+# Final sorting
+top_snps_dt <- top_snps_dt[order(chromo, position)]
 
-metric_cutoff <- min(outlier_data[[metric]], na.rm = TRUE)
-
-
+# Get metric cutoff
+metric_cutoff <- min(top_snps_dt[[metric]], na.rm = TRUE)
 
 
 
@@ -108,8 +138,8 @@ cat(metric, "cutoff:", metric_cutoff, "\n", file = cutoff_file, append = TRUE)
 
 # Save outliers
 cat("Saving outliers data...\n")
-outlier_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "/", pop_name, ".", metric, "_", win, ".snps.outlier.csv"))
-write.csv(outlier_data, outlier_file, row.names = FALSE)
+outlier_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "/", pop_name, ".", metric, "_", win, ".outlier.csv"))
+write.csv(top_snps_dt, outlier_file, row.names = FALSE)
 
 # Prepare data for plotting
 cat("Preparing data for plotting...\n")
