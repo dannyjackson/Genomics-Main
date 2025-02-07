@@ -1,6 +1,6 @@
 # params_raisd.sh
 
-source /path/to/params_base.sh
+source ${SCRIPTDIR}/Genomics-Main/params_base.sh
 
 CUTOFF=threshold_for_top_genes_or_snps_eg_0.01
 
@@ -8,9 +8,8 @@ CUTOFF=threshold_for_top_genes_or_snps_eg_0.01
 COLOR1=#XXXXXX
 COLOR2=#XXXXXX
 
-# define the name of the  population that will be analyzed
-POP=population1name
-
+REF=/xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/GCF_901933205.1_STF_HiC_genomic.fna # path to reference genome
+SCAFFOLD_LIST=/xdisk/mcnew/dannyjackson/cardinals/referencelists/SCAFFOLDS.txt
 
 # source the setup file for raisd                                           
 source ${SCRIPTDIR}/Genomics-Main/raisd/setup_raisd.sh

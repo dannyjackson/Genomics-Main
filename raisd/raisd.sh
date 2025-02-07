@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh 
 
 # raisd script
 
@@ -30,52 +30,21 @@ while getopts "p:w:" option; do
 done
 
 
-# Source the parameter file 
-source ~/programs/CardinalisGenomics/params_base.sh
 
-# Ensure that necessary parameters are set in the parameter file
-if [ -z "${OUTDIR:-}" ] ]; then
-    echo "Error: OUTDIR is not set in the parameter file." >&2
-    exit 1
-fi
+cd ${OUTDIR}/analyses/raisd/${POP}
 
-
-# Print starting info
-echo -e "\n\n\n\n"
-date
-echo "Current script: raisd.sh"
-
-# Ensure the output directory exists and navigate there
-cd "${OUTDIR}/analyses/raisd/${POP}" || { echo "Failed to enter directory"; exit 1; }
-
-# Validate that the scaffold list file exists
-SCAFFOLD_LIST="${OUTDIR}/referencelists/SCAFFOLDS.txt"
-if [[ ! -f "$SCAFFOLD_LIST" ]]; then
-    echo "Error: Scaffold list file not found: $SCAFFOLD_LIST"
-    exit 1
-fi
-
-# Process each scaffold
 while read -r SCAFFOLD; do
-    echo "Processing scaffold: $SCAFFOLD"
-    
-    # Define input VCF file path
-    VCF_IN="${OUTDIR}/datafiles/vcf2/${POP}.${SCAFFOLD}.phased.vcf.gz"
-    
-    # Check if the VCF file exists
-    if [[ ! -f "$VCF_IN" ]]; then
-        echo "Error: VCF file not found: $VCF_IN"
-        continue
-    fi
-    
-    # Run RAiSD program (ensure the path to RAiSD is correct)
-    ${PROGDIR}/RAiSD/raisd-master/RAiSD \
-        -n "${OUTDIR}/raisd/output/${POP}.${SCAFFOLD}" \
-        -I "${VCF_IN}" \
-        -f -O -R -P -a 1500 -C "${REF}" -w ${WIN}
+    VCF_IN=/xdisk/mcnew/dannyjackson/cardinals/datafiles/mergedvcfs/${POP}.${SCAFFOLD}.phased.vcf
 
+    ~/programs/RAiSD/raisd-master/RAiSD \
+        -n "nocaurban.${SCAFFOLD}" \
+        -I "${VCF_IN}" \
+        -f -O -R -P -C "${REF}" -w ${WIN}
+        
 done < "$SCAFFOLD_LIST"
 
-# Completion message
-echo "RAiSD analysis completed for all scaffolds."
-date
+mv /xdisk/mcnew/dannyjackson/cardinals/analyses/raisd/${POP}/RAiSD_Info* /xdisk/mcnew/dannyjackson/cardinals/analyses/raisd/${POP}/infofiles
+
+mv /xdisk/mcnew/dannyjackson/cardinals/analyses/raisd/${POP}/RAiSD_Plot* /xdisk/mcnew/dannyjackson/cardinals/analyses/raisd/${POP}/plots
+
+mv /xdisk/mcnew/dannyjackson/cardinals/analyses/raisd/${POP}/RAiSD_Report* /xdisk/mcnew/dannyjackson/cardinals/analyses/raisd/${POP}/reportfiles
