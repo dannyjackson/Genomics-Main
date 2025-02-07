@@ -9,7 +9,7 @@ COLOR1=#XXXXXX
 COLOR2=#XXXXXX
 
 # define the name of the  population that will be analyzed
-POP1=population1name
+POP=population1name
 
 
 # source the setup file for raisd                                           
