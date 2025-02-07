@@ -13,18 +13,19 @@ It requires a gzipped vcf file as input, which can be generated using the <scrip
     github.com/dannyjackson/Genomics-Main
 
 REQUIRED ARGUMENTS:
+    -p  path to params file
+    -n  population name
     -w  Window size
-    -p population name
 EOF
     exit 1
 }
 
 
 # Parse command-line arguments
-while getopts "p:w:" option; do
+while getopts "p:n:w:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
-        p) POP=${OPTARG} ;;
+        n) POP=${OPTARG} ;;
         w) WIN=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}" >&2; usage ;;
     esac
