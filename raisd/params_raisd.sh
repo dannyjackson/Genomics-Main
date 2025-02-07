@@ -1,6 +1,6 @@
 # params_raisd.sh
 
-source ${SCRIPTDIR}/Genomics-Main/params_base.sh
+source ${SCRIPTDIR}/params_base.sh
 
 CUTOFF=threshold_for_top_genes_or_snps_eg_0.01
 

@@ -36,7 +36,6 @@ if [ -z "${PARAMS}" ]; then
     exit 1
 fi
 
-source ~/programs/CardinalisGenomics/params_base.sh
 source "${PARAMS}"
 
 cd ${OUTDIR}/analyses/raisd/${POP}
