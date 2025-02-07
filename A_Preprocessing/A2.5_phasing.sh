@@ -30,18 +30,8 @@ if [[ -z "$PARAMS" || -z "$IND" || -z "$BAMDIR" ]]; then
     usage
 fi
 
-# Ensure script directory is set
-if [ -z "$SCRIPTDIR" ]; then
-    echo "Error: SCRIPTDIR is not defined. Please set this variable."
-    exit 1
-fi
-
 # Load parameters
-if [ ! -f "${SCRIPTDIR}/params.sh" ]; then
-    echo "Error: params.sh not found in ${SCRIPTDIR}"
-    exit 1
-fi
-source "${SCRIPTDIR}/params.sh"
+source "${PARAMS}"
 
 # Ensure OUTDIR is set
 if [ -z "$OUTDIR" ]; then
