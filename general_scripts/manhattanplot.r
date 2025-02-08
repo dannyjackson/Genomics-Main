@@ -33,7 +33,7 @@ chunk_size <- 1e6  # Adjust based on available memory
 
 
 # Read header to get column names
-header <- fread(input, nrows = 0)
+header <- fread(input, nrows = 0, sep = "\t", data.table = TRUE)
 col_names <- names(header)
 
 if ("dxy" %in% header) {
