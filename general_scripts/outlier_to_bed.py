@@ -28,7 +28,7 @@ if file2.shape[1] < 2:
 
 # Merge to replace values
 mapping = dict(zip(file2[0], file2[1]))  # Create a dictionary for mapping
-bed_df['chromo'] = bed_df['chromo'].map(mapping)
+bed_df.loc[:, 'chromo'] = bed_df['chromo'].map(mapping)
 
 # Save to a BED file
 bed_df.to_csv(output_file, sep='\t', header=False, index=False)
