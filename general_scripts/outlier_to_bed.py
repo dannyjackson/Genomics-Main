@@ -6,7 +6,7 @@ input_data = sys.argv[1]
 window = int(sys.argv[2]) if len(sys.argv) > 2 else None
 
 # Read the data into a DataFrame
-df = pd.read_csv(pd.compat.StringIO(input_data))
+df = pd.read_csv(io.StringIO(input_data))
 
 # Compute start and stop positions based on window size
 df['start'] = df['position'] - (window // 2) if window else df['position'] - 1
