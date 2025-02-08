@@ -58,6 +58,7 @@ if [ -z "${OUTDIR}" ] || [ -z "${POP}" ] || [ -z "${WIN}" ] || [ -z "${STEP}" ];
     exit 1
 fi
 
+z_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "/", pop_name, ".", metric, "_", win, ".Ztransformed.csv"))
 
 # Run R script for plotting
 echo "Generating Manhattan plot from ${WIN_OUT}..."
