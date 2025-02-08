@@ -15,6 +15,9 @@ df['stop'] = df['position'] + (window // 2) if window else df['position']
 # Create a BED file DataFrame
 bed_df = df[['chromo', 'start', 'stop']]
 
+# Sort numerically by chromosome number
+bed_df = bed_df.sort_values(by='chromo')
+
 # Save to a BED file
 bed_df.to_csv("output.bed", sep='\t', header=False, index=False)
 
