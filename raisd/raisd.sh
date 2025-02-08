@@ -38,7 +38,7 @@ fi
 
 source "${PARAMS}"
 
-cd ${OUTDIR}/analyses/raisd/${POP}
+cd ${OUTDIR}/analyses/raisd/${POP}/${WIN}
 
 while read -r SCAFFOLD; do
     VCF_IN=/xdisk/mcnew/dannyjackson/cardinals/datafiles/mergedvcfs/${POP}.${SCAFFOLD}.phased.vcf
