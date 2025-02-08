@@ -4,7 +4,7 @@ import sys
 # Read input data and optional window size from command-line arguments
 input_data = sys.argv[1]
 window = int(sys.argv[2]) if len(sys.argv) > 2 else None
-output_data = sys.argv[3]
+output_file = sys.argv[3]
 
 # Read the data into a DataFrame
 df = pd.read_csv(input_data)
@@ -17,6 +17,6 @@ df['stop'] = df['position'] + (window // 2) if window else df['position']
 bed_df = df[['chromo', 'start', 'stop']]
 
 # Save to a BED file
-bed_df.to_csv("output.bed", sep='\t', header=False, index=False)
+bed_df.to_csv(output_file, sep='\t', header=False, index=False)
 
 print("BED file created successfully.")
