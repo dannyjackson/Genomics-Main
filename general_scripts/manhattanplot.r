@@ -37,6 +37,16 @@ z_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "/", pop_name, 
 header <- fread(z_file, nrows = 0)
 col_names <- names(header)
 
+if ("dxy" %in% header) {
+  metric <- "dxy"
+} else if ("fst" %in% header) {
+  metric <- "fst"
+} else if ("Tajima" %in% header) {
+  metric <- "Tajima"
+} else {
+  stop("Unknown data format. Ensure the input file contains dxy, fst, or tajima's D column.")
+}
+
 # Initialize an empty data.table for top SNPs
 top_snps_dt <- NULL
 
