@@ -56,11 +56,10 @@ mv /xdisk/mcnew/dannyjackson/cardinals/analyses/raisd/${POP}/${WIN}/RAiSD_Plot* 
 
 mv /xdisk/mcnew/dannyjackson/cardinals/analyses/raisd/${POP}/${WIN}/RAiSD_Report* /xdisk/mcnew/dannyjackson/cardinals/analyses/raisd/${POP}/${WIN}/reportfiles
 
-/xdisk/mcnew/dannyjackson/cardinals//analyses/raisd/nocarural/1000/reportfiles/RAiSD_Report.nocarural..
 echo -e "chrom\tposition\tstart\tend\tVAR\tSFS\tLD\tU" > ${OUTDIR}/analyses/raisd/${POP}/${WIN}/RAiSD_Report.${POP}.chromosomes
 
 while read -r SCAFFOLD;
 do 
-  awk -v CHROM="$SCAFFOLD" '{print CHROM, $0}' ${OUTDIR}/analyses/raisd/${POP}/${WIN}/reportfiles/RAiSD_Report.${POP}"${SCAFFOLD}.${SCAFFOLD} >> ${OUTDIR}/analyses/raisd/${POP}/${WIN}/RAiSD_Report.${POP}.chromosomes
+  awk -v CHROM="$SCAFFOLD" '{print CHROM, $0}' ${OUTDIR}/analyses/raisd/${POP}/${WIN}/reportfiles/RAiSD_Report.${POP}.${SCAFFOLD}.${SCAFFOLD} >> ${OUTDIR}/analyses/raisd/${POP}/${WIN}/RAiSD_Report.${POP}.chromosomes
 
 done < "${OUTDIR}/referencelists/SCAFFOLDS.txt"
