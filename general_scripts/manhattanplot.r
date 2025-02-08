@@ -75,8 +75,8 @@ data$neg_log_pvalues_one_tailed <- -log10(pnorm(data$z, lower.tail = FALSE))
 
 # save file
 cat("Saving Z-transformed data...\n")
-outlier_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "/", pop_name, ".", metric, "_", win, ".Ztransformed.csv"))
-write.csv(outlier_data, outlier_file, row.names = FALSE)
+z_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "/", pop_name, ".", metric, "_", win, ".Ztransformed.csv"))
+write.csv(data, z_file, row.names = FALSE)
 
 rm(list = ls())
 
