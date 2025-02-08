@@ -1,5 +1,6 @@
 import pandas as pd
 import sys
+import io
 
 # Read input data and optional window size from command-line arguments
 input_data = sys.argv[1]
