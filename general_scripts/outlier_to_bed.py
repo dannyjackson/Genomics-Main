@@ -5,6 +5,8 @@ import sys
 input_data = sys.argv[1]
 window = int(sys.argv[2]) if len(sys.argv) > 2 else None
 output_file = sys.argv[3]
+chromconversion = sys.argv[4]
+
 
 # Read the data into a DataFrame
 df = pd.read_csv(input_data)
@@ -15,6 +17,13 @@ df['stop'] = df['position'] + (window // 2) if window else df['position']
 
 # Create a BED file DataFrame
 bed_df = df[['chromo', 'start', 'stop']]
+
+
+# Read chromosome conversion file
+file2 = pd.read_csv(chromconversion, sep=',', header=None, names=['col1', 'replacement'])
+
+# Merge to replace values
+bed_df[0] = bed_df[0].map(file2.set_index('col1')['replacement'])
 
 # Save to a BED file
 bed_df.to_csv(output_file, sep='\t', header=False, index=False)
