@@ -6,7 +6,8 @@ module load R/4.4.0
 # make directories for intermediate files-- will fail if these don't exist
 mkdir -p ${OUTDIR}/analyses/raisd/
 mkdir -p ${OUTDIR}/analyses/raisd/${POP}
-mkdir -p ${OUTDIR}/analyses/raisd/${POP}/{infofiles,plots,reportfiles}
+mkdir -p ${OUTDIR}/analyses/raisd/${POP}/${WIN}
+mkdir -p ${OUTDIR}/analyses/raisd/${POP}/${WIN}/{infofiles,plots,reportfiles}
 
 
 # install raisd
