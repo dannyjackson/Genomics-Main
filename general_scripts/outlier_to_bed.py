@@ -4,6 +4,7 @@ import sys
 # Read input data and optional window size from command-line arguments
 input_data = sys.argv[1]
 window = int(sys.argv[2]) if len(sys.argv) > 2 else None
+output_data = sys.argv[3]
 
 # Read the data into a DataFrame
 df = pd.read_csv(input_data)
