@@ -31,10 +31,9 @@ pop_name <- ifelse(is.na(pop2), pop1, paste0(pop1, "_", pop2))
 # Define parameters
 chunk_size <- 1e6  # Adjust based on available memory
 
-z_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "/", pop_name, ".", metric, "_", win, ".Ztransformed.csv"))
 
 # Read header to get column names
-header <- fread(z_file, nrows = 0)
+header <- fread(input, nrows = 0)
 col_names <- names(header)
 
 if ("dxy" %in% header) {
@@ -51,13 +50,13 @@ if ("dxy" %in% header) {
 top_snps_dt <- NULL
 
 # Read file in chunks
-con <- file(z_file, "r")
+con <- file(input, "r")
 readLines(con, n = 1)  # Skip header
 
 chunk_num <- 1
 repeat {
   # Read a chunk of data
-  chunk <- fread(z_file, skip = (chunk_num - 1) * chunk_size + 1, nrows = chunk_size, header = FALSE)
+  chunk <- fread(input, skip = (chunk_num - 1) * chunk_size + 1, nrows = chunk_size, header = FALSE)
   if (nrow(chunk) == 0) break  # Stop if no more data
   
   # Assign column names

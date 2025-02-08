@@ -58,6 +58,8 @@ if [ -z "${OUTDIR}" ] || [ -z "${POP}" ] || [ -z "${WIN}" ] || [ -z "${STEP}" ];
     exit 1
 fi
 
+WIN_OUT="${OUTDIR}/analyses/thetas/${POP}/${WIN}/${POP}.theta.thetasWindow.pestPG"
+
 # Run R script for plotting
 echo "Generating Manhattan plot from ${WIN_OUT}..."
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" \
