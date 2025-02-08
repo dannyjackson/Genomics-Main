@@ -27,9 +27,65 @@ pop2 <- ifelse(length(args) > 7 && args[8] != "", args[8], NA)
 # Determine naming convention
 pop_name <- ifelse(is.na(pop2), pop1, paste0(pop1, "_", pop2))
 
+# Detect file type based on header
+cat("Detecting input data type...\n")
+
+data <- fread(input, sep = "\t", na.strings = c("", "NA"), data.table = TRUE)
+
+cat("read in input data...\n")
+
+if ("dxy" %in% names(data)) {
+  metric <- "dxy"
+} else if ("fst" %in% names(data)) {
+  metric <- "fst"
+} else if ("Tajima" %in% names(data)) {
+  metric <- "Tajima"
+} else {
+  stop("Unknown data format. Ensure the input file contains dxy, fst, or tajima's D column.")
+}
+
+# standardize use of chromosome and pos in file
+
+cat("renaming names...\n")
+
+# Define patterns and replacements
+new_names <- names(data) %>%
+  gsub("(?i)\\bchr(?:omosome)?\\b", "chromo", ., perl = TRUE) %>%   # Replace chromosome variants with "chromo"
+  gsub("(?i)\\b(?:mid|pos|midpos|WinCenter)\\b", "position", ., perl = TRUE)  # Replace pos, mid, midpos variants with "position"
+
+
+# Assign new column names
+names(data) <- new_names
+
+
+# option 1
+# Z-transform metric values
+
+# Compute mean and SD 
+cat("Computing mean and SD...\n")
+metric_xbar <- mean(data[[metric]], na.rm = TRUE)
+metric_sd <- sd(data[[metric]], na.rm = TRUE)
+
+cat("Calculating Z-transform and identifying top outliers...\n")
+
+metric_xbar <- mean(data[[metric]], na.rm = TRUE)
+metric_sd <- sd(data[[metric]], na.rm = TRUE)
+data$z <- (data[[metric]] - metric_xbar) / metric_sd
+data$neg_log_pvalues_one_tailed <- -log10(pnorm(data$z, lower.tail = FALSE))
+
+# save file
+cat("Saving Z-transformed data...\n")
+z_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "/", pop_name, ".", metric, "_", win, ".Ztransformed.csv"))
+write.csv(data, z_file, row.names = FALSE)
+
+rm(list = ls())
+
+
 # Identify top outliers using chunking approach
 # Define parameters
 chunk_size <- 1e6  # Adjust based on available memory
+cutoff <- 0.01  # Adjust based on your needs
+file_path <- "your_large_file.csv"
 
 # Read header to get column names
 header <- fread(z_file, nrows = 0)
@@ -39,13 +95,13 @@ col_names <- names(header)
 top_snps_dt <- NULL
 
 # Read file in chunks
-con <- file(z_file, "r")
+con <- file(file_path, "r")
 readLines(con, n = 1)  # Skip header
 
 chunk_num <- 1
 repeat {
   # Read a chunk of data
-  chunk <- fread(z_file, skip = (chunk_num - 1) * chunk_size + 1, nrows = chunk_size, header = FALSE)
+  chunk <- fread(file_path, skip = (chunk_num - 1) * chunk_size + 1, nrows = chunk_size, header = FALSE)
   if (nrow(chunk) == 0) break  # Stop if no more data
   
   # Assign column names
