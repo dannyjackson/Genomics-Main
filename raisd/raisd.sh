@@ -44,7 +44,7 @@ while read -r SCAFFOLD; do
     VCF_IN=/xdisk/mcnew/dannyjackson/cardinals/datafiles/mergedvcfs/${POP}.${SCAFFOLD}.phased.vcf
 
     ~/programs/RAiSD/raisd-master/RAiSD \
-        -n "nocaurban.${SCAFFOLD}" \
+        -n "${POP}.${SCAFFOLD}" \
         -I "${VCF_IN}" \
         -f -O -R -P -C "${REF}" -w ${WIN}
         
