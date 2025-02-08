@@ -22,8 +22,13 @@ bed_df = df[['chromo', 'start', 'stop']]
 # Read chromosome conversion file
 file2 = pd.read_csv(chromconversion, sep=',', header=None)
 
+# Ensure file2 has at least two columns
+if file2.shape[1] < 2:
+    raise ValueError("file2 does not have at least two columns.")
+
 # Merge to replace values
-bed_df[0] = bed_df[0].map(file2.set_index(0)[1])
+mapping = dict(zip(file2[0], file2[1]))  # Create a dictionary for mapping
+bed_df[0] = bed_df[0].map(mapping)
 
 # Save to a BED file
 bed_df.to_csv(output_file, sep='\t', header=False, index=False)
