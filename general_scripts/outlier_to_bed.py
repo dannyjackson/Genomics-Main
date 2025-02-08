@@ -20,10 +20,10 @@ bed_df = df[['chromo', 'start', 'stop']]
 
 
 # Read chromosome conversion file
-file2 = pd.read_csv(chromconversion, sep=',', header=None, names=['col1', 'replacement'])
+file2 = pd.read_csv(chromconversion, sep=',', header=None)
 
 # Merge to replace values
-bed_df[0] = bed_df[0].map(file2.set_index('col1')['replacement'])
+bed_df[0] = bed_df[0].map(file2.set_index(0)[1])
 
 # Save to a BED file
 bed_df.to_csv(output_file, sep='\t', header=False, index=False)
