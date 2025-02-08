@@ -31,6 +31,8 @@ pop_name <- ifelse(is.na(pop2), pop1, paste0(pop1, "_", pop2))
 # Define parameters
 chunk_size <- 1e6  # Adjust based on available memory
 
+z_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "/", pop_name, ".", metric, "_", win, ".Ztransformed.csv"))
+
 # Read header to get column names
 header <- fread(z_file, nrows = 0)
 col_names <- names(header)
