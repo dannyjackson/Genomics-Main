@@ -33,17 +33,21 @@ chunk_size <- 1e6  # Adjust based on available memory
 
 
 # Read header to get column names
-header <- fread(input, nrows = 0, sep = "\t", data.table = TRUE)
-col_names <- names(header)
+# Extract file name without extension
+file_name <- tools::file_path_sans_ext(basename(input))
 
-if ("dxy" %in% header) {
+# Split file name by "."
+file_parts <- unlist(strsplit(file_name, "\\."))
+
+# Check for metric in file name
+if ("dxy" %in% file_parts) {
   metric <- "dxy"
-} else if ("fst" %in% header) {
+} else if ("fst" %in% file_parts) {
   metric <- "fst"
-} else if ("Tajima" %in% header) {
+} else if ("theta" %in% file_parts) {
   metric <- "Tajima"
 } else {
-  stop("Unknown data format. Ensure the input file contains dxy, fst, or tajima's D column.")
+  stop("Unknown data format. Ensure the file name contains dxy, fst, or Tajima.")
 }
 
 # Initialize an empty data.table for top SNPs
