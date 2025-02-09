@@ -50,6 +50,10 @@ if ("dxy" %in% file_parts) {
   stop("Unknown data format. Ensure the file name contains dxy, fst, or Tajima.")
 }
 
+
+header <- fread(input, nrows = 0, sep = "\t", data.table = TRUE)
+col_names <- names(header)
+
 # Initialize an empty data.table for top SNPs
 top_snps_dt <- NULL
 
