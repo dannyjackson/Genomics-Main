@@ -49,7 +49,7 @@ if [ -z "${OUTDIR}" ] || [ -z "${POP}" ] || [ -z "${WIN}" ] || [ -z "${METRIC}" 
 fi
 
 
-WIN_OUT="${OUTDIR}/analyses/${METRIC}/${POP}/${POP}.${METRIC}_"${WIN}.Ztransformed.csv"
+WIN_OUT="${OUTDIR}/analyses/${METRIC}/${POP}/${POP}.${METRIC}_${WIN}.Ztransformed.csv"
 
 # Run R script for plotting
 echo "Generating Manhattan plot from ${WIN_OUT}..."
