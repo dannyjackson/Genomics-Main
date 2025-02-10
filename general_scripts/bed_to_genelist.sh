@@ -36,18 +36,21 @@ done
 # CHROM_CONVERSION=/xdisk/mcnew/dannyjackson/cardinals/referencelists/GCF_901933205_chromconversion.txt
 # GFF=/xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/genomic.gff
 
-# defined in argument:
+# load modules
+
+module load python/3.11/3.11.4
+# has to be done on elgato for now
+module load gnu8/8.3.0
+module load bedtools2/2.29.2
+
+# load parameters
+source ${PARAMS}
 
 # defined in generalized
 OUT_FILE=${OUTDIR}/analyses/genelist/${POP}.${METRIC}.${WIN}kb.bed
 GENES_FILE=${OUTDIR}/analyses/genelist/${POP}.${METRIC}.${WIN}kb.genes.txt
 GENENAMES=${OUTDIR}/analyses/genelist/${POP}.${METRIC}.${WIN}kb.genenames.txt
 
-
-module load python/3.11/3.11.4
-# has to be done on elgato for now
-module load gnu8/8.3.0
-module load bedtools2/2.29.2
 
 python ${SCRIPTDIR}/Genomics-Main/general_scripts/outlier_to_bed.py ${IN_FILE} ${WIN} ${OUT_FILE} ${CHR_FILE}
 
