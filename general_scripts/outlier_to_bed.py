@@ -1,6 +1,5 @@
 import pandas as pd
 import sys
-pip install "numpy<2"
 import numpy
 
 # Read input data and optional window size from command-line arguments
