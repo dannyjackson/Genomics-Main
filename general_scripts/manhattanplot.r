@@ -21,8 +21,9 @@ color2 <- args[3]
 cutoff <- as.numeric(args[4])  # Convert to numeric
 input <- args[5]
 win <- args[6]
-pop1 <- args[7]
-pop2 <- ifelse(length(args) > 7 && args[8] != "", args[8], NA)
+metric <- args[7]
+pop1 <- args[8]
+pop2 <- ifelse(length(args) > 8 && args[9] != "", args[9], NA)
 
 # Determine naming convention
 pop_name <- ifelse(is.na(pop2), pop1, paste0(pop1, "_", pop2))
