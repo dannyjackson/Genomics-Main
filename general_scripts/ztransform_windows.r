@@ -28,7 +28,7 @@ pop_name <- ifelse(is.na(pop2), pop1, paste0(pop1, "_", pop2))
 # Detect file type based on header
 cat("Detecting input data type...\n")
 
-data <- fread(input, sep = "\t", na.strings = c("", "NA"), data.table = TRUE)
+data <- fread(input, sep = " ", na.strings = c("", "NA"), data.table = TRUE)
 
 cat("read in input data...\n")
 
