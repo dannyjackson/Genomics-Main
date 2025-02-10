@@ -47,9 +47,9 @@ module load bedtools2/2.29.2
 source ${PARAMS}
 
 # defined in generalized
-OUT_FILE=${OUTDIR}/analyses/genelist/${POP}.${METRIC}.${WIN}kb.bed
-GENES_FILE=${OUTDIR}/analyses/genelist/${POP}.${METRIC}.${WIN}kb.genes.txt
-GENENAMES=${OUTDIR}/analyses/genelist/${POP}.${METRIC}.${WIN}kb.genenames.txt
+OUT_FILE=${OUTDIR}/analyses/genelist/bed/${POP}.${METRIC}.${WIN}kb.bed
+GENES_FILE=${OUTDIR}/analyses/genelist/genes/${POP}.${METRIC}.${WIN}kb.genes.txt
+GENENAMES=${OUTDIR}/analyses/genelist/gene_names/${POP}.${METRIC}.${WIN}kb.genenames.txt
 
 
 python ${SCRIPTDIR}/Genomics-Main/general_scripts/outlier_to_bed.py ${IN_FILE} ${WIN} ${OUT_FILE} ${CHR_FILE}
