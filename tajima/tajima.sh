@@ -31,11 +31,12 @@ fi
 
 
 # Parse command-line arguments
-while getopts "p:w:s:c:" option; do
+while getopts "p:w:s:m:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         w) WIN=${OPTARG} ;;
         s) STEP=${OPTARG} ;;
+        m) METRIC=${OPTARG} ;;
         *) echo "Error: Invalid option '-${OPTARG}'" >&2; exit 1 ;;
     esac
 done
