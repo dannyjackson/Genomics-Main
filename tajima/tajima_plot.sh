@@ -21,7 +21,7 @@ fi
 
 
 # Parse command-line arguments
-while getopts "p:w:c:" option; do
+while getopts "p:w:m:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         w) WIN=${OPTARG} ;;
