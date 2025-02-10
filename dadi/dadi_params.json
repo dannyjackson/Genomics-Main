@@ -1,0 +1,32 @@
+// dadi Specific Parameters for SFS and Model Creation
+// See dadi_params_README.md for additional clarification on parameter inputs
+
+{
+    "VCF PATH": "relative/path/to/vcf-file",
+
+    "POP PATH": "relative/path/to/pop-file",
+
+    // Any 2d-Site Frequency Spectra that you wish to generate between populations should be outlined in the format outlined in dadi_params README: *Remove or add lines as needed*
+    "SFS PARAMS": {
+        "SFS_1":[["pop0_ID", "pop1_ID"], ["pop0_projection", "pop1_projection"], false],
+        "SFS_2":[["pop0_ID", "pop1_ID"], ["pop0_projection", "pop1_projection"], false],
+        "SFS_3":[["pop0_ID", "pop1_ID"], ["pop0_projection", "pop1_projection"], false]
+                },
+
+    // Desired dadi model MUST be stated as actual function name
+    "DADI MODEL": "dadi.Demographics2D.split_mig",
+
+    "LOWPASS": false,
+
+    // Recommend to run 20 rounds of optimizations for testing and 100 rounds on HPC for full analyses
+    "PARAM OPTIMIZATIONS": 20,
+
+    // Any 2d-Models that you wish to generate between populations should be outlined in the format outlined in dadi_params README: *Remove or add lines as needed*
+    "MODEL PARAMS":{
+        "Model_1":[["pop0_ID", "pop1_ID"], "/path/to/data_fs", ["list of starting params"], ["list of param lower bounds"], ["list of param upper bounds"]],
+        "Model_2":[["pop0_ID", "pop1_ID"], "/path/to/data_fs", ["list of starting params"], ["list of param lower bounds"], ["list of param upper bounds"]],
+        "Model_3":[["pop0_ID", "pop1_ID"], "/path/to/data_fs", ["list of starting params"], ["list of param lower bounds"], ["list of param upper bounds"]]
+                  },
+    
+    "GODAMBE STEP SIZES":[0.1, 0.01, 0.001, 0.0001, 0.00001]
+}
