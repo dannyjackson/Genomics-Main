@@ -30,6 +30,11 @@ cat("Detecting input data type...\n")
 
 data <- fread(input, sep = "\t", na.strings = c("", "NA"), data.table = TRUE)
 
+new_names <- names(data) %>%
+  gsub("(?i)\\bU?\\b", "raisd", ., perl = TRUE)
+
+names(data) <- new_names
+
 cat("read in input data...\n")
 
 if ("dxy" %in% names(data)) {
@@ -38,8 +43,8 @@ if ("dxy" %in% names(data)) {
   metric <- "fst"
 } else if ("Tajima" %in% names(data)) {
   metric <- "Tajima"
-} else if ("U" %in% names(data)) {
-  metric <- "U"
+} else if ("raisd" %in% names(data)) {
+  metric <- "raisd"
 } else {
   stop("Unknown data format. Ensure the input file contains dxy, fst, or tajima's D column.")
 }
