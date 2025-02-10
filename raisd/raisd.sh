@@ -63,3 +63,30 @@ do
   awk -v CHROM="$SCAFFOLD" '{print CHROM, $0}' ${OUTDIR}/analyses/raisd/${POP}/${WIN}/reportfiles/RAiSD_Report.${POP}.${SCAFFOLD}.${SCAFFOLD} >> ${OUTDIR}/analyses/raisd/${POP}/${WIN}/RAiSD_Report.${POP}.chromosomes
 
 done < "${OUTDIR}/referencelists/SCAFFOLDS.txt"
+
+
+# rename scaffolds for plotting
+
+echo "Processing CHROM file: $CHR_FILE..."
+
+FILE="${OUTDIR}/analyses/raisd/${POP}/${WIN}/RAiSD_Report.${POP}.chromosomes"
+# Read CHROM line by line
+while IFS=',' read -r first second; do
+    echo "Replacing occurrences of '$second' with '$first' in $FILE"
+    sed -i.bak "s/$second/$first/g" "$FILE"
+done < "$CHR_FILE"
+
+rm -f "${FILE}.bak"
+
+# z transform U metric
+
+echo 'visualizing windows'
+Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/ztransform_windows.r" "${OUTDIR}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP}"
+echo 'finished windowed plot' &
+
+# plot scaffolds
+WIN_OUT="${OUTDIR}/analyses/${METRIC}/${POP}/${POP}.${METRIC}_${WIN}.Ztransformed.csv"
+
+echo 'visualizing windows'
+Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP}"
+echo 'finished windowed plot' &

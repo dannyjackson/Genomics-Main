@@ -16,8 +16,6 @@ cat("Parsing command-line arguments...\n")
 # Parse command-line arguments
 args <- commandArgs(trailingOnly = TRUE)
 outdir <- args[1]
-color1 <- args[2]
-color2 <- args[3]
 cutoff <- as.numeric(args[4])  # Convert to numeric
 input <- args[5]
 win <- args[6]
@@ -40,6 +38,8 @@ if ("dxy" %in% names(data)) {
   metric <- "fst"
 } else if ("Tajima" %in% names(data)) {
   metric <- "Tajima"
+} else if ("U" %in% names(data)) {
+  metric <- "raisd"
 } else {
   stop("Unknown data format. Ensure the input file contains dxy, fst, or tajima's D column.")
 }
