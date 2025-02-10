@@ -79,14 +79,13 @@ done < "$CHR_FILE"
 rm -f "${FILE}.bak"
 
 # z transform U metric
-
-echo 'visualizing windows'
-Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/ztransform_windows.r" "${OUTDIR}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP}"
-echo 'finished windowed plot' &
-
-# plot scaffolds
 WIN_OUT="${OUTDIR}/analyses/${METRIC}/${POP}/${POP}.${METRIC}_${WIN}.Ztransformed.csv"
 
 echo 'visualizing windows'
+Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/ztransform_windows.r" "${OUTDIR}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP}"
+echo 'finished windowed plot' 
+
+# plot scaffolds
+echo 'visualizing windows'
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP}"
-echo 'finished windowed plot' &
+echo 'finished windowed plot' 
