@@ -33,24 +33,6 @@ chunk_size <- 1e6  # Adjust based on available memory
 
 
 # Read header to get column names
-# Extract file name without extension
-file_name <- tools::file_path_sans_ext(basename(input))
-
-# Split file name by "."
-file_parts <- unlist(strsplit(file_name, "\\."))
-
-# Check for metric in file name
-if ("dxy" %in% file_parts) {
-  metric <- "dxy"
-} else if ("fst" %in% file_parts) {
-  metric <- "fst"
-} else if ("theta" %in% file_parts) {
-  metric <- "Tajima"
-} else {
-  stop("Unknown data format. Ensure the file name contains dxy, fst, or Tajima.")
-}
-
-
 header <- fread(input, nrows = 0, sep = "\t", data.table = TRUE)
 col_names <- names(header)
 
