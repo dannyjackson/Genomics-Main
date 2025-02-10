@@ -73,7 +73,9 @@ metric_sd <- sd(data[[metric]], na.rm = TRUE)
 data$z <- (data[[metric]] - metric_xbar) / metric_sd
 data$neg_log_pvalues_one_tailed <- -log10(pnorm(data$z, lower.tail = FALSE))
 
+df <- data[ -c(1) ]
+
 # save file
 cat("Saving Z-transformed data...\n")
 z_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "/", pop_name, ".", metric, "_", win, ".Ztransformed.csv"))
-write.csv(data, z_file, row.names = FALSE)
+write.csv(df, z_file, row.names = FALSE)
