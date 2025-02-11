@@ -15,7 +15,8 @@ It requires a gzipped vcf file as input, which can be generated using the <scrip
 REQUIRED ARGUMENTS:
     -p  path to params file
     -n  population name
-    -w  Window size
+    -w  window size
+    -m  name of mtric
 EOF
     exit 1
 }
@@ -86,7 +87,7 @@ echo 'visualizing windows'
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/ztransform_windows.r" "${OUTDIR}" "${CUTOFF}" "${FILE}" "${WIN}" "${POP}"
 echo 'finished windowed plot' 
 
-WIN_OUT="${OUTDIR}/analyses/${METRIC}/${POP}/${POP}.${METRIC}_${WIN}.Ztransformed.csv"
+WIN_OUT="${OUTDIR}/analyses/raisd/${POP}/${POP}.raisd_${WIN}.Ztransformed.csv"
 # plot scaffolds
 echo 'visualizing windows'
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP}"
