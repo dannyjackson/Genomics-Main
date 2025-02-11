@@ -45,7 +45,7 @@ def iso_inbreeding(params, ns, pts):
     fs = dadi.Spectrum.from_phi_inbreeding(phi, ns, (xx, xx), (F1, F2), (2, 2))
     return fs
 
-def make_2d_demo_model(fs, pop_ids, dadi_model, result_dir, model_results_path, start_params, l_bounds, u_bounds, lowpass=False, num_opt):
+def make_2d_demo_model(fs, pop_ids, dadi_model, result_dir, model_results_path, start_params, l_bounds, u_bounds, num_opt, lowpass=False):
     '''
     This function makes a 2D demographic model from a 2D site frequency spectra object
     between the populations present in the sfs.
@@ -65,25 +65,23 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, result_dir, model_results_path, 
     n = fs.sample_sizes
     # Get number of grid points for the model
     pts = [max(n)+20, max(n)+30, max(n)+40]
-    # Define starting model optimization parameters
-    #NOTE: The final parameter in our list is ALWAYS the Misidentification Parameter######
-    params = start_params
-    # Define upper and lower bounds for model optimization
-    # These boundaries help avoid parameters that are likely incorrect and reduce runtime
-    l_bounds = [1e-2, 1e-2, 1e-3, 1e-3]
-    u_bounds = [50, 50, 50, 50]
-
-    # Calculate Coverage Distribution
-    #cov_dist =  LowPass.compute_cov_dist(dd, fs.pop_ids)
 
     # State our model
-    model = dadi_model
-    # Since we have unfolded data, we will wrap the model
-    # in a function that adds a parameter to estimate misidentification rate
-    #model = dadi.Numerics.make_anc_state_misid_func(model)
+    model = getattr(dadi.Demographics2D, dadi_model)
+
+    if not fs.folded:
+        # Since we have unfolded data, we will wrap the model in a function that adds a parameter to estimate misidentification rate
+        model = dadi.Numerics.make_anc_state_misid_func(model)
+
     # Add another model wrapper that allows for the use of grid points
     model_ex = dadi.Numerics.make_extrap_func(model)
-    #model_ex = LowPass.make_low_pass_func_GATK_multisample(model_ex, cov_dist, data_fs.pop_ids, [40], [32], 1e-2)
+
+    if lowpass:
+        # Calculate Coverage Distribution
+        with open('dadi_results/dd.bpkl', 'rb') as file:
+            dd = pkl.load(file)
+        cov_dist =  LowPass.compute_cov_dist(dd, fs.pop_ids)
+        model_ex = LowPass.make_low_pass_func_GATK_multisample(model_ex, cov_dist, fs.pop_ids, [40], [32], 1e-2)
 
     # Create a file to store the fitted parameters in your current working directory
     try:
@@ -95,7 +93,7 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, result_dir, model_results_path, 
     # By the end, we will (presumably) get some optimal parameters and the log-liklihood for how optimal they are
     for i in range(num_opt):
         # Slightly alter parameters
-        p0 = dadi.Misc.perturb_params(params, fold=1, upper_bound=u_bounds,lower_bound=l_bounds)
+        p0 = dadi.Misc.perturb_params(start_params, fold=1, upper_bound=u_bounds,lower_bound=l_bounds)
         popt, ll_model = dadi.Inference.opt(p0, fs, model_ex, pts, lower_bound=l_bounds, upper_bound=u_bounds,algorithm=nlopt.LN_BOBYQA,maxeval=400, verbose=0)
         # Calculate the synonymous theta
         # Also finding optimal scaling factor for data
@@ -128,7 +126,7 @@ def godambe(popt, pop_ids, model_ex, pts, fs, result_dir, model_results_path, ep
         # Get optimzed parameters * 100 (possibly can solve low parameter values leading to floating point arithmetic errors)
         #popt_100 = [param * 100 for param in popt]
         # Do normal uncertainty analysis
-        uncerts_adj = dadi.Godambe.GIM_uncert(func_ex=model_ex, grid_pts=pts, all_boot=boots_syn, p0=popt, data=fs, eps=eps, log=True)
+        uncerts_adj = dadi.Godambe.GIM_uncert(func_ex=model_ex, grid_pts=pts, all_boot=boots_syn, p0=popt, data=fs, eps=steps, log=True)
         uncerts_str = ',  '.join([str(ele) for ele in uncerts_adj])
         fi.write('Godambe Uncertainty Array Output: [' + uncerts_str + ']\n')
         fi.write('Estimated 95% uncerts (with step size '+str(eps)+'): {0}\n'.format(1.96*uncerts_adj[:-1]))
@@ -202,7 +200,7 @@ def main():
         u_bounds = model_params[dct][4]
 
         # Make model SFS objects for each species comparison
-        popt, model_fs, model_ex, pts = make_2d_demo_model(data_fs, pop_ids, dadi_model, result_dir, model_results_path, start_params, l_bounds, u_bounds, lowpass, num_opt)
+        popt, model_fs, model_ex, pts = make_2d_demo_model(data_fs, pop_ids, dadi_model, result_dir, model_results_path, start_params, l_bounds, u_bounds, num_opt, lowpass)
 
         # Plot SFS model/data comparison
         compare_sfs_plots(data_fs, model_fs, pop_ids, model_results_path)

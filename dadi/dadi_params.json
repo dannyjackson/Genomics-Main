@@ -13,8 +13,9 @@
         "SFS_3":[["pop0_ID", "pop1_ID"], ["pop0_projection", "pop1_projection"], false]
                 },
 
-    // Desired dadi model MUST be stated as actual function name
-    "DADI MODEL": "dadi.Demographics2D.split_mig",
+    // Desired dadi model MUST be a 2D model offered in dadi.Demographics2D submodule
+    // State model as actual method name
+    "DADI MODEL": "split_mig",
 
     "LOWPASS": false,
 
@@ -22,6 +23,7 @@
     "PARAM OPTIMIZATIONS": 20,
 
     // Any 2d-Models that you wish to generate between populations should be outlined in the format outlined in dadi_params README: *Remove or add lines as needed*
+    // Recall that if your SFS is unfolded, you will need one additional starting parameter at the end of your param lists that acts as the misidentification parameter.
     "MODEL PARAMS":{
         "Model_1":[["pop0_ID", "pop1_ID"], "/path/to/data_fs", ["list of starting params"], ["list of param lower bounds"], ["list of param upper bounds"]],
         "Model_2":[["pop0_ID", "pop1_ID"], "/path/to/data_fs", ["list of starting params"], ["list of param lower bounds"], ["list of param upper bounds"]],
