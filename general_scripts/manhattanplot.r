@@ -47,7 +47,7 @@ readLines(con, n = 1)  # Skip header
 chunk_num <- 1
 repeat {
   # Read a chunk of data
-  chunk <- fread(input, skip = (chunk_num - 1) * chunk_size + 1, nrows = chunk_size, header = FALSE)
+  chunk <- fread(input, skip = (chunk_num - 1) * chunk_size + 1, nrows = chunk_size, sep = ",", data.table = TRUE, header = FALSE)
   if (nrow(chunk) == 0) break  # Stop if no more data
   
   # Assign column names
