@@ -37,7 +37,7 @@ cat("identifying top snps...\n")
 # Identify top SNPs
 top_snps_count <- round(nrow(data) * cutoff)
 cat("identifying top snps 2...\n")
-top_snps_dt <- data[order(-neg_log_pvalues_one_tailed, na.last = TRUE)][1:top_snps_count]
+top_snps_dt <- data[!is.na(neg_log_pvalues_one_tailed)][order(-neg_log_pvalues_one_tailed)][1:top_snps_count, ]
 
 cat("sorting top snps...\n")
 # Final sorting
