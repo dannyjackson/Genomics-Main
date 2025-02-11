@@ -14,7 +14,7 @@
                 },
 
     // Desired dadi model MUST be a 2D model offered in dadi.Demographics2D submodule
-    // State model as actual method name
+    // State model as actual method name (Refer to dadi documentation)
     "DADI MODEL": "split_mig",
 
     "LOWPASS": false,

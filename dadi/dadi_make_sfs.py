@@ -85,9 +85,6 @@ def main():
     base_params = Path(sys.argv[1]).read_text().strip().split('\n')
     for line in base_params:
         if 'OUTDIR=' in line: outdir = line.split('=')[1].split('#')[0].strip()
-        if 'PROGDIR=' in line: progdir = line.split('=')[1].split('#')[0].strip()
-        if 'PROJHUB=' in line: github = line.split('=')[1].split('#')[0].strip()
-        if 'SCRIPTDIR=' in line: scriptdir = line.split('=')[1].split('#')[0].strip()
 
     # Import dadi-specific parameters for sfs creation from user-inputted dadi_params.json file
     with open(sys.argv[2], 'r') as file:
