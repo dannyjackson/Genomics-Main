@@ -51,6 +51,8 @@ fi
 
 WIN_OUT="${OUTDIR}/analyses/${METRIC}/${POP}/${POP}.${METRIC}_${WIN}.Ztransformed.csv"
 
+sed -i 's/\"//g' $WIN_OUT
+
 # Run R script for plotting
 echo "Generating Manhattan plot from ${WIN_OUT}..."
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" \

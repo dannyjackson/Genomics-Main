@@ -31,7 +31,7 @@ cat("Detecting input data type...\n")
 data <- fread(input, sep = "\t", na.strings = c("", "NA"), data.table = TRUE)
 
 new_names <- names(data) %>%
-  gsub("(?i)\\bU?\\b", "raisd", ., perl = TRUE)
+  gsub("(?i)\\bU\\b", "raisd", ., perl = TRUE)
 
 names(data) <- new_names
 
