@@ -79,13 +79,16 @@ done < "$CHR_FILE"
 
 rm -f "${FILE}.bak"
 
+sed -i 's/ /\t/g' "${FILE}"
+
 
 # z transform U metric
 
 
-echo 'visualizing windows'
+echo 'z transforming u metric'
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/ztransform_windows.r" "${OUTDIR}" "${CUTOFF}" "${FILE}" "${WIN}" "${POP}"
-echo 'finished windowed plot' 
+echo 'finished z transforming' 
+
 
 WIN_OUT="${OUTDIR}/analyses/raisd/${POP}/${POP}.raisd_${WIN}.Ztransformed.csv"
 # plot scaffolds
