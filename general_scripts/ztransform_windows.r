@@ -62,8 +62,6 @@ new_names <- names(data) %>%
 # Assign new column names
 names(data) <- new_names
 
-data$metric <-as.numeric(data$metric)
-
 # option 1
 # Z-transform metric values
 
