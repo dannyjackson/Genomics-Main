@@ -28,22 +28,22 @@ pop2 <- ifelse(length(args) > 8 && args[9] != "", args[9], NA)
 # Determine naming convention
 pop_name <- ifelse(is.na(pop2), pop1, paste0(pop1, "_", pop2))
 
-# Identify top outliers using chunking approach
 # Define parameters
-chunk_size <- 1e6  # Adjust based on available memory
-
-
+cat("Reading in file...\n")
 # Read file
 data <- fread(input, sep = ",", data.table = TRUE)
 
+cat("identifying top snps...\n")
 # Identify top SNPs
 top_snps_count <- round(nrow(data) * cutoff)
+cat("identifying top snps 2...\n")
 top_snps_dt <- data[order(-neg_log_pvalues_one_tailed, na.last = TRUE)][1:top_snps_count]
 
-
+cat("sorting top snps...\n")
 # Final sorting
 top_snps_dt <- top_snps_dt[order(chromo, position)]
 
+cat("Get metric cutoff...\n")
 # Get metric cutoff
 metric_cutoff <- min(top_snps_dt[[metric]], na.rm = TRUE)
 
