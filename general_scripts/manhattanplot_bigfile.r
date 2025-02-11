@@ -33,13 +33,39 @@ pop_name <- ifelse(is.na(pop2), pop1, paste0(pop1, "_", pop2))
 chunk_size <- 1e6  # Adjust based on available memory
 
 
-# Read file
-data <- fread(input, sep = ",", data.table = TRUE)
+# Read header to get column names
+header <- fread(input, nrows = 0, sep = ",", data.table = TRUE)
+col_names <- names(header)
 
-# Identify top SNPs
-top_snps_count <- round(nrow(data) * cutoff)
-top_snps_dt <- data[order(-neg_log_pvalues_one_tailed, na.last = TRUE)][1:top_snps_count]
+# Initialize an empty data.table for top SNPs
+top_snps_dt <- NULL
 
+# Read file in chunks
+con <- file(input, "r")
+readLines(con, n = 1)  # Skip header
+
+chunk_num <- 1
+repeat {
+  # Read a chunk of data
+  chunk <- fread(input, skip = (chunk_num - 1) * chunk_size + 1, nrows = chunk_size, sep = ",", data.table = TRUE, header = FALSE)
+  if (nrow(chunk) == 0) break  # Stop if no more data
+  
+  # Assign column names
+  setnames(chunk, col_names)
+  
+  # Combine current chunk with previous top SNPs
+  if (!is.null(top_snps_dt)) {
+    chunk <- rbind(top_snps_dt, chunk)
+  }
+  
+  # Identify top SNPs
+  top_snps_count <- round(nrow(chunk) * cutoff)
+  top_snps_dt <- chunk[order(-neg_log_pvalues_one_tailed, na.last = TRUE)][1:top_snps_count]
+  
+  chunk_num <- chunk_num + 1
+}
+
+close(con)
 
 # Final sorting
 top_snps_dt <- top_snps_dt[order(chromo, position)]
