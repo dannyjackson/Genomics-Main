@@ -96,5 +96,5 @@ sed -i 's/\"//g' $WIN_OUT
 
 # plot scaffolds
 echo 'visualizing windows'
-Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" raisd "${POP}"
+Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "raisd" "${POP}"
 echo 'finished windowed plot' 
