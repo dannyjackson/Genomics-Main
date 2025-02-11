@@ -91,6 +91,9 @@ echo 'finished z transforming'
 
 
 WIN_OUT="${OUTDIR}/analyses/raisd/${POP}/${POP}.raisd_${WIN}.Ztransformed.csv"
+
+sed -i 's/\"//g' $WIN_OUT
+
 # plot scaffolds
 echo 'visualizing windows'
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP}"
