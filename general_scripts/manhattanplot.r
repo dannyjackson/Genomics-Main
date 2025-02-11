@@ -60,7 +60,7 @@ repeat {
   
   # Identify top SNPs
   top_snps_count <- round(nrow(chunk) * cutoff)
-  top_snps_dt <- chunk[order(-neg_log_pvalues_one_tailed)][1:top_snps_count]
+  top_snps_dt <- chunk[order(-neg_log_pvalues_one_tailed, na.last = TRUE)][1:top_snps_count]
   
   chunk_num <- chunk_num + 1
 }
