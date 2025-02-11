@@ -55,7 +55,7 @@ cat("renaming names...\n")
 
 # Define patterns and replacements
 new_names <- names(data) %>%
-  gsub("(?i)\\bchr(?:omosome)?\\b", "chromo", ., perl = TRUE) %>%   # Replace chromosome variants with "chromo"
+  gsub("(?i)\\bchr(?:om(?:osome)?)?\\b", "chromo", ., perl = TRUE) %>%   # Replace chr, chrom, and chromosome with "chromo"
   gsub("(?i)\\b(?:mid|pos|midpos|WinCenter)\\b", "position", ., perl = TRUE)  # Replace pos, mid, midpos variants with "position"
 
 
