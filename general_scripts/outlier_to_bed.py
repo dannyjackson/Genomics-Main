@@ -12,12 +12,15 @@ chromconversion = sys.argv[4]
 # Read the data into a DataFrame
 df = pd.read_csv(input_data)
 
-# Compute start and stop positions based on window size
-df['start'] = df['position'] - (window // 2) if window else df['position'] - 1
-df['stop'] = df['position'] + (window // 2) if window else df['position']
+# Compute start and end positions based on window size
+if 'start' not in df.columns:
+    df['start'] = df['position'] - (window // 2) if window else df['position'] - 1
+if 'end' not in df.columns:
+    df['end'] = df['position'] + (window // 2) if window else df['position']
+
 
 # Create a BED file DataFrame
-bed_df = df[['chromo', 'start', 'stop']]
+bed_df = df[['chromo', 'start', 'end']]
 
 
 # Read chromosome conversion file
