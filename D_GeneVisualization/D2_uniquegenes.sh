@@ -22,7 +22,8 @@ fi
 # Parse command-line arguments
 while getopts "p:i:n:m:w:" option; do
     case "${option}" in
-        p) POP1=${OPTARG} ;;
+        p) PARAMS=${OPTARG} ;;
+        i) POP1=${OPTARG} ;;
         q) POP2=${OPTARG} ;;
         m) METRIC=${OPTARG} ;;
         w) WIN=${OPTARG} ;;
@@ -30,4 +31,6 @@ while getopts "p:i:n:m:w:" option; do
     esac
 done
 
-grep -Fxv -f ${POP2}.${METRIC}.${WIN}.genenames.txt ${POP1}.${METRIC}.${WIN}.genenames.txt > ${POP1}.${METRIC}.${WIN}.unique.genenames.txt
+source ${PARAMS}
+
+grep -Fxv -f ${OUTDIR}/analyses/genelist/gene_names/${POP2}.${METRIC}.${WIN}.genenames.txt ${OUTDIR}/analyses/genelist/gene_names/${POP1}.${METRIC}.${WIN}.genenames.txt > ${OUTDIR}/analyses/genelist/final_gene_lists/${POP1}.${METRIC}.${WIN}.unique.genenames.txt
