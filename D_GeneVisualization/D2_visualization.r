@@ -1,7 +1,8 @@
 #!/usr/bin/env Rscript
 
 # Load required packages, installing if necessary
-BiocManager::install("org.Gg.eg.db")
+# BiocManager::install("org.Gg.eg.db")
+# BiocManager::install("rrvgo")
 
 required_packages <- c("org.Gg.eg.db", "rrvgo")
 installed_packages <- rownames(installed.packages())
@@ -9,7 +10,7 @@ installed_packages <- rownames(installed.packages())
 cat("Checking required packages...\n")
 for (pkg in required_packages) {
   if (!(pkg %in% installed_packages)) {
-    install.packages(pkg, repos = "http://cran.us.r-project.org")
+    BiocManager::install(pkg)
   }
   library(pkg, character.only = TRUE)
 }
