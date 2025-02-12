@@ -20,7 +20,7 @@ fi
 
 
 # Parse command-line arguments
-while getopts "p:i:n:m:w:" option; do
+while getopts "p:i:q:m:w:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         i) POP1=${OPTARG} ;;
@@ -32,5 +32,4 @@ while getopts "p:i:n:m:w:" option; do
 done
 
 source ${PARAMS}
-
 grep -Fxv -f ${OUTDIR}/analyses/genelist/gene_names/${POP2}.${METRIC}.${WIN}.genenames.txt ${OUTDIR}/analyses/genelist/gene_names/${POP1}.${METRIC}.${WIN}.genenames.txt > ${OUTDIR}/analyses/genelist/final_gene_lists/${POP1}.${METRIC}.${WIN}.unique.genenames.txt
