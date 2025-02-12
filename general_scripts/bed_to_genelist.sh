@@ -56,4 +56,4 @@ python ${SCRIPTDIR}/Genomics-Main/general_scripts/outlier_to_bed.py ${IN_FILE} $
 
 bedtools intersect -a ${GFF} -b ${OUT_FILE} -wa > ${GENES_FILE}
 
-awk '{OFS = "\t"} {split($9, arr, ";"); print(arr[1])}' ${GENES_FILE} | sed 's/ID\=gene\-//g' | sort -u > ${GENENAMES}
+grep 'gene' ${GENES_FILE} | awk '{OFS = "\t"} {split($9, arr, ";"); print(arr[1])}' | sed 's/ID\=gene\-//g' | sort -u > ${GENENAMES}
