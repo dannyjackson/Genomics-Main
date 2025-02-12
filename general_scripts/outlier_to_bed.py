@@ -1,6 +1,7 @@
-import pandas as pd
 import sys
 import numpy
+import pandas as pd
+pd.set_option('compute.use_bottleneck', False)
 
 # Read input data and optional window size from command-line arguments
 input_data = sys.argv[1]
