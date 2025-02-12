@@ -3,7 +3,7 @@
 # Load required packages, installing if necessary
 BiocManager::install("org.Gg.eg.db")
 
-required_packages <- c("org.Gg.eg.db", "limma", "rrvgo")
+required_packages <- c("org.Gg.eg.db", "rrvgo")
 installed_packages <- rownames(installed.packages())
 
 cat("Checking required packages...\n")
