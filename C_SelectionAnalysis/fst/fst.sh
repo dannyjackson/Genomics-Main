@@ -23,7 +23,6 @@ while getopts "p:w:s:c:" option; do
         p) PARAMS=${OPTARG} ;;
         w) WIN=${OPTARG:-10000} ;;
         s) STEP=${OPTARG:-10000} ;;
-        c) CHR_FILE=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1 ;;
     esac
 done
@@ -41,10 +40,9 @@ source "${PARAMS}"
 WIN=${WIN:-10000}
 STEP=${STEP:-10000}
 
-# Read chromosome file if provided
-if [ -n "$CHR_FILE" ]; then
-    CHROM=$(cat "$CHR_FILE")
-fi
+# Read chromosome file 
+CHROM=$(cat "$CHR_FILE")
+
 
 # Print script info
 echo "\nRunning FST computation script"
