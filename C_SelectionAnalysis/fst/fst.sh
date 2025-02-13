@@ -18,7 +18,7 @@ if [ $# -lt 1 ]; then
 fi
 
 # Parse arguments
-while getopts "p:w:s:c:" option; do
+while getopts "p:w:s:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         w) WIN=${OPTARG:-10000} ;;
