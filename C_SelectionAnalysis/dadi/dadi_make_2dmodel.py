@@ -219,11 +219,12 @@ def main():
     model_dir = result_dir + dadi_model + '/'
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
+    
     #========================================
-
+    # Enter a loop to perform model-making runs for each species combo
     for dct in model_params:
         pop_ids = model_params[dct][0]
-        data_fs = model_params[dct][1]
+        data_fs = dadi.Spectrum.from_file(model_params[dct][1])
         start_params = model_params[dct][2]
         l_bounds = model_params[dct][3]
         u_bounds = model_params[dct][4]

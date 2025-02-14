@@ -92,6 +92,7 @@ def main():
     vcffile = dadi_params['VCF PATH']
     popfile = dadi_params['POP PATH']
     sfsparams = dadi_params['SFS PARAMS']
+    
     #========================================
     # Check if dadi-specific results directory exists in specified outdir. If not, create it.
     result_dir = outdir + 'dadi_results/'
@@ -99,11 +100,12 @@ def main():
         os.makedirs(result_dir)
 
     # Make Data dictionary and save to file.
-    dd = dadi.Misc.make_data_dict_vcf(vcffile, popfile, calc_coverage=True)
+    dd = dadi.Misc.make_data_dict_vcf(vcffile, popfile)
     with open('dadi_results/dd.bpkl', 'wb') as file:
         pkl.dump(dd, file, 2)
-
-    # Enter a loop to perform tasks below for each species combo
+    
+    #========================================
+    # Enter a loop to make SFS for each species combo
     for dct in sfsparams:
         pop_ids = sfsparams[dct][0]
         num_chrom = sfsparams[dct][1]
