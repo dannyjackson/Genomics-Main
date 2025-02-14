@@ -83,3 +83,4 @@ df <- data[ -c(1) ]
 cat("Saving Z-transformed data...\n")
 z_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "/", pop_name, ".", metric, ".", win, ".Ztransformed.csv"))
 write_delim(df, z_file, quote = "none", delim = "\t")
+  
