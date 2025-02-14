@@ -94,7 +94,7 @@ if [ -n "$CHROM" ]; then
     echo "Replacing chromosome names based on conversion file..."
     while IFS=',' read -r first second; do
         echo "Replacing $second with $first..."
-        sed -i "s/$second/$first/g" "$SLIDING_FILE" "$CHROM_FILE"
+        sed -i "s/$second/$first/g" "$SLIDING_FILE" 
     done <<< "$CHROM"
 fi
 
