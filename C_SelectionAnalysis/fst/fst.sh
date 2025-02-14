@@ -81,12 +81,12 @@ fi
 
 
 # Compute sliding window FST
-SLIDING_FILE="${OUTDIR}/analyses/fst/${POP1}_${POP2}/${WIN}/${POP1}_${POP2}.${WIN}.fst"
-if [ -f "$SLIDING_FILE" ]; then
+WIN_OUT="${OUTDIR}/analyses/fst/${POP1}_${POP2}/${WIN}/${POP1}_${POP2}.${WIN}.fst"
+if [ -f "$WIN_OUT" ]; then
     echo "Sliding window FST output already exists, skipping computation."
 else
     echo "Computing sliding window FST..."
-    ${ANGSD}/misc/realSFS fst stats2 "$FST_INDEX" -win "$WIN" -step "$STEP" > "$SLIDING_FILE"
+    ${ANGSD}/misc/realSFS fst stats2 "$FST_INDEX" -win "$WIN" -step "$STEP" > "$WIN_OUT"
 fi
 
 # Replace chromosome names if conversion file is provided
@@ -94,17 +94,24 @@ if [ -n "$CHROM" ]; then
     echo "Replacing chromosome names based on conversion file..."
     while IFS=',' read -r first second; do
         echo "Replacing $second with $first..."
-        sed -i "s/$second/$first/g" "$SLIDING_FILE" 
+        sed -i "s/$second/$first/g" "$WIN_OUT" 
     done <<< "$CHROM"
 fi
 
 # replace header (for whatever reason, it lacks a label for the fst column)
-sed -i '1s/^region\tchr\tmidPos\tNsites$/region\tchr\tmidPos\tNsites\tfst/' "$SLIDING_FILE"
+sed -i '1s/^region\tchr\tmidPos\tNsites$/region\tchr\tmidPos\tNsites\tfst/' "$WIN_OUT"
 
-# Generate Manhattan plot 
 
-echo "Generating Manhattan plot..."
+# z transform windowed data
+Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/ztransform_windows.r" \
+    "${OUTDIR}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP}"
+
+Z_OUT="${OUTDIR}/analyses/Tajima/${POP}/${POP}.Tajima_${WIN}.Ztransformed.csv"
+sed -i 's/\"//g' $Z_OUT
+
+# Run R script for plotting
+echo "Generating Manhattan plot from ${Z_OUT}..."
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" \
-    "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${SLIDING_FILE}" "${WIN}" "${POP1}" "${POP2}"
-echo "Manhattan plot generation complete."
+    "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${Z_OUT}" "${WIN}" "fst" "${POP}"
 
+echo "Script completed successfully!"
