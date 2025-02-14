@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 # Load required packages, installing if necessary
-required_packages <- c("qqman", "hexbin", "readr", "ggrepel", "ggplot2", "dplyr", "RColorBrewer", "data.table")
+required_packages <- c("qqman", "hexbin", "readr", "ggrepel", "ggplot2", "dplyr", "RColorBrewer", "data.table", "tidyr")
 installed_packages <- rownames(installed.packages())
 
 cat("Checking required packages...\n")
@@ -82,4 +82,4 @@ df <- data[ -c(1) ]
 # save file
 cat("Saving Z-transformed data...\n")
 z_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "/", pop_name, ".", metric, ".", win, ".Ztransformed.csv"))
-write.delim(df, z_file, quote = FALSE, row.names = FALSE, sep = "\t")
+write_delim(df, z_file, quote = FALSE, row.names = FALSE, sep = "\t")
