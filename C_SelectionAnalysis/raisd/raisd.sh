@@ -15,7 +15,8 @@ It requires a gzipped vcf file as input, which can be generated using the <scrip
 REQUIRED ARGUMENTS:
     -p  path to params file
     -n  population name
-    -w  Window size
+    -w  window size
+    -m  name of mtric
 EOF
     exit 1
 }
@@ -78,15 +79,22 @@ done < "$CHR_FILE"
 
 rm -f "${FILE}.bak"
 
+sed -i 's/ /\t/g' "${FILE}"
+
+
 # z transform U metric
 
-echo 'visualizing windows'
-Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/ztransform_windows.r" "${OUTDIR}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP}"
-echo 'finished windowed plot' &
+
+echo 'z transforming u metric'
+Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/ztransform_windows.r" "${OUTDIR}" "${CUTOFF}" "${FILE}" "${WIN}" "${POP}"
+echo 'finished z transforming' 
+
+
+WIN_OUT="${OUTDIR}/analyses/raisd/${POP}/${POP}.raisd_${WIN}.Ztransformed.csv"
+
+sed -i 's/\"//g' $WIN_OUT
 
 # plot scaffolds
-WIN_OUT="${OUTDIR}/analyses/${METRIC}/${POP}/${POP}.${METRIC}_${WIN}.Ztransformed.csv"
-
 echo 'visualizing windows'
-Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP}"
-echo 'finished windowed plot' &
+Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "raisd" "${POP}"
+echo 'finished windowed plot' 

@@ -122,11 +122,14 @@ fi
 
 # z transform windowed data
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/ztransform_windows.r" \
-    "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP}"
+    "${OUTDIR}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP}"
+
+Z_OUT="${OUTDIR}/analyses/Tajima/${POP}/${POP}.Tajima_${WIN}.Ztransformed.csv"
+sed -i 's/\"//g' $Z_OUT
 
 # Run R script for plotting
-echo "Generating Manhattan plot from ${WIN_OUT}..."
+echo "Generating Manhattan plot from ${Z_OUT}..."
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" \
-    "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP}"
+    "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${Z_OUT}" "${WIN}" "Tajima" "${POP}"
 
 echo "Script completed successfully!"

@@ -28,25 +28,48 @@ pop2 <- ifelse(length(args) > 8 && args[9] != "", args[9], NA)
 # Determine naming convention
 pop_name <- ifelse(is.na(pop2), pop1, paste0(pop1, "_", pop2))
 
+# Identify top outliers using chunking approach
 # Define parameters
-cat("Reading in file...\n")
-# Read file
-data <- fread(input, sep = "\t", na.strings = c("", "NA"), data.table = TRUE)
+chunk_size <- 1e6  # Adjust based on available memory
 
-cat("identifying top snps...\n")
-# Identify top SNPs
-data_nona <- data[!is.na(neg_log_pvalues_one_tailed)]
-top_snps_count <- round(nrow(data_nona) * cutoff)
-cat("identifying top snps 2...\n")
-data_nona_sorted <- data_nona %>%
-  arrange(desc(neg_log_pvalues_one_tailed)) %>%
-  slice_head(n = top_snps_count)
 
-cat("sorting top snps...\n")
+# Read header to get column names
+header <- fread(input, nrows = 0, sep = ",", data.table = TRUE)
+col_names <- names(header)
+
+# Initialize an empty data.table for top SNPs
+top_snps_dt <- NULL
+
+# Read file in chunks
+con <- file(input, "r")
+readLines(con, n = 1)  # Skip header
+
+chunk_num <- 1
+repeat {
+  # Read a chunk of data
+  chunk <- fread(input, skip = (chunk_num - 1) * chunk_size + 1, nrows = chunk_size, sep = ",", data.table = TRUE, header = FALSE)
+  if (nrow(chunk) == 0) break  # Stop if no more data
+  
+  # Assign column names
+  setnames(chunk, col_names)
+  
+  # Combine current chunk with previous top SNPs
+  if (!is.null(top_snps_dt)) {
+    chunk <- rbind(top_snps_dt, chunk)
+  }
+  
+  # Identify top SNPs
+  top_snps_count <- round(nrow(chunk) * cutoff)
+  top_snps_dt <- chunk[order(-neg_log_pvalues_one_tailed, na.last = TRUE)][1:top_snps_count]
+  
+  chunk_num <- chunk_num + 1
+}
+
+close(con)
+
 # Final sorting
-top_snps_dt <- data_nona_sorted[order(chromo, position)]
+top_snps_dt <- top_snps_dt[order(chromo, position)]
 
-cat("Get metric cutoff...\n")
 # Get metric cutoff
 metric_cutoff <- min(top_snps_dt[[metric]], na.rm = TRUE)
 
