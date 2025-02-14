@@ -108,7 +108,7 @@ Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/ztransform_windows.r" \
 
 Z_OUT="${OUTDIR}/analyses/fst/${POP1}_${POP2}/${POP1}_${POP2}.fst.${WIN}.Ztransformed.csv"
 
-sed -i 's/\"//g' ${Z_OUT}
+# sed -i 's/\"//g' ${Z_OUT}
 
 # Run R script for plotting
 echo "Generating Manhattan plot from ${Z_OUT}..."
