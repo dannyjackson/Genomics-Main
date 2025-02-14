@@ -24,6 +24,7 @@ import matplotlib.pyplot as plt
 import pickle as pkl
 from dadi.LowPass import LowPass
 from pathlib import Path
+import numpy as np
 
 
 # Function Definitions
@@ -73,6 +74,7 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, start_params, l_bound
     '''
     # Get Sample Sizes
     n = fs.sample_sizes
+    n_total = np.sum(n)
     # Get number of grid points for the model
     pts = [max(n)+20, max(n)+30, max(n)+40]
 
@@ -94,7 +96,7 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, start_params, l_bound
         with open('dadi_results/dd.bpkl', 'rb') as file:
             dd = pkl.load(file)
         cov_dist =  LowPass.compute_cov_dist(dd, fs.pop_ids)
-        model_ex = LowPass.make_low_pass_func_GATK_multisample(model_ex, cov_dist, fs.pop_ids, [40], [32], 1e-2)
+        model_ex = LowPass.make_low_pass_func_GATK_multisample(model_ex, cov_dist, fs.pop_ids, nseq=n_total, nsub=n_total, sim_threshold=1e-2, Fx=None)
 
     # Create a file to store the fitted parameters in your current working directory
     try:
@@ -107,7 +109,7 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, start_params, l_bound
     for i in range(num_opt):
         # Slightly alter parameters
         p0 = dadi.Misc.perturb_params(start_params, fold=1, upper_bound=u_bounds,lower_bound=l_bounds)
-        popt, ll_model = dadi.Inference.opt(p0, fs, model_ex, pts, lower_bound=l_bounds, upper_bound=u_bounds,algorithm=nlopt.LN_BOBYQA,maxeval=400, verbose=0)
+        popt, ll_model = dadi.Inference.opt(p0, fs, model_ex, pts, lower_bound=l_bounds, upper_bound=u_bounds,algorithm=nlopt.LN_BOBYQA,maxeval=400, verbose=100)
         # Calculate the synonymous theta
         # Also finding optimal scaling factor for data
         model_fs = model_ex(popt, n, pts)
@@ -209,7 +211,7 @@ def main():
     lowpass = dadi_params['LOWPASS']
 
     #========================================
-    # Check if dadi-specific results directories exists in specified outdir. If not, create it.
+    # Check if dadi-specific results directories exists in specified outdir. If not, create them.
     result_dir = outdir + 'dadi_results/'
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
