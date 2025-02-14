@@ -31,7 +31,7 @@ pop_name <- ifelse(is.na(pop2), pop1, paste0(pop1, "_", pop2))
 # Define parameters
 cat("Reading in file...\n")
 # Read file
-data <- fread(input, sep = ",", data.table = TRUE)
+data <- fread(input, sep = "\t", na.strings = c("", "NA"), data.table = TRUE)
 
 cat("identifying top snps...\n")
 # Identify top SNPs
