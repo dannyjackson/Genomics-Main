@@ -1,7 +1,7 @@
 ## dadi Parameter File Structure
 The dadi-specific parameters for making SFS and/or 2D demography models are contained in a JSON file. The basic structure is as follows:
 
-All JSON data is placed within curly brackets {} and is formatted in key:value pairs. The Values can be user-edited, but the Keys should NEVER be changed by the user.
+All JSON data is placed within curly brackets {} and is formatted in key:value pairs. The values can be user-edited, but the keys should **NEVER** be changed by the user.
 
 ## Basic Formatting
 - All text string values must be placed in double quotes. 
