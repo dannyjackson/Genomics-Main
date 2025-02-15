@@ -86,7 +86,7 @@ Rscript ~/programs/ngsTools/ngsPopGen/scripts/calcDxy.R \
     -q "${OUTDIR}/datafiles/safs/${POP2}.mafs" \
     -t "${num_sites}" > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_globalestimate_${POP1}_${POP2}.txt"
 
-mv "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite.txt" \
+# mv "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite.txt" \
    "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.txt"
 
 # Write header to the output file
