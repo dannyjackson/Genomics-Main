@@ -79,47 +79,64 @@ done
 # Calculate number of sites
 total_lines=$(wc -l < "${OUTDIR}/datafiles/safs/${POP1}.mafs")
 num_sites=$((total_lines - 1))
+# Define output file paths
+DXY_OUTPUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_globalestimate_${POP1}_${POP2}.txt"
+PERSITE_OUTPUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.txt"
+AUTOSOMES_OUTPUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
+SITES_OUTPUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/${POP1}_${POP2}_sites.txt"
 
-# Run Dxy calculation
-Rscript ~/programs/ngsTools/ngsPopGen/scripts/calcDxy.R \
-    -p "${OUTDIR}/datafiles/safs/${POP1}.mafs" \
-    -q "${OUTDIR}/datafiles/safs/${POP2}.mafs" \
-    -t "${num_sites}" > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_globalestimate_${POP1}_${POP2}.txt"
+# Run Dxy calculation only if the output file does not already exist
+if [[ ! -f "$DXY_OUTPUT" ]]; then
+    Rscript ~/programs/ngsTools/ngsPopGen/scripts/calcDxy.R \
+        -p "${OUTDIR}/datafiles/safs/${POP1}.mafs" \
+        -q "${OUTDIR}/datafiles/safs/${POP2}.mafs" \
+        -t "${num_sites}" > "$DXY_OUTPUT"
+else
+    echo "Dxy calculation already completed. Skipping."
+fi
 
-# mv "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite.txt" \
-   "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.txt"
+# Move the per-site Dxy file only if it doesn't exist
+if [[ -f "$PERSITE_OUTPUT" ]]; then
+    mv "$PERSITE_OUTPUT" \
+       "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.txt"
+else
+    echo "Per-site Dxy file not found or already moved."
+fi
 
-# Write header to the output file
-echo -e "chromo\tposition\tdxy" > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
+# Write header and filter autosomes only if the output file doesn't already exist
+if [[ ! -f "$AUTOSOMES_OUTPUT" ]]; then
+    echo -e "chromo\tposition\tdxy" > "$AUTOSOMES_OUTPUT"
+    grep ${CHRLEAD} "$PERSITE_OUTPUT" | grep -v ${SEXCHR} >> "$AUTOSOMES_OUTPUT"
+else
+    echo "Autosomes filtered file already exists. Skipping."
+fi
 
-# Filter the input file, excluding sex chromosomes, and append results
-grep ${CHRLEAD} "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.txt" | grep -v ${SEXCHR} >> "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
-
-
-# Check if CHROM has anything assigned
+# Process CHROM file only if it exists
 if [[ -f "$CHR_FILE" ]]; then
     echo "Processing CHROM file: $CHR_FILE..."
-    
-    # Define the files to process
 
     FILE="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${WIN}/${POP1}_${POP2}_average_dxy_${WIN}bp_windows.txt"
 
+    if [[ -f "$FILE" ]]; then
+        while IFS=',' read -r first second; do
+            echo "Replacing occurrences of '$second' with '$first' in $FILE"
+            sed -i.bak "s/$second/$first/g" "$FILE"
+        done < "$CHR_FILE"
 
-    # Read CHROM line by line
-    while IFS=',' read -r first second; do
-        echo "Replacing occurrences of '$second' with '$first' in $FILE"
-        sed -i.bak "s/$second/$first/g" "$FILE"
-    done < "$CHR_FILE"
-
-    rm -f "${FILE}.bak"
+        rm -f "${FILE}.bak"
+    else
+        echo "Windowed Dxy file not found. Skipping CHROM processing."
+    fi
 else
-    echo "CHROM variable is empty or not set."
+    echo "CHROM file not set or missing. Skipping CHROM processing."
 fi
 
-# Extract site positions
-
-awk 'NR>1 {print $2}' "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt" \
-    > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/${POP1}_${POP2}_sites.txt"
+# Extract site positions only if the output file doesn't already exist
+if [[ ! -f "$SITES_OUTPUT" ]]; then
+    awk 'NR>1 {print $2}' "$AUTOSOMES_OUTPUT" > "$SITES_OUTPUT"
+else
+    echo "Site positions file already exists. Skipping."
+fi
 
 
 # Compute windows and produce manhattan plots for windows and snp data
