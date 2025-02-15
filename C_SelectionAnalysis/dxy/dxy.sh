@@ -148,7 +148,7 @@ SNP_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/${POP1}_${POP2}.dxy.snps.si
 # Run first two scripts in sequence if output file doesn't exist
 if [ ! -f "$WIN_OUT" ]; then
     echo 'computing windows'
-    python "${SCRIPTDIR}/Genomics-Main/dxy/dxy_windows.py" --outdir "${OUTDIR}" --pop1 "${POP1}" --pop2 "${POP2}" --win "${WIN}" 
+    python "${SCRIPTDIR}/Genomics-Main/C_SelectionAnalysis/dxy/dxy_windows.py" --outdir "${OUTDIR}" --pop1 "${POP1}" --pop2 "${POP2}" --win "${WIN}" 
 
     # Check if CHROM has anything assigned
 if [[ -f "$CHR_FILE" ]]; then
@@ -169,9 +169,22 @@ if [[ -f "$CHR_FILE" ]]; then
 else
     echo "CHROM variable is empty or not set."
 fi
-    echo 'visualizing windows'
-    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP1}" "${POP2}"
-    echo 'finished windowed plot' &
+
+    # z transform windowed data
+    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/ztransform_windows.r" \
+        "${OUTDIR}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP1}_${POP2}"
+
+    Z_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${POP1}_${POP2}.dxy.${WIN}.Ztransformed.csv"
+
+    # sed -i 's/\"//g' ${Z_OUT}
+
+    # Run R script for plotting
+    echo "Generating Manhattan plot from ${Z_OUT}..."
+    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" \
+        "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${Z_OUT}" "${WIN}" "dxy" "${POP1}" "${POP2}"
+
+    echo "Script completed successfully!"
+
 fi
 
 # Run the SNP visualization separately if output file doesn't exist
