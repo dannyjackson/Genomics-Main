@@ -86,12 +86,17 @@ sbatch --account=mcnew \
 
 
 
+import sys
 import pandas as pd
 
-# Load the gene regions file (tab-separated)
-gene_df = pd.read_csv("/xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions.tsv", sep="\t") 
-# Load the depth file (assumed to be tab-separated and without headers)
-depth_df = pd.read_csv("/xdisk/mcnew/dannyjackson/cardinals/datafiles/bamstats/all_avg_depthstats.txt", sep="\t", header=None, names=["Chromosome", "Position", "Depth"])
+s = sys.argv[1]  # Get the first command-line argument
+gene_file_path = f"/xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions.{s}.tsv"
+
+gene_df = pd.read_csv(gene_file_path, sep="\t")
+
+depth_file_path = f"/xdisk/mcnew/dannyjackson/cardinals/datafiles/bamstats/all_avg_depthstats.{s}.tsv"
+
+depth_df = pd.read_csv(depth_file_path, sep="\t", header=None, names=["Chromosome", "Position", "Depth"])
 
 # Function to compute average depth for each gene
 def compute_avg_depth(row):
@@ -105,21 +110,59 @@ def compute_avg_depth(row):
 # Apply the function to each row in the gene DataFrame
 gene_df["Average_Depth"] = gene_df.apply(compute_avg_depth, axis=1)
 # Save the result
-gene_df.to_csv("/xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions_depth.tsv", sep="\t", index=False)
+output_file_path = f"/xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions_depth.{s}.tsv"
+
+gene_df.to_csv(output_file_path, sep="\t", index=False)
+
+
+for s in `cat /xdisk/mcnew/dannyjackson/cardinals/referencelists/SCAFFOLDS.txt`;
+	do echo $s
+
+    grep $s /xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions.tsv > "/xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions.$s.tsv"
+
+    grep $s /xdisk/mcnew/dannyjackson/cardinals/datafiles/bamstats/all_avg_depthstats.txt > "/xdisk/mcnew/dannyjackson/cardinals/datafiles/bamstats/all_avg_depthstats.$s.txt"
+done
+
+head -1 /xdisk/mcnew/dannyjackson/cardinals/referencelists/SCAFFOLDS.txt > /xdisk/mcnew/dannyjackson/cardinals/referencelists/SCAFFOLDS.test.txt
+
+for s in `cat /xdisk/mcnew/dannyjackson/cardinals/referencelists/SCAFFOLDS.txt`;
+	do echo ${s}
+
+	sbatch --account=mcnew \
+	--job-name=submit_makefile_gene_prop_depth_${s} \
+    --partition=standard \
+	--mail-type=ALL \
+	--output=slurm_output/output.submit_makefile_gene_prop_depth_${s}.%j \
+	--nodes=1 \
+	--ntasks-per-node=1 \
+    --mem=50gb \
+	--time=6:00:00 \
+	/xdisk/mcnew/dannyjackson/cardinals/datafiles/bamstats/submit_makefile_gene_prop_depth.sh -s "$s"
+
+done
+
+# 12228322
 
 #!/bin/bash
 
+# Parse command-line arguments
+while getopts "s:" option; do
+    case "${option}" in
+        s) SCAFF=${OPTARG} ;;
+        *) usage ;;
+    esac
+done
+
 module load python
-python makefile_gene_prop_depth.py
 
+echo ${SCAFF}
 
-sbatch --account=mcnew \
-        --job-name=submit_makefile_gene_prop_depth \
-        --partition=standard \
-        --mail-type=ALL \
-        --output=slurm_output/submit_makefile_gene_prop_depth.%j \
-        --nodes=1 \
-        --ntasks-per-node=4 \
-        --mem=100gb \
-        --time=10:00:00 \
-        /xdisk/mcnew/dannyjackson/cardinals/datafiles/bamstats/submit_makefile_gene_prop_depth.sh
+echo "first file"
+head -1 /xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions.tsv > "/xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions.${SCAFF}.tsv"
+grep ${SCAFF} /xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions.tsv >> "/xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions.${SCAFF}.tsv"
+
+echo "second file"
+grep ${SCAFF} /xdisk/mcnew/dannyjackson/cardinals/datafiles/bamstats/all_avg_depthstats.txt > "/xdisk/mcnew/dannyjackson/cardinals/datafiles/bamstats/all_avg_depthstats.${SCAFF}.txt"
+
+echo "python"
+python /xdisk/mcnew/dannyjackson/cardinals/datafiles/bamstats/makefile_gene_prop_depth.py ${SCAFF}
