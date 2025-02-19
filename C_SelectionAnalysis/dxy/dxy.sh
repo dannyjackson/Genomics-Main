@@ -95,7 +95,7 @@ fi
 # Move the per-site Dxy file only if it doesn't exist
 if [[ ! -f "$PERSITE_OUTPUT" ]]; then
     mv "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite.txt" \
-       "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.txt"
+       ${PERSITE_OUTPUT}
 else
     echo "Per-site Dxy file not found or already moved."
 fi
