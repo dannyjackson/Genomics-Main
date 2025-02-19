@@ -7,13 +7,10 @@
 
 if [ $# -lt 1 ]; then
     cat <<EOF
-This script computes dxy between two groups of genomes using a genotype likelihood framework implemented in ANGSD.
+This script computes average and sliding window dxy between two groups of genomes using a genotype likelihood framework implemented in ANGSD. It also produces a plot of windowed statistics and an output file of outlier regions above a threshold defined in the main parameter file.
 It requires SAF files as input, which can be generated using the <scriptname> scripts in:
     github.com/dannyjackson/Genomics-Main
 
-It computes average genome-wide dxy and produces output files for:
-    - Sliding window dxy
-    - Per-SNP dxy
 
 Read and understand the entire script before running it!
 
@@ -81,7 +78,7 @@ total_lines=$(wc -l < "${OUTDIR}/datafiles/safs/${POP1}.mafs")
 num_sites=$((total_lines - 1))
 # Define output file paths
 DXY_OUTPUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_globalestimate_${POP1}_${POP2}.txt"
-PERSITE_OUTPUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.txt"
+PERSITE_OUTPUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt"
 AUTOSOMES_OUTPUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
 SITES_OUTPUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/${POP1}_${POP2}_sites.txt"
 
@@ -97,7 +94,7 @@ fi
 
 # Move the per-site Dxy file only if it doesn't exist
 if [[ -f "$PERSITE_OUTPUT" ]]; then
-    mv "$PERSITE_OUTPUT" \
+    mv "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite.txt" \
        "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.txt"
 else
     echo "Per-site Dxy file not found or already moved."
@@ -139,11 +136,10 @@ else
 fi
 
 
-# Compute windows and produce manhattan plots for windows and snp data
+# Compute windows and produce manhattan plots for windows data
 # Define output files
 WIN_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${WIN}/${POP1}_${POP2}_average_dxy_${WIN}bp_windows.txt"
 SNP_IN="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
-SNP_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/${POP1}_${POP2}.dxy.snps.sigline.png"
        
 # Run first two scripts in sequence if output file doesn't exist
 if [ ! -f "$WIN_OUT" ]; then
@@ -185,13 +181,6 @@ fi
 
     echo "Script completed successfully!"
 
-fi
-
-# Run the SNP visualization separately if output file doesn't exist
-if [ ! -f "$SNP_OUT" ]; then
-    echo 'visualizing snps'
-    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${SNP_IN}" "snps" "${POP1}" "${POP2}"
-    echo 'finished snp plot' &
 fi
 
 # Wait for background jobs to finish
