@@ -1,8 +1,10 @@
 Given a list of sites with the first two columns describing 1-based chromosomal positions, filter out all sites corresponding to c!=3:
 apply_mask_l mask_35_50.fa in.list > out.list  
 
+# start by just generating a basic list of all genes in the reference genome
+grep 'ID=gene' /xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/genomic.gff > /xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/genomic.genes.gff
 
-grep 'ID=gene' genomic.gff > genomic.genes.gff
+awk '{print $9}' /xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/genomic.genes.gff | awk -F"[-;]" '{print $2}' | sort -u > genelist.txt
 
 import pysam
 import csv
@@ -121,9 +123,10 @@ for s in `cat /xdisk/mcnew/dannyjackson/cardinals/referencelists/SCAFFOLDS.txt`;
     grep $s /xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions.tsv > "/xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions.$s.tsv"
 
     grep $s /xdisk/mcnew/dannyjackson/cardinals/datafiles/bamstats/all_avg_depthstats.txt > "/xdisk/mcnew/dannyjackson/cardinals/datafiles/bamstats/all_avg_depthstats.$s.txt"
+
 done
 
-head -1 /xdisk/mcnew/dannyjackson/cardinals/referencelists/SCAFFOLDS.txt > /xdisk/mcnew/dannyjackson/cardinals/referencelists/SCAFFOLDS.test.txt
+tail -1 /xdisk/mcnew/dannyjackson/cardinals/referencelists/SCAFFOLDS.txt > /xdisk/mcnew/dannyjackson/cardinals/referencelists/SCAFFOLDS.test.txt
 
 for s in `cat /xdisk/mcnew/dannyjackson/cardinals/referencelists/SCAFFOLDS.txt`;
 	do echo ${s}
@@ -166,3 +169,101 @@ grep ${SCAFF} /xdisk/mcnew/dannyjackson/cardinals/datafiles/bamstats/all_avg_dep
 
 echo "python"
 python /xdisk/mcnew/dannyjackson/cardinals/datafiles/bamstats/makefile_gene_prop_depth.py ${SCAFF}
+
+
+
+cd /xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/
+
+head -n 1 gene_mask_proportions_depth.NC_044571.1.tsv > gene_mask_proportions_depth.all.txt
+
+for s in `cat /xdisk/mcnew/dannyjackson/cardinals/referencelists/SCAFFOLDS.txt`;
+	do echo ${s}
+
+	cat "gene_mask_proportions_depth.$s.tsv" | tail -n +2 >> gene_mask_proportions_depth.all.txt
+
+done
+
+# Make histograms
+cd /xdisk/mcnew/dannyjackson/cardinals/datafiles/bamstats
+
+# first, identify genes with high depth:
+28.15031
+
+head -n 1 /xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions_depth.all.txt > /xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions_depth.all.filtereddepthmax.txt
+
+awk '$6 < 28.15031 { print $0 }' /xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions_depth.all.txt >> /xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions_depth.all.filtereddepthmax.txt
+
+# cutoff of 2xSD is 28.15031
+# cutoff of 3xSD is 39.76541
+# a bunch of LOC genes and also:
+ACAD9       50.778   Acyl-CoA dehydrogenase
+# ARF4        32.566   Auxin response factors (ARF) GTPase
+CEP250      69.202 Centrosomal Protein 250
+# GARNL3      35.596
+# MMP17       32.290
+# NAA20       33.701
+PROCA1      70.155
+RESF1       43.456
+# TRNAQ-CUG   32.025
+# UBE2G2      30.689
+
+# go with 2x...
+
+
+# what genes had low mapability?
+awk '$4 < 0.5 { print $0 }' /xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions_depth.all.txt | wc -l
+
+awk '($4 < 0.95) { match($5, /ID=gene-([^;]+)/, arr); print arr[1] }' /xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions_depth.all.txt | grep -v 'LOC'
+
+R
+
+library(ggplot2)
+
+# Read your data
+df <- read.csv("/xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions_depth.all.filtereddepthmax.txt", sep='\t')
+
+df$Average_Depth <- as.numeric(df$Average_Depth)
+
+df_plot = df[!is.na(df$Average_Depth),]
+
+
+u = mean(df_plot$Average_Depth)
+# 4.568
+stdv = sd(df_plot$Average_Depth)
+# 1.221131
+u + (2*stdv)
+# cutoff of 28.15031 depth originally
+# 7.010419 after filtering
+
+
+
+# Histogram for Depth
+p2 <- ggplot(df, aes(x = Average_Depth)) +
+  geom_histogram(binwidth = 1, fill = "red", color = "black") +
+  theme_minimal() +
+  ggtitle("Histogram of Depth")
+
+# Save the Depth histogram
+ggsave("Depth_Histogram.png", plot = p2, width = 6, height = 4, dpi = 300)
+
+
+
+
+
+
+df$Proportion_3 <- as.numeric(df$Proportion_3)
+
+# Histogram for Proportion
+p1 <- ggplot(df, aes(x = Proportion_3)) +
+  geom_histogram(binwidth = 0.05, fill = "blue", color = "black") +
+  theme_minimal() +
+  ggtitle("Histogram of Proportion")
+
+# Save the Proportion histogram
+ggsave("Proportion_Histogram.png", plot = p1, width = 6, height = 4, dpi = 300)
+
+
+# decide to filter based on 3 < depth < 28.15031 and proportion > 0.95, see what genes that cuts out
+
+awk '($6 < 3 || $6 > 28.15031 || $4 < 0.90)  { match($5, /ID=gene-([^;]+)/, arr); print arr[1] }'  /xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions_depth.all.txt | grep -v 'LOC' | sort -u > /xdisk/mcnew/dannyjackson/cardinals/analyses/genelist/gene_names/excludedgenes.3depth28.prop90.txt
+

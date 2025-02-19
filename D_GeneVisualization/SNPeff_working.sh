@@ -217,3 +217,6 @@ sbatch --account=mcnew \
         --time=5:00:00 \
         --mem=50gb \
         /xdisk/mcnew/dannyjackson/cardinals/scripts/snpeff_filtered.sh
+
+# now filter fst file to contain only genes within snpeff vcf
+
