@@ -7,13 +7,10 @@
 
 if [ $# -lt 1 ]; then
     cat <<EOF
-This script computes dxy between two groups of genomes using a genotype likelihood framework implemented in ANGSD.
+This script computes average and sliding window dxy between two groups of genomes using a genotype likelihood framework implemented in ANGSD. It also produces a plot of windowed statistics and an output file of outlier regions above a threshold defined in the main parameter file.
 It requires SAF files as input, which can be generated using the <scriptname> scripts in:
     github.com/dannyjackson/Genomics-Main
 
-It computes average genome-wide dxy and produces output files for:
-    - Sliding window dxy
-    - Per-SNP dxy
 
 Read and understand the entire script before running it!
 
@@ -79,59 +76,75 @@ done
 # Calculate number of sites
 total_lines=$(wc -l < "${OUTDIR}/datafiles/safs/${POP1}.mafs")
 num_sites=$((total_lines - 1))
+# Define output file paths
+DXY_OUTPUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_globalestimate_${POP1}_${POP2}.txt"
+PERSITE_OUTPUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite_${POP1}_${POP2}.txt"
+AUTOSOMES_OUTPUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
+SITES_OUTPUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/${POP1}_${POP2}_sites.txt"
 
-# Run Dxy calculation
-Rscript ~/programs/ngsTools/ngsPopGen/scripts/calcDxy.R \
-    -p "${OUTDIR}/datafiles/safs/${POP1}.mafs" \
-    -q "${OUTDIR}/datafiles/safs/${POP2}.mafs" \
-    -t "${num_sites}" > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_globalestimate_${POP1}_${POP2}.txt"
+# Run Dxy calculation only if the output file does not already exist
+if [[ ! -f "$DXY_OUTPUT" ]]; then
+    Rscript ~/programs/ngsTools/ngsPopGen/scripts/calcDxy.R \
+        -p "${OUTDIR}/datafiles/safs/${POP1}.mafs" \
+        -q "${OUTDIR}/datafiles/safs/${POP2}.mafs" \
+        -t "${num_sites}" > "$DXY_OUTPUT"
+else
+    echo "Dxy calculation already completed. Skipping."
+fi
 
-mv "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite.txt" \
-   "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.txt"
+# Move the per-site Dxy file only if it doesn't exist
+if [[ ! -f "$PERSITE_OUTPUT" ]]; then
+    mv "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/Dxy_persite.txt" \
+       ${PERSITE_OUTPUT}
+else
+    echo "Per-site Dxy file not found or already moved."
+fi
 
-# Write header to the output file
-echo -e "chromo\tposition\tdxy" > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
+# Write header and filter autosomes only if the output file doesn't already exist
+if [[ ! -f "$AUTOSOMES_OUTPUT" ]]; then
+    echo -e "chromo\tposition\tdxy" > "$AUTOSOMES_OUTPUT"
+    grep ${CHRLEAD} "$PERSITE_OUTPUT" | grep -v ${SEXCHR} >> "$AUTOSOMES_OUTPUT"
+else
+    echo "Autosomes filtered file already exists. Skipping."
+fi
 
-# Filter the input file, excluding sex chromosomes, and append results
-grep ${CHRLEAD} "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.txt" | grep -v ${SEXCHR} >> "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
-
-
-# Check if CHROM has anything assigned
+# Process CHROM file only if it exists
 if [[ -f "$CHR_FILE" ]]; then
     echo "Processing CHROM file: $CHR_FILE..."
-    
-    # Define the files to process
 
     FILE="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${WIN}/${POP1}_${POP2}_average_dxy_${WIN}bp_windows.txt"
 
+    if [[ -f "$FILE" ]]; then
+        while IFS=',' read -r first second; do
+            echo "Replacing occurrences of '$second' with '$first' in $FILE"
+            sed -i.bak "s/$second/$first/g" "$FILE"
+        done < "$CHR_FILE"
 
-    # Read CHROM line by line
-    while IFS=',' read -r first second; do
-        echo "Replacing occurrences of '$second' with '$first' in $FILE"
-        sed -i.bak "s/$second/$first/g" "$FILE"
-    done < "$CHR_FILE"
-
-    rm -f "${FILE}.bak"
+        rm -f "${FILE}.bak"
+    else
+        echo "Windowed Dxy file not found. Skipping CHROM processing."
+    fi
 else
-    echo "CHROM variable is empty or not set."
+    echo "CHROM file not set or missing. Skipping CHROM processing."
 fi
 
-# Extract site positions
+# Extract site positions only if the output file doesn't already exist
+if [[ ! -f "$SITES_OUTPUT" ]]; then
+    awk 'NR>1 {print $2}' "$AUTOSOMES_OUTPUT" > "$SITES_OUTPUT"
+else
+    echo "Site positions file already exists. Skipping."
+fi
 
-awk 'NR>1 {print $2}' "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt" \
-    > "${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/${POP1}_${POP2}_sites.txt"
 
-
-# Compute windows and produce manhattan plots for windows and snp data
+# Compute windows and produce manhattan plots for windows data
 # Define output files
 WIN_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${WIN}/${POP1}_${POP2}_average_dxy_${WIN}bp_windows.txt"
 SNP_IN="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/Dxy_persite_${POP1}_${POP2}.autosomes.txt"
-SNP_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/snps/${POP1}_${POP2}.dxy.snps.sigline.png"
        
 # Run first two scripts in sequence if output file doesn't exist
 if [ ! -f "$WIN_OUT" ]; then
     echo 'computing windows'
-    python "${SCRIPTDIR}/Genomics-Main/dxy/dxy_windows.py" --outdir "${OUTDIR}" --pop1 "${POP1}" --pop2 "${POP2}" --win "${WIN}" 
+    python "${SCRIPTDIR}/Genomics-Main/C_SelectionAnalysis/dxy/dxy_windows.py" --outdir "${OUTDIR}" --pop1 "${POP1}" --pop2 "${POP2}" --win "${WIN}" 
 
     # Check if CHROM has anything assigned
 if [[ -f "$CHR_FILE" ]]; then
@@ -152,16 +165,22 @@ if [[ -f "$CHR_FILE" ]]; then
 else
     echo "CHROM variable is empty or not set."
 fi
-    echo 'visualizing windows'
-    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP1}" "${POP2}"
-    echo 'finished windowed plot' &
-fi
 
-# Run the SNP visualization separately if output file doesn't exist
-if [ ! -f "$SNP_OUT" ]; then
-    echo 'visualizing snps'
-    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${SNP_IN}" "snps" "${POP1}" "${POP2}"
-    echo 'finished snp plot' &
+    # z transform windowed data
+    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/ztransform_windows.r" \
+        "${OUTDIR}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP1}_${POP2}"
+
+    Z_OUT="${OUTDIR}/analyses/dxy/${POP1}_${POP2}/${POP1}_${POP2}.dxy.${WIN}.Ztransformed.csv"
+
+    # sed -i 's/\"//g' ${Z_OUT}
+
+    # Run R script for plotting
+    echo "Generating Manhattan plot from ${Z_OUT}..."
+    Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" \
+        "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${Z_OUT}" "${WIN}" "dxy" "${POP1}" "${POP2}"
+
+    echo "Script completed successfully!"
+
 fi
 
 # Wait for background jobs to finish
