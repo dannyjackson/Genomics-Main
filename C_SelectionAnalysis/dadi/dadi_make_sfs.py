@@ -81,12 +81,23 @@ def main():
     4) Make Data Dictionary
     '''
     #========================================
+    # Basic check for enough parameter files inputted
+    print('Checking File Arguments...')
+    if len(sys.argv) != 3:
+        raise IndexError('Not enough arguments. Did you include both the Base and dadi-specific parameter files?')
+    
     # Import base parameters from user-inputted params_base.sh file
+    print('Storing Needed Base Parameters...')
     base_params = Path(sys.argv[1]).read_text().strip().split('\n')
+    outdir = None
     for line in base_params:
-        if 'OUTDIR=' in line: outdir = line.split('=')[1].split('#')[0].strip()
+        if 'OUTDIR=' in line: outdir = line.split('=')[1].split('#')[0].strip() 
+    if not outdir:
+        raise NameError("Couldn't find Out-Directory. Check that OUTDIR is specified as in example Genomics-Main base_params.sh.")
+    
 
     # Import dadi-specific parameters for sfs creation from user-inputted dadi_params.json file
+    print('Storing Needed dadi Parameters...')
     with open(sys.argv[2], 'r') as file:
         dadi_params = json5.load(file)
     vcffile = dadi_params['VCF PATH']
@@ -95,32 +106,38 @@ def main():
     
     #========================================
     # Check if dadi-specific results directory exists in specified outdir. If not, create it.
+    print('Verifying Directories...')
     result_dir = outdir + 'dadi_results/'
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
 
     # Make Data dictionary and save to file.
-    dd = dadi.Misc.make_data_dict_vcf(vcffile, popfile)
+    print('Making Data Dictionary...')
+    dd = dadi.Misc.make_data_dict_vcf(vcffile, popfile, calc_coverage=True)
+    print('Saving Data Dictionary to results directory...')
     with open('dadi_results/dd.bpkl', 'wb') as file:
         pkl.dump(dd, file, 2)
     
     #========================================
     # Enter a loop to make SFS for each species combo
     for dct in sfsparams:
-        pop_ids = sfsparams[dct][0]
-        num_chrom = sfsparams[dct][1]
-        polarize = sfsparams[dct][2]
+        print('Getting ' + dct + ' Parameters...')
+        pop_ids, num_chrom, polarize = sfsparams[dct]
 
         # Make Spectrum objects
+        print('Generating SFS for ' + dct + '...')
         data_fs = dadi.Spectrum.from_data_dict(dd, pop_ids, polarized=polarize, projections=num_chrom)
         
         # Plot the SFS and save plot to file
+        print('Plotting SFS for ' + dct + '...')
         plot_sfs(data_fs, pop_ids, result_dir)
         
         # Save SFS to files
+        print('Saving SFS for ' + dct + '...')
         data_fs.to_file(result_dir + '_'.join(pop_ids) + '_fs')
         
         # Make Bootstrapped SFS files
+        print('Generating Bootstrapped SFS for ' + dct + '...')
         bootstrap(dd, pop_ids, num_chrom, result_dir)
 
 

@@ -122,7 +122,7 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, start_params, l_bound
 
     return popt, model_fs, model_ex, pts
     
-def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps):
+#def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps):
     '''
     This function performs dadi Godambe Uncertainty Analysis on out 2D demographic models.
     It requires SFS bootstraps generated from dadi_make_sfs.py and will save the confidence intervals to text files
@@ -142,15 +142,13 @@ def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps):
     boots_fids = glob.glob('dadi_results/bootstraps/' + '_'.join(pop_ids) + '/' + '_'.join(pop_ids) + 'boots*.fs')
     boots_syn = [dadi.Spectrum.from_file(fid) for fid in boots_fids]
 
-    # Godambe uncertainties
-    # Will contain uncertainties for the
-    # estimated demographic parameters and theta.
+    # Godambe uncertainties will contain uncertainties for the estimated demographic parameters and theta.
 
     # Start a file to contain the confidence intervals
     fi = open(model_dir  + '_'.join(pop_ids) +'confidence_intervals.txt','w')
     fi.write('Optimized parameters: {0}\n\n'.format(popt))
 
-    # we want to try a few different step sizes (eps) to see if uncertainties very wildly with changes to step size.
+    # We want to try a few different step sizes (eps) to see if uncertainties very wildly with changes to step size. (Ideally they shoud not)
     for steps in eps:
         # Get optimzed parameters * 100 (possibly can solve low parameter values leading to floating point arithmetic errors)
         #popt_100 = [param * 100 for param in popt]
@@ -196,22 +194,32 @@ def main():
     9) Perform uncertainty analysis on all models and save them to files
     '''
     #========================================
+    # Basic check for enough parameter files inputted
+    print('Checking File Arguments...')
+    if len(sys.argv) != 3:
+        raise IndexError('Not enough arguments. Did you include both the Base and dadi-specific parameter files?')
+    
     # Import base parameters from user-inputted params_base.sh file
+    print('Storing Needed Base Parameters...')
     base_params = Path(sys.argv[1]).read_text().strip().split('\n')
+    outdir = None
     for line in base_params:
-        if 'OUTDIR=' in line: outdir = line.split('=')[1].split('#')[0].strip()
+        if 'OUTDIR=' in line: outdir = line.split('=')[1].split('#')[0].strip() 
+    if not outdir:
+        raise NameError("Couldn't find Out-Directory. Check that OUTDIR is specified as in example Genomics-Main base_params.sh.")
 
     # Import dadi-specific parameters for model creation from user-inputted dadi_params.json file
+    print('Storing Needed dadi Parameters...')
     with open(sys.argv[2], 'r') as file:
         dadi_params = json5.load(file)
     dadi_model = dadi_params['DADI MODEL']
     model_params = dadi_params['MODEL PARAMS']
-    godambe_eps = dadi_params['GODAMBE STEP SIZES']
     num_opt = dadi_params['PARAM OPTIMIZATIONS']
     lowpass = dadi_params['LOWPASS']
 
     #========================================
     # Check if dadi-specific results directories exists in specified outdir. If not, create them.
+    print('Verifying Directories...')
     result_dir = outdir + 'dadi_results/'
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
@@ -222,24 +230,32 @@ def main():
     
     #========================================
     # Enter a loop to perform model-making runs for each species combo
+    gim_params = []
     for dct in model_params:
-        pop_ids = model_params[dct][0]
-        data_fs = dadi.Spectrum.from_file(model_params[dct][1])
-        start_params = model_params[dct][2]
-        l_bounds = model_params[dct][3]
-        u_bounds = model_params[dct][4]
+        print('Getting ' + dct + ' Parameters...')
+        pop_ids, fs_fname, start_params, l_bounds, u_bounds = model_params[dct]
+        data_fs = dadi.Spectrum.from_file(fs_fname)
 
         # Make model SFS objects for each species comparison
+        print('Generating Model for ' + dct + '...')
         popt, model_fs, model_ex, pts = make_2d_demo_model(data_fs, pop_ids, dadi_model, model_dir, start_params, l_bounds, u_bounds, num_opt, lowpass)
+        gim_params.append([popt, pop_ids, model_ex, pts, data_fs])
 
         # Plot SFS model/data comparison
+        print('Plotting SFS Comparison for ' + dct + '...')
         compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir)
 
         # Save model SFS to files
+        print('Saving Model SFS for ' + dct + '...')
         model_fs.to_file(model_dir + '_'.join(pop_ids) + 'model_fs')
 
         # Perform dadi Godambe Uncertainty Analysis
-        godambe(popt, pop_ids, model_ex, pts, data_fs, model_dir, godambe_eps)
+        #godambe(popt, pop_ids, model_ex, pts, data_fs, model_dir, godambe_eps)
+    
+    # Save GIM Params to .pkl file for Uncertainty Analysis
+    print('Saving Intermediate GIM Params file to Model Directory...')
+    with open(model_dir + 'gim_params.pkl') as file:
+        pkl.dump(gim_params, file)
 
 
 if __name__ == '__main__':
