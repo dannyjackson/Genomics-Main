@@ -19,12 +19,11 @@ File Requirements:
 
 # Required Modules
 #==========================================================
-import dadi, nlopt, glob, os, json5, sys
+import dadi, nlopt, os, json5, sys
 import matplotlib.pyplot as plt
-import pickle as pkl
+import pickle as pkl, numpy as np
 from dadi.LowPass import LowPass
 from pathlib import Path
-import numpy as np
 
 
 # Function Definitions
@@ -121,46 +120,6 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, start_params, l_bound
     output.close()
 
     return popt, model_fs, model_ex, pts
-    
-#def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps):
-    '''
-    This function performs dadi Godambe Uncertainty Analysis on out 2D demographic models.
-    It requires SFS bootstraps generated from dadi_make_sfs.py and will save the confidence intervals to text files
-    in the dadi model results directory.
-    Parameters:
-        popt: List of int/floats of Optimal model parameters
-        pop_ids: A 2 element list containing strings of species names
-        model_ex: Our final model function
-        pts: ist of integers of number of grid points for model
-        fs: An SFS object containing data across 2 populations
-        model_dir: A string representing the model_specific dadi results directory
-        eps: List of floats of step sizes to test in our confidence intervals
-    Returns:
-        None
-    '''
-    # Perform Godambe Uncertainty Analysis
-    boots_fids = glob.glob('dadi_results/bootstraps/' + '_'.join(pop_ids) + '/' + '_'.join(pop_ids) + 'boots*.fs')
-    boots_syn = [dadi.Spectrum.from_file(fid) for fid in boots_fids]
-
-    # Godambe uncertainties will contain uncertainties for the estimated demographic parameters and theta.
-
-    # Start a file to contain the confidence intervals
-    fi = open(model_dir  + '_'.join(pop_ids) +'confidence_intervals.txt','w')
-    fi.write('Optimized parameters: {0}\n\n'.format(popt))
-
-    # We want to try a few different step sizes (eps) to see if uncertainties very wildly with changes to step size. (Ideally they shoud not)
-    for steps in eps:
-        # Get optimzed parameters * 100 (possibly can solve low parameter values leading to floating point arithmetic errors)
-        #popt_100 = [param * 100 for param in popt]
-        # Do normal uncertainty analysis
-        uncerts_adj = dadi.Godambe.GIM_uncert(func_ex=model_ex, grid_pts=pts, all_boot=boots_syn, p0=popt, data=fs, eps=steps, log=True)
-        uncerts_str = ',  '.join([str(ele) for ele in uncerts_adj])
-        fi.write('Godambe Uncertainty Array Output: [' + uncerts_str + ']\n')
-        fi.write('Estimated 95% uncerts (with step size '+str(eps)+'): {0}\n'.format(1.96*uncerts_adj[:-1]))
-        fi.write('Lower bounds of 95% confidence interval : {0}\n'.format(popt-1.96*uncerts_adj[:-1]))
-        fi.write('Upper bounds of 95% confidence interval : {0}\n\n'.format(popt+1.96*uncerts_adj[:-1]))
-        
-    fi.close()
 
 def compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir):
     '''
@@ -183,15 +142,13 @@ def compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir):
 #==========================================================
 def main():
     '''
-    1) Make data dictionary from VCF file
-    2) Make the spectrum objects for each species comparison from data dictionary
-    3) Plot SFS and Save plots to files
-    4) Save SFS objects to files
-    5) Make bootstraps
-    6) Make demography model SFS and save fits to files
-    7) Make SFS / Model SFS comparison plots
-    8) Save model SFS to files
-    9) Perform uncertainty analysis on all models and save them to files
+    1) Import Base Parameters
+    2) Import Dadi-SFS Specific Parameters
+    3) Check for required directories
+    6) Generate demography model SFS and save fits to files
+    7) Plot SFS / Model SFS comparisons/residuals
+    8) Save model SFS to file
+    9) Save uncertainty analysis on all models to file
     '''
     #========================================
     # Basic check for enough parameter files inputted

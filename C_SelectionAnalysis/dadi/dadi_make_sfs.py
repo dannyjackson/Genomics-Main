@@ -73,12 +73,16 @@ def plot_sfs(sfs, pop_ids, result_dir):
     plt.clf()
 
 
+# Main
+#==========================================================
 def main():
     '''
     1) Import Base Parameters
     2) Import Dadi-SFS Specific Parameters
     3) Check for required directories
     4) Make Data Dictionary
+    5) Generate and Plot SFS
+    6) Generate Bootstrapped SFS
     '''
     #========================================
     # Basic check for enough parameter files inputted
@@ -111,6 +115,7 @@ def main():
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
 
+    #========================================
     # Make Data dictionary and save to file.
     print('Making Data Dictionary...')
     dd = dadi.Misc.make_data_dict_vcf(vcffile, popfile, calc_coverage=True)

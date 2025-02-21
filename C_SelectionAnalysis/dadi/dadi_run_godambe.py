@@ -13,7 +13,6 @@ File Requirements:
     - Base Parameter File from Genomics Main Lab Repository
     - Dadi-Specific Parameter File from Genomics Main Lab Repository
     - Bootstrapped SFS files in proper result directory for use in Godambe Uncertainty Analysis
-    - If using LowPass workflow, your data dictionary generated in dadi_make_sfs.py is needed in the dadi_results directory
 '''
 
 
@@ -71,15 +70,11 @@ def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps):
 #==========================================================
 def main():
     '''
-    1) Make data dictionary from VCF file
-    2) Make the spectrum objects for each species comparison from data dictionary
-    3) Plot SFS and Save plots to files
-    4) Save SFS objects to files
-    5) Make bootstraps
-    6) Make demography model SFS and save fits to files
-    7) Make SFS / Model SFS comparison plots
-    8) Save model SFS to files
-    9) Perform uncertainty analysis on all models and save them to files
+    1) Import Base Parameters
+    2) Import Dadi-SFS Specific Parameters
+    3) Check for required directories
+    4) Load GIM Parameters
+    5) Perform GIM Uncertainty Analysis and write results to files
     '''
     #========================================
     # Basic check for enough parameter files inputted
@@ -124,7 +119,7 @@ def main():
     # Enter a loop to perform GIM Analysis for each species combo
     for lst in gim_params:
         popt, pop_ids, model_ex, pts, fs = lst
-        print('Performing GIM Analysis for ' + '_'.join(pop_ids) + ' Model...')
+        print('Performing GIM Analysis for ' + '_'.join(pop_ids) + ' ' + dadi_model +' Model...')
         godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps)
 
 
