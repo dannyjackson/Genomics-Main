@@ -21,7 +21,7 @@ File Requirements:
 #==========================================================
 import dadi, nlopt, os, json5, sys
 import matplotlib.pyplot as plt
-import pickle as pkl, numpy as np
+import dill as pkl
 from dadi.LowPass import LowPass
 from pathlib import Path
 
@@ -73,7 +73,6 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, start_params, l_bound
     '''
     # Get Sample Sizes
     n = fs.sample_sizes
-    n_total = np.sum(n)
     # Get number of grid points for the model
     pts = [max(n)+20, max(n)+30, max(n)+40]
 
@@ -88,25 +87,32 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, start_params, l_bound
         model = dadi.Numerics.make_anc_state_misid_func(model)
 
     # Add another model wrapper that allows for the use of grid points
+    print('---> Make Model Function')
     model_ex = dadi.Numerics.make_extrap_func(model)
 
     if lowpass:
+        lp_fname = '_lowpass'
         # Calculate Coverage Distribution from data dictionary
-        with open('dadi_results/dd.bpkl', 'rb') as file:
+        print('---> Diverting to LowPass workflow...')
+        with open('dadi_results/dd.pkl', 'rb') as file:
             dd = pkl.load(file)
         cov_dist =  LowPass.compute_cov_dist(dd, fs.pop_ids)
-        model_ex = LowPass.make_low_pass_func_GATK_multisample(model_ex, cov_dist, fs.pop_ids, nseq=n_total, nsub=n_total, sim_threshold=1e-2, Fx=None)
+        print('---> Making LowPass Model Function...')
+        model_ex = LowPass.make_low_pass_func_GATK_multisample(model_ex, cov_dist, fs.pop_ids, nseq=n, nsub=n, sim_threshold=1e-2, Fx=None)
+    else:
+        lp_fname = ''
 
     # Create a file to store the fitted parameters in your current working directory
     try:
-        output = open(model_dir + '_'.join(pop_ids) +'_fits.txt','a')
+        output = open(model_dir + '_'.join(pop_ids) + lp_fname +'_fits.txt','a')
     except:
-        output = open(model_dir + '_'.join(pop_ids) +'_fits.txt','w')
+        output = open(model_dir + '_'.join(pop_ids) + lp_fname + '_fits.txt','w')
     
     # This is where we run the optimization for our arbitrary model parameters
     # By the end, we will (presumably) get some optimal parameters and the log-liklihood for how optimal they are
     for i in range(num_opt):
         # Slightly alter parameters
+        print('---> Optimizing Starting Parameters...')
         p0 = dadi.Misc.perturb_params(start_params, fold=1, upper_bound=u_bounds,lower_bound=l_bounds)
         popt, ll_model = dadi.Inference.opt(p0, fs, model_ex, pts, lower_bound=l_bounds, upper_bound=u_bounds,algorithm=nlopt.LN_BOBYQA,maxeval=400, verbose=100)
         # Calculate the synonymous theta
@@ -115,6 +121,7 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, start_params, l_bound
         theta0 = dadi.Inference.optimal_sfs_scaling(model_fs, fs)
 
     # Write results to output file
+    print('---> Saving Optimized Model Parameters...')
     res = [ll_model] + list(popt) + [theta0]
     output.write('\t'.join([str(ele) for ele in res])+'\n')
     output.close()
@@ -189,12 +196,12 @@ def main():
     # Enter a loop to perform model-making runs for each species combo
     gim_params = []
     for dct in model_params:
-        print('Getting ' + dct + ' Parameters...')
+        print('\nGetting ' + dct + ' Parameters...')
         pop_ids, fs_fname, start_params, l_bounds, u_bounds = model_params[dct]
         data_fs = dadi.Spectrum.from_file(fs_fname)
 
         # Make model SFS objects for each species comparison
-        print('Generating Model for ' + dct + '...')
+        print('Generating ' + dct + '...')
         popt, model_fs, model_ex, pts = make_2d_demo_model(data_fs, pop_ids, dadi_model, model_dir, start_params, l_bounds, u_bounds, num_opt, lowpass)
         gim_params.append([popt, pop_ids, model_ex, pts, data_fs])
 
@@ -203,15 +210,12 @@ def main():
         compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir)
 
         # Save model SFS to files
-        print('Saving Model SFS for ' + dct + '...')
+        print('Saving SFS file for ' + dct + '...')
         model_fs.to_file(model_dir + '_'.join(pop_ids) + 'model_fs')
-
-        # Perform dadi Godambe Uncertainty Analysis
-        #godambe(popt, pop_ids, model_ex, pts, data_fs, model_dir, godambe_eps)
     
     # Save GIM Params to .pkl file for Uncertainty Analysis
-    print('Saving Intermediate GIM Params file to Model Directory...')
-    with open(model_dir + 'gim_params.pkl') as file:
+    print('\nSaving Intermediate GIM Params file to Model Directory...')
+    with open(model_dir + 'gim_params.pkl', 'wb') as file:
         pkl.dump(gim_params, file)
 
 

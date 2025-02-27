@@ -19,7 +19,7 @@ File Requirements:
 # Required Modules
 #==========================================================
 import dadi, glob, os, json5, sys
-import pickle as pkl
+import dill as pkl
 from pathlib import Path
 
 
@@ -41,7 +41,7 @@ def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps):
     Returns:
         None
     '''
-    # Perform Godambe Uncertainty Analysis
+    # Get Bootstrapped datasets
     boots_fids = glob.glob('dadi_results/bootstraps/' + '_'.join(pop_ids) + '/' + '_'.join(pop_ids) + 'boots*.fs')
     boots_syn = [dadi.Spectrum.from_file(fid) for fid in boots_fids]
 
@@ -111,15 +111,15 @@ def main():
 
     #========================================
     # Load GIM Params from intermediate file generated in dadi_make_2d_model.py
-    print('Loading GIM Parameters from gim_params.pkl...')
+    print('\nLoading GIM Parameters from gim_params.pkl...')
     with open(model_dir + 'gim_params.pkl') as file:
-        gim_params = pkl.load(file)
+        gim_params = pkl.loads(file)
     
     #========================================
     # Enter a loop to perform GIM Analysis for each species combo
     for lst in gim_params:
         popt, pop_ids, model_ex, pts, fs = lst
-        print('Performing GIM Analysis for ' + '_'.join(pop_ids) + ' ' + dadi_model +' Model...')
+        print('\nPerforming GIM Analysis for ' + '_'.join(pop_ids) + ' ' + dadi_model +' Model...')
         godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps)
 
 
