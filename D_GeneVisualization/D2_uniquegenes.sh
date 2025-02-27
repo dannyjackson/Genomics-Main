@@ -48,7 +48,7 @@ fi
 # Define file paths
 GENE_LIST1="$OUTDIR/analyses/genelist/gene_names/${POP1}.${METRIC}.${WIN}kb.genenames.txt"
 GENE_LIST2="$OUTDIR/analyses/genelist/gene_names/${POP2}.${METRIC}.${WIN}kb.genenames.txt"
-FINAL_LIST="$OUTDIR/analyses/genelist/final_gene_lists/${POP1}.${METRIC}.${WIN}kb.unique.genenames.txt"
+FINAL_LIST="$OUTDIR/analyses/genelist/gene_names/${POP1}.${METRIC}.${WIN}kb.unique.genenames.txt"
 
 # Ensure gene list files exist
 if [ ! -f "$GENE_LIST1" ]; then
