@@ -57,7 +57,7 @@ def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps):
         uncerts_adj = dadi.Godambe.GIM_uncert(func_ex=model_ex, grid_pts=pts, all_boot=boots_syn, p0=popt, data=fs, eps=steps, log=True)
         uncerts_str = ',  '.join([str(ele) for ele in uncerts_adj])
         fi.write('Godambe Uncertainty Array Output: [' + uncerts_str + ']\n')
-        fi.write('Estimated 95% uncerts (with step size '+str(eps)+'): {0}\n'.format(1.96*uncerts_adj[:-1]))
+        fi.write('Estimated 95% uncerts (with step size '+str(steps)+'): {0}\n'.format(1.96*uncerts_adj[:-1]))
         fi.write('Lower bounds of 95% confidence interval : {0}\n'.format(popt-1.96*uncerts_adj[:-1]))
         fi.write('Upper bounds of 95% confidence interval : {0}\n\n'.format(popt+1.96*uncerts_adj[:-1]))
         
