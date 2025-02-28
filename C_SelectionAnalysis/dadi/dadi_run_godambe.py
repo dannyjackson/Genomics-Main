@@ -25,7 +25,7 @@ from pathlib import Path
 
 # Function Definitions
 #==========================================================
-def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps):
+def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps, result_dir):
     '''
     This function performs dadi Godambe Uncertainty Analysis on out 2D demographic models.
     It requires SFS bootstraps generated from dadi_make_sfs.py and will save the confidence intervals to text files
@@ -42,7 +42,7 @@ def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps):
         None
     '''
     # Get Bootstrapped datasets
-    boots_fids = glob.glob('dadi_results/bootstraps/' + '_'.join(pop_ids) + '/' + '_'.join(pop_ids) + 'boots*.fs')
+    boots_fids = glob.glob(result_dir + 'bootstraps/' + '_'.join(pop_ids) + '/' + '_'.join(pop_ids) + 'boots*.fs')
     boots_syn = [dadi.Spectrum.from_file(fid) for fid in boots_fids]
 
     # Godambe uncertainties will contain uncertainties for the estimated demographic parameters and theta.
@@ -95,14 +95,17 @@ def main():
         dadi_params = json5.load(file)
     dadi_model = dadi_params['DADI MODEL']
     eps = dadi_params['GODAMBE STEP SIZES']
+    lowpass = dadi_params['LOWPASS']
 
     #========================================
     # Check if dadi-specific results directories exists in specified outdir. If not, create them.
     print('Verifying Directories...')
-    result_dir = outdir + 'dadi_results/'
+    # If using lowpass, make a lowpass directory
+    result_dir = outdir + 'dadi_results/lowpass/' if lowpass else outdir + 'dadi_results/'
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
 
+    # If using lowpass, make a lowpass directory
     model_dir = result_dir + dadi_model + '/'
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
@@ -111,14 +114,14 @@ def main():
     # Load GIM Params from intermediate file generated in dadi_make_2d_model.py
     print('\nLoading GIM Parameters from gim_params.pkl...')
     with open(model_dir + 'gim_params.pkl', 'rb') as file:
-        gim_params = pkl.loads(file)
+        gim_params = pkl.load(file)
     
     #========================================
     # Enter a loop to perform GIM Analysis for each species combo
     for lst in gim_params:
         popt, pop_ids, model_ex, pts, fs = lst
         print('\nPerforming GIM Analysis for ' + '_'.join(pop_ids) + ' ' + dadi_model +' Model...')
-        godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps)
+        godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps, result_dir)
     print('\n**GIM Analysis Complete**')
 
 

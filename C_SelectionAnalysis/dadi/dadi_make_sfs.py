@@ -107,11 +107,13 @@ def main():
     popfile = dadi_params['POP PATH']
     sfsparams = dadi_params['SFS PARAMS']
     num_boots, chunk_size = dadi_params['BOOTSTRAP PARAMS']
+    lowpass = dadi_params['LOWPASS']
     
     #========================================
     # Check if dadi-specific results directory exists in specified outdir. If not, create it.
     print('Verifying Directories...')
-    result_dir = outdir + 'dadi_results/'
+    # If using lowpass, make a lowpass directory
+    result_dir = outdir + 'dadi_results/lowpass/' if lowpass else outdir + 'dadi_results/'
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
 
@@ -120,7 +122,7 @@ def main():
     print('\nMaking Data Dictionary...')
     dd = dadi.Misc.make_data_dict_vcf(vcffile, popfile, calc_coverage=True)
     print('Saving Data Dictionary to results directory...')
-    with open('dadi_results/dd.pkl', 'wb') as file:
+    with open(result_dir + 'dd.pkl', 'wb') as file:
         pkl.dump(dd, file)
     
     #========================================
@@ -144,7 +146,7 @@ def main():
         # Make Bootstrapped SFS files
         print('Generating Bootstrapped SFS for ' + dct + '...')
         bootstrap(dd, pop_ids, num_chrom, result_dir, num_boots, chunk_size)
-    
+
     print('\n**SFS Creation Complete**')
 
 

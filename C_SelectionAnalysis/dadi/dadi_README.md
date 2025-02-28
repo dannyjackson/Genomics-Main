@@ -56,6 +56,7 @@ Example: If your desired model function is dadi.Demographics2D.split_mig, then s
 
 **LowPass Workflow**:
 If your data is 10x coverage or lower, you may plan to use dadi's LowPass workflow. If so, change the boolean parameter to true.
+Doing this will store all script outputs in a subdirectory under dadi_results called lowpass.
 
 **Model Parameter Optimizations**:
 Recommended to run 20 rounds of optimizations for testing and 100 rounds on HPC for full analyses.
@@ -71,7 +72,7 @@ Example:
 ```
     
 **Godambe Uncertainty Analysis**:
-You can change the range of your step sizes that you test depending on your data. (Refer to dadi documentation and discussion posts)
+You can change the range of your step sizes of confidence intervals that you test depending on your data. (Refer to dadi documentation and discussion posts)
 Steps sizes should be stated as lists of floats.
 
 
