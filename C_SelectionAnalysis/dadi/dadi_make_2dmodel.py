@@ -218,6 +218,7 @@ def main():
     with open(model_dir + 'gim_params.pkl', 'wb') as file:
         pkl.dump(gim_params, file)
 
+    print('\n**Model Creation Complete**')
 
 if __name__ == '__main__':
     main()

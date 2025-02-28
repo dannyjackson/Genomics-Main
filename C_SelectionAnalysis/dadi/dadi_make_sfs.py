@@ -144,6 +144,8 @@ def main():
         # Make Bootstrapped SFS files
         print('Generating Bootstrapped SFS for ' + dct + '...')
         bootstrap(dd, pop_ids, num_chrom, result_dir, num_boots, chunk_size)
+    
+    print('\n**SFS Creation Complete**')
 
 
 if __name__ == '__main__':

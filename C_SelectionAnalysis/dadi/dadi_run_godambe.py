@@ -121,6 +121,7 @@ def main():
         popt, pop_ids, model_ex, pts, fs = lst
         print('\nPerforming GIM Analysis for ' + '_'.join(pop_ids) + ' ' + dadi_model +' Model...')
         godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps)
+    print('\n**GIM Analysis Complete**')
 
 
 if __name__ == '__main__':
