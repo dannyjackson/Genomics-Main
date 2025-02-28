@@ -8,7 +8,7 @@ Each script will require the following python modules (and any additional depend
 *All other unstated modules should be installed by default on most Python installations*
 
 - dadi (Check Official Documentation to ensure all dependencies met)
-- json5 (This is an alternative Python JSON file parser that allows for comments in JSON file structure) <-- If you run into issues with this module, edit the scripts use the default json parser instead (import json) and remove all comments from dadi_params.json
+- json5 (This is an alternative Python JSON file parser that allows for comments in JSON file structure) <-- If you run into issues with this module, edit the scripts to use the default json parser instead (import json) and remove all comments from dadi_params.json
 
 When executing in an interactive terminal or submitting as a bash script to an HPC, each params file must be submitted as arguments when executing a dadi script.
 *Use Python Version 3.9 for smoother experience.*
@@ -29,7 +29,7 @@ Making Demography models in dadi should follow the outline below.
 ## Parameter Input Notes
 Below are notes and recommendations on how some parameters should be stated to properly run dadi scripts:
 
-**File Path Parameters**
+**File Path Parameters**:
 All file path parameters should be strings representing either the full or relative file path.
 
 **2D Site Frequency Spectra**:
@@ -39,7 +39,7 @@ Example of an SFS Param List:
 "SFS_1":[["pop0_ID", "pop1_ID"], [22, 33], false]
 ```
 
-**Bootstrapped SFS Params**
+**Bootstrapped SFS Params**:
 These parameters should be integers stating the number of bootstrapped datasets you want to generate, and the chunk size of each one (in number of base pairs).
 Example:
 ```
@@ -54,7 +54,7 @@ Example: If your desired model function is dadi.Demographics2D.split_mig, then s
 ```
 **Note, dadi_make_2dmodel.py has a custom an iso_inbreeding() model function that is not offered in dadi-out-of-the-box function. If you wish to use it, state "iso_inbreeding" as the parameter**
 
-**LowPass Workflow**
+**LowPass Workflow**:
 If your data is 10x coverage or lower, you may plan to use dadi's LowPass workflow. If so, change the boolean parameter to true.
 
 **Model Parameter Optimizations**:
