@@ -4,7 +4,6 @@
 Each dadi script requires the base_params.sh file and dadi_params.json file.
 If you need additional explanation on the basic JSON file structure, read the json_file_structure_overview.md.
 
-
 Each script will require the following python modules (and any additional dependencies for them)
 *All other unstated modules should be installed by default on most Python installations*
 
@@ -18,6 +17,14 @@ module load python/3.9/3.9.10
 
 python3 dadi_make_sfs.py base_params.sh dadi_params.json
 ```
+
+## Pipeline
+Making Demography models in dadi should follow the outline below.
+ 1) Generate and filter your VCF as needed. We have found that dadi prefers bcftools for this step over other programs such as ANGSD
+ 2) Run dadi_make_sfs.py to create your Site Frequency Spectra.
+ 3) Run dadi_make_2dmodels.py to generate your demography models.
+ 4) Run dadi_run_godambe.py to perform dadi GIM Uncertainty Analysis
+
 
 ## Parameter Input Notes
 Below are notes and recommendations on how some parameters should be stated to properly run dadi scripts:

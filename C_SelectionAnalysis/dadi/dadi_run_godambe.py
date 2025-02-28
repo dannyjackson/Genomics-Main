@@ -53,8 +53,6 @@ def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps):
 
     # We want to try a few different step sizes (eps) to see if uncertainties very wildly with changes to step size. (Ideally they shoud not)
     for steps in eps:
-        # Get optimzed parameters * 100 (possibly can solve low parameter values leading to floating point arithmetic errors)
-        #popt_100 = [param * 100 for param in popt]
         # Do normal uncertainty analysis
         uncerts_adj = dadi.Godambe.GIM_uncert(func_ex=model_ex, grid_pts=pts, all_boot=boots_syn, p0=popt, data=fs, eps=steps, log=True)
         uncerts_str = ',  '.join([str(ele) for ele in uncerts_adj])
@@ -112,7 +110,7 @@ def main():
     #========================================
     # Load GIM Params from intermediate file generated in dadi_make_2d_model.py
     print('\nLoading GIM Parameters from gim_params.pkl...')
-    with open(model_dir + 'gim_params.pkl') as file:
+    with open(model_dir + 'gim_params.pkl', 'rb') as file:
         gim_params = pkl.loads(file)
     
     #========================================
