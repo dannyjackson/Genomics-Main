@@ -14,17 +14,20 @@ File Requirements:
     - Dadi-Specific Parameter File from Genomics Main Lab Repository
     - Bootstrapped SFS files in proper result directory for use in Godambe Uncertainty Analysis
     - If using LowPass workflow, your data dictionary generated in dadi_make_sfs.py is needed in the dadi_results directory
+    - If parallelizing this script using CUDA Enabled GPUs (recommended for if doing many runs), you will also need Python's PYCUDA 
+        and scikit-cuda modules (along with loading the Nvidia CUDA toolkits from an HPC)
 '''
 
 
 # Required Modules
 #==========================================================
-import dadi, nlopt, os, json5, sys
+import dadi, nlopt, os, sys
 import matplotlib.pyplot as plt
 import dill as pkl
-from dadi.LowPass import LowPass
 from pathlib import Path
-
+import pycuda, skcuda # Can comment out if not parallelizing
+from dadi.LowPass import LowPass # Can comment out if not using LowPass workflow
+import json5 # Can switch to normal json module if this one causes issues
 
 # Function Definitions
 #==========================================================
@@ -177,6 +180,8 @@ def main():
     model_params = dadi_params['MODEL PARAMS']
     num_opt = dadi_params['PARAM OPTIMIZATIONS']
     lowpass = dadi_params['LOWPASS']
+    # Check if CUDA Enabled
+    dadi.cuda_enabled(dadi_params['CUDA ENABLED'])
 
     #========================================
     # Check if dadi-specific results directories exists in specified outdir. If not, create them.

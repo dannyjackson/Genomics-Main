@@ -8,7 +8,8 @@ Each script will require the following python modules (and any additional depend
 *All other unstated modules should be installed by default on most Python installations*
 
 - dadi (Check Official Documentation to ensure all dependencies met)
-- json5 (This is an alternative Python JSON file parser that allows for comments in JSON file structure) <-- If you run into issues with this module, edit the scripts to use the default json parser instead (import json) and remove all comments from dadi_params.json
+- json5 (This is an alternative Python JSON file parser that allows for comments in JSON file structure) <-- If you run into issues with this module, edit the scripts to use the default json parser instead (json) and remove all comments from dadi_params.json
+- PYCUDA and SciKit-CUDA if paralellizing your modelmaking script with CUDA Enabled GPUs.
 
 When executing in an interactive terminal or submitting as a bash script to an HPC, each params file must be submitted as arguments when executing a dadi script.
 *Use Python Version 3.9 for smoother experience.*
@@ -57,6 +58,7 @@ Example: If your desired model function is dadi.Demographics2D.split_mig, then s
 **LowPass Workflow**:
 If your data is 10x coverage or lower, you may plan to use dadi's LowPass workflow. If so, change the boolean parameter to true.
 Doing this will store all script outputs in a subdirectory under dadi_results called lowpass.
+If not doing this analysis in dadi, feel free to comment out the importing of dadi LowPass module.
 
 **Model Parameter Optimizations**:
 Recommended to run 20 rounds of optimizations for testing and 100 rounds on HPC for full analyses.
@@ -75,5 +77,8 @@ Example:
 You can change the range of your step sizes of confidence intervals that you test depending on your data. (Refer to dadi documentation and discussion posts)
 Steps sizes should be stated as lists of floats.
 
+**Enabling CUDA**:
+If you are running on an HPC that has CUDA Enabled Nvidia GPUs, you can speed up model-making in dadi substantially by setting this parameter to true.
+If not using this feature, you can also edit dadi_make_2dmodel.py to comment out the importing of pycuda and skcuda modules.
 
 

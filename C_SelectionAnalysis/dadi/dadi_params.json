@@ -39,5 +39,8 @@
     // Recall that if your SFS is unfolded, you will need one additional value at the end of your param lists that acts as the misidentification parameter.
 
     // You can change the range of your step sizes that you test depending on your data. (Refer to dadi documentation and discussion posts)
-    "GODAMBE STEP SIZES":[0.1, 0.01, 0.001, 0.0001, 0.00001]
+    "GODAMBE STEP SIZES":[0.1, 0.01, 0.001, 0.0001, 0.00001],
+
+    // Only use if running on an HPC or local system with a CUDA Enabled Nvidia GPU
+    "CUDA ENABLED": false
 }
