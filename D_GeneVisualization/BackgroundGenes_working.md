@@ -267,3 +267,16 @@ ggsave("Proportion_Histogram.png", plot = p1, width = 6, height = 4, dpi = 300)
 
 awk '($6 < 3 || $6 > 28.15031 || $4 < 0.90)  { match($5, /ID=gene-([^;]+)/, arr); print arr[1] }'  /xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/gene_mask_proportions_depth.all.txt | grep -v 'LOC' | sort -u > /xdisk/mcnew/dannyjackson/cardinals/analyses/genelist/gene_names/excludedgenes.3depth28.prop90.txt
 
+EXCLUDE_FILE="/xdisk/mcnew/dannyjackson/cardinals/analyses/genelist/gene_names/excludedgenes.3depth28.prop90.txt"
+FILE="/xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/genelist.txt"
+
+
+OUTPUT_FILE="${FILE%.txt}_filtered.txt"
+cp "$FILE" "$OUTPUT_FILE"  # Make a copy to modify
+
+# Iterate through each gene in exclude_genes.txt and remove it from the file
+while IFS= read -r GENE; do
+    sed -i "/^$GENE$/d" "$OUTPUT_FILE"
+done < "$EXCLUDE_FILE"
+
+cp "$OUTPUT_FILE" /home/u15/dannyjackson/programs/CardinalisGenomics/D_CandidateGeneAnalyses/GeneLists/background_genelist.full.txt
