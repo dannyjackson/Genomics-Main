@@ -26,7 +26,7 @@ from pathlib import Path
 
 # Function Definitions
 #==========================================================
-def bootstrap(dd, pop_ids, num_chrom, result_dir):
+def bootstrap(dd, pop_ids, num_chrom, result_dir, Nboot=100, chunk_size=1e7):
     '''
     This function creates bootstrapped datasets from our SNP data dictionary.
     Parameters:
@@ -34,11 +34,11 @@ def bootstrap(dd, pop_ids, num_chrom, result_dir):
         pop_ids: A 2 element list containing strings of species names for which we are generating bootstrapped datasets
         num_chrom: A 2 element list containing integers representing the number of chromosomes for each species we are bootstrapping
         result_dir: A string representing the dadi results directory path to where the bootstraps will be saved
+        Nboot: An integer representing the number of bootstrapped SFS to create (defaults to 100)
+        chunk_size: An integer (can be scientific notation) representing the chunk size of each bootstrapped SFS (defaults to 1e7)
     Returns:
         None
     '''
-    # State number of bootstrapped datasets desired and genome chunks
-    Nboot, chunk_size = 100, 1e7
     # Break data dictionary into chunks (list of dictionary genome chunks)
     chunks = dadi.Misc.fragment_data_dict(dd, chunk_size)
     # Set any random seed so that the same random genome chunks are selected for non/synonymous mutations
@@ -73,12 +73,16 @@ def plot_sfs(sfs, pop_ids, result_dir):
     plt.clf()
 
 
+# Main
+#==========================================================
 def main():
     '''
     1) Import Base Parameters
     2) Import Dadi-SFS Specific Parameters
     3) Check for required directories
     4) Make Data Dictionary
+    5) Generate and Plot SFS
+    6) Generate Bootstrapped SFS
     '''
     #========================================
     # Basic check for enough parameter files inputted
@@ -95,7 +99,6 @@ def main():
     if not outdir:
         raise NameError("Couldn't find Out-Directory. Check that OUTDIR is specified as in example Genomics-Main base_params.sh.")
     
-
     # Import dadi-specific parameters for sfs creation from user-inputted dadi_params.json file
     print('Storing Needed dadi Parameters...')
     with open(sys.argv[2], 'r') as file:
@@ -103,25 +106,29 @@ def main():
     vcffile = dadi_params['VCF PATH']
     popfile = dadi_params['POP PATH']
     sfsparams = dadi_params['SFS PARAMS']
+    num_boots, chunk_size = dadi_params['BOOTSTRAP PARAMS']
+    lowpass = dadi_params['LOWPASS']
     
     #========================================
     # Check if dadi-specific results directory exists in specified outdir. If not, create it.
     print('Verifying Directories...')
-    result_dir = outdir + 'dadi_results/'
+    # If using lowpass, make a lowpass directory
+    result_dir = outdir + 'dadi_results/lowpass/' if lowpass else outdir + 'dadi_results/'
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
 
+    #========================================
     # Make Data dictionary and save to file.
-    print('Making Data Dictionary...')
+    print('\nMaking Data Dictionary...')
     dd = dadi.Misc.make_data_dict_vcf(vcffile, popfile, calc_coverage=True)
     print('Saving Data Dictionary to results directory...')
-    with open('dadi_results/dd.bpkl', 'wb') as file:
-        pkl.dump(dd, file, 2)
+    with open(result_dir + 'dd.pkl', 'wb') as file:
+        pkl.dump(dd, file)
     
     #========================================
     # Enter a loop to make SFS for each species combo
     for dct in sfsparams:
-        print('Getting ' + dct + ' Parameters...')
+        print('\nGetting ' + dct + ' Parameters...')
         pop_ids, num_chrom, polarize = sfsparams[dct]
 
         # Make Spectrum objects
@@ -138,7 +145,9 @@ def main():
         
         # Make Bootstrapped SFS files
         print('Generating Bootstrapped SFS for ' + dct + '...')
-        bootstrap(dd, pop_ids, num_chrom, result_dir)
+        bootstrap(dd, pop_ids, num_chrom, result_dir, num_boots, chunk_size)
+
+    print('\n**SFS Creation Complete**')
 
 
 if __name__ == '__main__':

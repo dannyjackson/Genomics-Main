@@ -2,8 +2,10 @@
 // See dadi_params_README.md or json_structure_overview.md for additional clarification on parameter inputs
 
 {
+    //Either the full or relative path
     "VCF PATH": "path/to/vcf-file",
 
+    //Either the full or relative path
     "POP PATH": "path/to/pop-file",
 
     // 2D-Site Frequency Spectra should contain your population IDs, your population projections, and a T/F statement of whether the SFS should be polarized.
@@ -14,6 +16,9 @@
         "SFS_2":[["pop0_ID", "pop1_ID"], ["pop0_projection", "pop1_projection"], false],
         "SFS_3":[["pop0_ID", "pop1_ID"], ["pop0_projection", "pop1_projection"], false]
                 },
+    
+    // Your Bootstrap parameters stating how many bootstraps you want and the size of your data chunks (in base pairs)
+    "BOOTSTRAP PARAMS": [100, 1e7],
 
     // Desired dadi model MUST be a 2D model offered in dadi.Demographics2D submodule. State model as actual method name (Refer to dadi documentation)
     "DADI MODEL": "split_mig",
@@ -34,5 +39,8 @@
     // Recall that if your SFS is unfolded, you will need one additional value at the end of your param lists that acts as the misidentification parameter.
 
     // You can change the range of your step sizes that you test depending on your data. (Refer to dadi documentation and discussion posts)
-    "GODAMBE STEP SIZES":[0.1, 0.01, 0.001, 0.0001, 0.00001]
+    "GODAMBE STEP SIZES":[0.1, 0.01, 0.001, 0.0001, 0.00001],
+
+    // Only use if running on an HPC or local system with a CUDA Enabled Nvidia GPU
+    "CUDA ENABLED": false
 }

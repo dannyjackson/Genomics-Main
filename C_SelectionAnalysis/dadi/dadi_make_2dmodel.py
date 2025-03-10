@@ -14,18 +14,20 @@ File Requirements:
     - Dadi-Specific Parameter File from Genomics Main Lab Repository
     - Bootstrapped SFS files in proper result directory for use in Godambe Uncertainty Analysis
     - If using LowPass workflow, your data dictionary generated in dadi_make_sfs.py is needed in the dadi_results directory
+    - If parallelizing this script using CUDA Enabled GPUs (recommended for if doing many runs), you will also need Python's PYCUDA 
+        and scikit-cuda modules (along with loading the Nvidia CUDA toolkits from an HPC)
 '''
 
 
 # Required Modules
 #==========================================================
-import dadi, nlopt, glob, os, json5, sys
+import dadi, nlopt, os, sys
 import matplotlib.pyplot as plt
-import pickle as pkl
-from dadi.LowPass import LowPass
+import dill as pkl
 from pathlib import Path
-import numpy as np
-
+import pycuda, skcuda # Can comment out if not parallelizing
+from dadi.LowPass import LowPass # Can comment out if not using LowPass workflow
+import json5 # Can switch to normal json module if this one causes issues
 
 # Function Definitions
 #==========================================================
@@ -52,7 +54,7 @@ def iso_inbreeding(params, ns, pts):
     fs = dadi.Spectrum.from_phi_inbreeding(phi, ns, (xx, xx), (F1, F2), (2, 2))
     return fs
 
-def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, start_params, l_bounds, u_bounds, num_opt=20, lowpass=False):
+def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, result_dir, start_params, l_bounds, u_bounds, num_opt=20, lowpass=False):
     '''
     This function makes a 2D demographic model. After optimizing the model, 
     it will save the model parameters into an output file in the results directory.
@@ -74,7 +76,6 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, start_params, l_bound
     '''
     # Get Sample Sizes
     n = fs.sample_sizes
-    n_total = np.sum(n)
     # Get number of grid points for the model
     pts = [max(n)+20, max(n)+30, max(n)+40]
 
@@ -89,23 +90,27 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, start_params, l_bound
         model = dadi.Numerics.make_anc_state_misid_func(model)
 
     # Add another model wrapper that allows for the use of grid points
+    print('---> Make Model Function')
     model_ex = dadi.Numerics.make_extrap_func(model)
 
     if lowpass:
         # Calculate Coverage Distribution from data dictionary
-        with open('dadi_results/dd.bpkl', 'rb') as file:
+        print('---> Diverting to LowPass workflow...')
+        with open(result_dir + 'dd.pkl', 'rb') as file:
             dd = pkl.load(file)
         cov_dist =  LowPass.compute_cov_dist(dd, fs.pop_ids)
-        model_ex = LowPass.make_low_pass_func_GATK_multisample(model_ex, cov_dist, fs.pop_ids, nseq=n_total, nsub=n_total, sim_threshold=1e-2, Fx=None)
+        print('---> Making LowPass Model Function...')
+        model_ex = LowPass.make_low_pass_func_GATK_multisample(model_ex, cov_dist, fs.pop_ids, nseq=n, nsub=n, sim_threshold=1e-2, Fx=None)
 
     # Create a file to store the fitted parameters in your current working directory
     try:
-        output = open(model_dir + '_'.join(pop_ids) +'_fits.txt','a')
+        output = open(model_dir + '_'.join(pop_ids) + '_fits.txt','a')
     except:
-        output = open(model_dir + '_'.join(pop_ids) +'_fits.txt','w')
+        output = open(model_dir + '_'.join(pop_ids) + '_fits.txt','w')
     
     # This is where we run the optimization for our arbitrary model parameters
     # By the end, we will (presumably) get some optimal parameters and the log-liklihood for how optimal they are
+    print('---> Optimizing Starting Parameters...')
     for i in range(num_opt):
         # Slightly alter parameters
         p0 = dadi.Misc.perturb_params(start_params, fold=1, upper_bound=u_bounds,lower_bound=l_bounds)
@@ -116,53 +121,14 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, start_params, l_bound
         theta0 = dadi.Inference.optimal_sfs_scaling(model_fs, fs)
 
     # Write results to output file
+    print('---> Saving Optimized Model Parameters...')
     res = [ll_model] + list(popt) + [theta0]
     output.write('\t'.join([str(ele) for ele in res])+'\n')
     output.close()
 
     return popt, model_fs, model_ex, pts
-    
-#def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps):
-    '''
-    This function performs dadi Godambe Uncertainty Analysis on out 2D demographic models.
-    It requires SFS bootstraps generated from dadi_make_sfs.py and will save the confidence intervals to text files
-    in the dadi model results directory.
-    Parameters:
-        popt: List of int/floats of Optimal model parameters
-        pop_ids: A 2 element list containing strings of species names
-        model_ex: Our final model function
-        pts: ist of integers of number of grid points for model
-        fs: An SFS object containing data across 2 populations
-        model_dir: A string representing the model_specific dadi results directory
-        eps: List of floats of step sizes to test in our confidence intervals
-    Returns:
-        None
-    '''
-    # Perform Godambe Uncertainty Analysis
-    boots_fids = glob.glob('dadi_results/bootstraps/' + '_'.join(pop_ids) + '/' + '_'.join(pop_ids) + 'boots*.fs')
-    boots_syn = [dadi.Spectrum.from_file(fid) for fid in boots_fids]
 
-    # Godambe uncertainties will contain uncertainties for the estimated demographic parameters and theta.
-
-    # Start a file to contain the confidence intervals
-    fi = open(model_dir  + '_'.join(pop_ids) +'confidence_intervals.txt','w')
-    fi.write('Optimized parameters: {0}\n\n'.format(popt))
-
-    # We want to try a few different step sizes (eps) to see if uncertainties very wildly with changes to step size. (Ideally they shoud not)
-    for steps in eps:
-        # Get optimzed parameters * 100 (possibly can solve low parameter values leading to floating point arithmetic errors)
-        #popt_100 = [param * 100 for param in popt]
-        # Do normal uncertainty analysis
-        uncerts_adj = dadi.Godambe.GIM_uncert(func_ex=model_ex, grid_pts=pts, all_boot=boots_syn, p0=popt, data=fs, eps=steps, log=True)
-        uncerts_str = ',  '.join([str(ele) for ele in uncerts_adj])
-        fi.write('Godambe Uncertainty Array Output: [' + uncerts_str + ']\n')
-        fi.write('Estimated 95% uncerts (with step size '+str(eps)+'): {0}\n'.format(1.96*uncerts_adj[:-1]))
-        fi.write('Lower bounds of 95% confidence interval : {0}\n'.format(popt-1.96*uncerts_adj[:-1]))
-        fi.write('Upper bounds of 95% confidence interval : {0}\n\n'.format(popt+1.96*uncerts_adj[:-1]))
-        
-    fi.close()
-
-def compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir):
+def compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir, lowpass):
     '''
     This function plots a comparison spectra between the data and model.
     Will be useful in visually determining model accuracy.
@@ -183,15 +149,13 @@ def compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir):
 #==========================================================
 def main():
     '''
-    1) Make data dictionary from VCF file
-    2) Make the spectrum objects for each species comparison from data dictionary
-    3) Plot SFS and Save plots to files
-    4) Save SFS objects to files
-    5) Make bootstraps
-    6) Make demography model SFS and save fits to files
-    7) Make SFS / Model SFS comparison plots
-    8) Save model SFS to files
-    9) Perform uncertainty analysis on all models and save them to files
+    1) Import Base Parameters
+    2) Import Dadi-SFS Specific Parameters
+    3) Check for required directories
+    6) Generate demography model SFS and save fits to files
+    7) Plot SFS / Model SFS comparisons/residuals
+    8) Save model SFS to file
+    9) Save uncertainty analysis on all models to file
     '''
     #========================================
     # Basic check for enough parameter files inputted
@@ -216,11 +180,14 @@ def main():
     model_params = dadi_params['MODEL PARAMS']
     num_opt = dadi_params['PARAM OPTIMIZATIONS']
     lowpass = dadi_params['LOWPASS']
+    # Check if CUDA Enabled
+    dadi.cuda_enabled(dadi_params['CUDA ENABLED'])
 
     #========================================
     # Check if dadi-specific results directories exists in specified outdir. If not, create them.
     print('Verifying Directories...')
-    result_dir = outdir + 'dadi_results/'
+    # If using lowpass, make a lowpass directory
+    result_dir = outdir + 'dadi_results/lowpass/' if lowpass else outdir + 'dadi_results/'
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
 
@@ -232,31 +199,29 @@ def main():
     # Enter a loop to perform model-making runs for each species combo
     gim_params = []
     for dct in model_params:
-        print('Getting ' + dct + ' Parameters...')
+        print('\nGetting ' + dct + ' Parameters...')
         pop_ids, fs_fname, start_params, l_bounds, u_bounds = model_params[dct]
         data_fs = dadi.Spectrum.from_file(fs_fname)
 
         # Make model SFS objects for each species comparison
-        print('Generating Model for ' + dct + '...')
-        popt, model_fs, model_ex, pts = make_2d_demo_model(data_fs, pop_ids, dadi_model, model_dir, start_params, l_bounds, u_bounds, num_opt, lowpass)
+        print('Generating ' + dct + '...')
+        popt, model_fs, model_ex, pts = make_2d_demo_model(data_fs, pop_ids, dadi_model, model_dir, result_dir, start_params, l_bounds, u_bounds, num_opt, lowpass)
         gim_params.append([popt, pop_ids, model_ex, pts, data_fs])
 
         # Plot SFS model/data comparison
         print('Plotting SFS Comparison for ' + dct + '...')
-        compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir)
+        compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir, lowpass)
 
         # Save model SFS to files
-        print('Saving Model SFS for ' + dct + '...')
-        model_fs.to_file(model_dir + '_'.join(pop_ids) + 'model_fs')
-
-        # Perform dadi Godambe Uncertainty Analysis
-        #godambe(popt, pop_ids, model_ex, pts, data_fs, model_dir, godambe_eps)
+        print('Saving SFS file for ' + dct + '...')
+        model_fs.to_file(model_dir + '_'.join(pop_ids) + '_model_fs')
     
     # Save GIM Params to .pkl file for Uncertainty Analysis
-    print('Saving Intermediate GIM Params file to Model Directory...')
-    with open(model_dir + 'gim_params.pkl') as file:
+    print('\nSaving Intermediate GIM Params file to Model Directory...')
+    with open(model_dir + 'gim_params.pkl', 'wb') as file:
         pkl.dump(gim_params, file)
 
+    print('\n**Model Creation Complete**')
 
 if __name__ == '__main__':
     main()

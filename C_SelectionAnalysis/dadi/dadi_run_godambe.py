@@ -13,20 +13,19 @@ File Requirements:
     - Base Parameter File from Genomics Main Lab Repository
     - Dadi-Specific Parameter File from Genomics Main Lab Repository
     - Bootstrapped SFS files in proper result directory for use in Godambe Uncertainty Analysis
-    - If using LowPass workflow, your data dictionary generated in dadi_make_sfs.py is needed in the dadi_results directory
 '''
 
 
 # Required Modules
 #==========================================================
 import dadi, glob, os, json5, sys
-import pickle as pkl
+import dill as pkl
 from pathlib import Path
 
 
 # Function Definitions
 #==========================================================
-def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps):
+def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps, result_dir):
     '''
     This function performs dadi Godambe Uncertainty Analysis on out 2D demographic models.
     It requires SFS bootstraps generated from dadi_make_sfs.py and will save the confidence intervals to text files
@@ -42,8 +41,8 @@ def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps):
     Returns:
         None
     '''
-    # Perform Godambe Uncertainty Analysis
-    boots_fids = glob.glob('dadi_results/bootstraps/' + '_'.join(pop_ids) + '/' + '_'.join(pop_ids) + 'boots*.fs')
+    # Get Bootstrapped datasets
+    boots_fids = glob.glob(result_dir + 'bootstraps/' + '_'.join(pop_ids) + '/' + '_'.join(pop_ids) + 'boots*.fs')
     boots_syn = [dadi.Spectrum.from_file(fid) for fid in boots_fids]
 
     # Godambe uncertainties will contain uncertainties for the estimated demographic parameters and theta.
@@ -54,13 +53,11 @@ def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps):
 
     # We want to try a few different step sizes (eps) to see if uncertainties very wildly with changes to step size. (Ideally they shoud not)
     for steps in eps:
-        # Get optimzed parameters * 100 (possibly can solve low parameter values leading to floating point arithmetic errors)
-        #popt_100 = [param * 100 for param in popt]
         # Do normal uncertainty analysis
         uncerts_adj = dadi.Godambe.GIM_uncert(func_ex=model_ex, grid_pts=pts, all_boot=boots_syn, p0=popt, data=fs, eps=steps, log=True)
         uncerts_str = ',  '.join([str(ele) for ele in uncerts_adj])
         fi.write('Godambe Uncertainty Array Output: [' + uncerts_str + ']\n')
-        fi.write('Estimated 95% uncerts (with step size '+str(eps)+'): {0}\n'.format(1.96*uncerts_adj[:-1]))
+        fi.write('Estimated 95% uncerts (with step size '+str(steps)+'): {0}\n'.format(1.96*uncerts_adj[:-1]))
         fi.write('Lower bounds of 95% confidence interval : {0}\n'.format(popt-1.96*uncerts_adj[:-1]))
         fi.write('Upper bounds of 95% confidence interval : {0}\n\n'.format(popt+1.96*uncerts_adj[:-1]))
         
@@ -71,15 +68,11 @@ def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps):
 #==========================================================
 def main():
     '''
-    1) Make data dictionary from VCF file
-    2) Make the spectrum objects for each species comparison from data dictionary
-    3) Plot SFS and Save plots to files
-    4) Save SFS objects to files
-    5) Make bootstraps
-    6) Make demography model SFS and save fits to files
-    7) Make SFS / Model SFS comparison plots
-    8) Save model SFS to files
-    9) Perform uncertainty analysis on all models and save them to files
+    1) Import Base Parameters
+    2) Import Dadi-SFS Specific Parameters
+    3) Check for required directories
+    4) Load GIM Parameters
+    5) Perform GIM Uncertainty Analysis and write results to files
     '''
     #========================================
     # Basic check for enough parameter files inputted
@@ -102,30 +95,34 @@ def main():
         dadi_params = json5.load(file)
     dadi_model = dadi_params['DADI MODEL']
     eps = dadi_params['GODAMBE STEP SIZES']
+    lowpass = dadi_params['LOWPASS']
 
     #========================================
     # Check if dadi-specific results directories exists in specified outdir. If not, create them.
     print('Verifying Directories...')
-    result_dir = outdir + 'dadi_results/'
+    # If using lowpass, make a lowpass directory
+    result_dir = outdir + 'dadi_results/lowpass/' if lowpass else outdir + 'dadi_results/'
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
 
+    # If using lowpass, make a lowpass directory
     model_dir = result_dir + dadi_model + '/'
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
 
     #========================================
     # Load GIM Params from intermediate file generated in dadi_make_2d_model.py
-    print('Loading GIM Parameters from gim_params.pkl...')
-    with open(model_dir + 'gim_params.pkl') as file:
+    print('\nLoading GIM Parameters from gim_params.pkl...')
+    with open(model_dir + 'gim_params.pkl', 'rb') as file:
         gim_params = pkl.load(file)
     
     #========================================
     # Enter a loop to perform GIM Analysis for each species combo
     for lst in gim_params:
         popt, pop_ids, model_ex, pts, fs = lst
-        print('Performing GIM Analysis for ' + '_'.join(pop_ids) + ' Model...')
-        godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps)
+        print('\nPerforming GIM Analysis for ' + '_'.join(pop_ids) + ' ' + dadi_model +' Model...')
+        godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps, result_dir)
+    print('\n**GIM Analysis Complete**')
 
 
 if __name__ == '__main__':
