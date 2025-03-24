@@ -128,7 +128,7 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, result_dir, start_par
 
     return popt, model_fs, model_ex, pts
 
-def compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir, lowpass):
+def compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir):
     '''
     This function plots a comparison spectra between the data and model.
     Will be useful in visually determining model accuracy.
@@ -176,6 +176,7 @@ def main():
     print('Storing Needed dadi Parameters...')
     with open(sys.argv[2], 'r') as file:
         dadi_params = json5.load(file)
+    job_name = dadi_params['JOB NAME']
     dadi_model = dadi_params['DADI MODEL']
     model_params = dadi_params['MODEL PARAMS']
     num_opt = dadi_params['PARAM OPTIMIZATIONS']
@@ -186,8 +187,8 @@ def main():
     #========================================
     # Check if dadi-specific results directories exists in specified outdir. If not, create them.
     print('Verifying Directories...')
-    # If using lowpass, make a lowpass directory
-    result_dir = outdir + 'dadi_results/lowpass/' if lowpass else outdir + 'dadi_results/'
+    # If using lowpass, make a lowpass directory inside specified results folder
+    result_dir = outdir + job_name + '/lowpass/' if lowpass else outdir + job_name + '/'
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
 
@@ -210,7 +211,7 @@ def main():
 
         # Plot SFS model/data comparison
         print('Plotting SFS Comparison for ' + dct + '...')
-        compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir, lowpass)
+        compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir)
 
         # Save model SFS to files
         print('Saving SFS file for ' + dct + '...')

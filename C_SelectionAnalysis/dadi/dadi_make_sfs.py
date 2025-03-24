@@ -44,7 +44,14 @@ def bootstrap(dd, pop_ids, num_chrom, result_dir, Nboot=100, chunk_size=1e7):
     # Set any random seed so that the same random genome chunks are selected for non/synonymous mutations
     random.seed(1762)
     # Get a list containing sfs from bootstrapped genomes for each pop combo
-    boots = dadi.Misc.bootstraps_from_dd_chunks(chunks, Nboot, pop_ids=pop_ids, polarized=False, projections=num_chrom)
+    #boots = dadi.Misc.bootstraps_from_dd_chunks(chunks, Nboot, pop_ids=pop_ids, polarized=False, projections=num_chrom)
+    boots = []
+    for i in range(Nboot):
+        chosen = random.choice(chunks, k=len(chunks))
+        temp = {}
+        for j in chosen:
+            temp.update(j)
+        boots.append(dadi.Spectrum.from_data_dict(temp, pop_ids, num_chrom))
 
     # Check for Directories for dadi sfs bootstraps
     if not os.path.exists(result_dir + 'bootstraps/'):
@@ -103,6 +110,7 @@ def main():
     print('Storing Needed dadi Parameters...')
     with open(sys.argv[2], 'r') as file:
         dadi_params = json5.load(file)
+    job_name = dadi_params['JOB NAME']
     vcffile = dadi_params['VCF PATH']
     popfile = dadi_params['POP PATH']
     sfsparams = dadi_params['SFS PARAMS']
@@ -112,8 +120,8 @@ def main():
     #========================================
     # Check if dadi-specific results directory exists in specified outdir. If not, create it.
     print('Verifying Directories...')
-    # If using lowpass, make a lowpass directory
-    result_dir = outdir + 'dadi_results/lowpass/' if lowpass else outdir + 'dadi_results/'
+    # If using lowpass, make a lowpass directory inside specified results folder
+    result_dir = outdir + job_name + '/lowpass/' if lowpass else outdir + job_name + '/'
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
 
@@ -127,25 +135,25 @@ def main():
     
     #========================================
     # Enter a loop to make SFS for each species combo
-    for dct in sfsparams:
-        print('\nGetting ' + dct + ' Parameters...')
-        pop_ids, num_chrom, polarize = sfsparams[dct]
+    #for dct in sfsparams:
+        #print('\nGetting ' + dct + ' Parameters...')
+        #pop_ids, num_chrom, polarize = sfsparams[dct]
 
         # Make Spectrum objects
-        print('Generating SFS for ' + dct + '...')
-        data_fs = dadi.Spectrum.from_data_dict(dd, pop_ids, polarized=polarize, projections=num_chrom)
+        #print('Generating SFS for ' + dct + '...')
+        #data_fs = dadi.Spectrum.from_data_dict(dd, pop_ids, polarized=polarize, projections=num_chrom)
         
         # Plot the SFS and save plot to file
-        print('Plotting SFS for ' + dct + '...')
-        plot_sfs(data_fs, pop_ids, result_dir)
+        #print('Plotting SFS for ' + dct + '...')
+        #plot_sfs(data_fs, pop_ids, result_dir)
         
         # Save SFS to files
-        print('Saving SFS for ' + dct + '...')
-        data_fs.to_file(result_dir + '_'.join(pop_ids) + '_fs')
+        #print('Saving SFS for ' + dct + '...')
+        #data_fs.to_file(result_dir + '_'.join(pop_ids) + '_fs')
         
         # Make Bootstrapped SFS files
-        print('Generating Bootstrapped SFS for ' + dct + '...')
-        bootstrap(dd, pop_ids, num_chrom, result_dir, num_boots, chunk_size)
+        #print('Generating Bootstrapped SFS for ' + dct + '...')
+        #bootstrap(dd, pop_ids, num_chrom, result_dir, num_boots, chunk_size)
 
     print('\n**SFS Creation Complete**')
 

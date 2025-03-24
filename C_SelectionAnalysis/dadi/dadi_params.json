@@ -2,6 +2,9 @@
 // See dadi_params_README.md or json_structure_overview.md for additional clarification on parameter inputs
 
 {
+    // String used to denote different dadi test results (perhaps using different vcf data)
+    "JOB NAME": "dadi_results",
+
     //Either the full or relative path
     "VCF PATH": "path/to/vcf-file",
 

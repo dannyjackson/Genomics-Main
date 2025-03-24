@@ -93,6 +93,7 @@ def main():
     print('Storing Needed dadi Parameters...')
     with open(sys.argv[2], 'r') as file:
         dadi_params = json5.load(file)
+    job_name = dadi_params['JOB NAME']
     dadi_model = dadi_params['DADI MODEL']
     eps = dadi_params['GODAMBE STEP SIZES']
     lowpass = dadi_params['LOWPASS']
@@ -100,8 +101,8 @@ def main():
     #========================================
     # Check if dadi-specific results directories exists in specified outdir. If not, create them.
     print('Verifying Directories...')
-    # If using lowpass, make a lowpass directory
-    result_dir = outdir + 'dadi_results/lowpass/' if lowpass else outdir + 'dadi_results/'
+    # If using lowpass, make a lowpass directory inside specified results folder
+    result_dir = outdir + job_name + '/lowpass/' if lowpass else outdir + job_name + '/'
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
 
