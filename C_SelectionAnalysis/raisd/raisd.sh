@@ -41,7 +41,7 @@ source "${PARAMS}"
 cd ${OUTDIR}/analyses/raisd/${POP}/${WIN}
 
 
-VCF_IN=${OUTDIR}/datafiles/vcf3/${POP}.phased.vcf
+VCF_IN=${OUTDIR}/datafiles/vcf3/${POP}.phased.vcf.gz
 
 ~/programs/RAiSD/raisd-master/RAiSD \
     -n "${POP}" \
