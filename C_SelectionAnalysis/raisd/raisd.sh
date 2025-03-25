@@ -40,12 +40,12 @@ source "${PARAMS}"
 
 cd ${OUTDIR}/analyses/raisd/${POP}/${WIN}
 
-while read -r SCAFFOLD; do
-    VCF_IN=${OUTDIR}/datafiles/vcf3/${POP}.phased.vcf
 
-    ~/programs/RAiSD/raisd-master/RAiSD \
-        -n "${POP}.${SCAFFOLD}" \
-        -I "${VCF_IN}" \
-        -f -O -R -P -C "${REF}" -w ${WIN}
-        
-done < "$SCAFFOLD_LIST"
+VCF_IN=${OUTDIR}/datafiles/vcf3/${POP}.phased.vcf
+
+~/programs/RAiSD/raisd-master/RAiSD \
+    -n "${POP}" \
+    -I "${VCF_IN}" \
+    -f -O -R -P -C "${REF}" -w ${WIN}
+    
+
