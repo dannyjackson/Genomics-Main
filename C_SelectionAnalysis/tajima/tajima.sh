@@ -124,7 +124,7 @@ fi
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/ztransform_windows.r" \
     "${OUTDIR}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP}"
 
-Z_OUT="${OUTDIR}/analyses/Tajima/${POP}/${POP}.Tajima_${WIN}.Ztransformed.csv"
+Z_OUT="${OUTDIR}/analyses/tajima/${POP}/${POP}.Tajima_${WIN}.Ztransformed.csv"
 sed -i 's/\"//g' $Z_OUT
 
 # Run R script for plotting

@@ -21,8 +21,8 @@ if 'end' not in df.columns:
 
 
 # Create a BED file DataFrame
-bed_df = df[['chromo', 'start', 'end']]
-
+bed_df = df[['chromo', 'start', 'end']].copy()  # Copy to avoid modifying df
+bed_df['chromo'] = bed_df['chromo'].astype(str).str.strip()
 
 # Read chromosome conversion file
 file2 = pd.read_csv(chromconversion, sep=',', header=None)

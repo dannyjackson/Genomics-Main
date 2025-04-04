@@ -38,7 +38,6 @@ done
 
 # load modules
 
-module load python/3.11/3.11.4
 # has to be done on elgato for now
 module load gnu8/8.3.0
 module load bedtools2/2.29.2
@@ -52,7 +51,7 @@ GENES_FILE=${OUTDIR}/analyses/genelist/genes/${POP}.${METRIC}.${WIN}kb.genes.txt
 GENENAMES=${OUTDIR}/analyses/genelist/gene_names/${POP}.${METRIC}.${WIN}kb.genenames.txt
 
 
-python ${SCRIPTDIR}/Genomics-Main/general_scripts/outlier_to_bed.py ${IN_FILE} ${WIN} ${OUT_FILE} ${CHR_FILE}
+python3 ${SCRIPTDIR}/Genomics-Main/general_scripts/outlier_to_bed.py ${IN_FILE} ${WIN} ${OUT_FILE} ${CHR_FILE}
 
 bedtools intersect -a ${GFF} -b ${OUT_FILE} -wa > ${GENES_FILE}
 
