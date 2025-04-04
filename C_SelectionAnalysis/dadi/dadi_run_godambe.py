@@ -18,14 +18,15 @@ File Requirements:
 
 # Required Modules
 #==========================================================
-import dadi, glob, os, json5, sys
+import dadi, glob, os, sys
 import dill as pkl
 from pathlib import Path
+import json5 # Can switch to normal json module if this one causes issues
 
 
 # Function Definitions
 #==========================================================
-def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps, result_dir):
+def godambe(popt, model_ex, pts, fs, model_dir, eps, result_dir):
     '''
     This function performs dadi Godambe Uncertainty Analysis on out 2D demographic models.
     It requires SFS bootstraps generated from dadi_make_sfs.py and will save the confidence intervals to text files
@@ -42,13 +43,13 @@ def godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps, result_dir):
         None
     '''
     # Get Bootstrapped datasets
-    boots_fids = glob.glob(result_dir + 'bootstraps/' + '_'.join(pop_ids) + '/' + '_'.join(pop_ids) + 'boots*.fs')
+    boots_fids = glob.glob(result_dir + 'bootstraps/' + '_'.join(fs.pop_ids) + '/' + '_'.join(fs.pop_ids) + 'boots*.fs')
     boots_syn = [dadi.Spectrum.from_file(fid) for fid in boots_fids]
 
     # Godambe uncertainties will contain uncertainties for the estimated demographic parameters and theta.
 
     # Start a file to contain the confidence intervals
-    fi = open(model_dir  + '_'.join(pop_ids) +'confidence_intervals.txt','w')
+    fi = open(model_dir  + '_'.join(fs.pop_ids) +'confidence_intervals.txt','w')
     fi.write('Optimized parameters: {0}\n\n'.format(popt))
 
     # We want to try a few different step sizes (eps) to see if uncertainties very wildly with changes to step size. (Ideally they shoud not)
@@ -120,9 +121,9 @@ def main():
     #========================================
     # Enter a loop to perform GIM Analysis for each species combo
     for lst in gim_params:
-        popt, pop_ids, model_ex, pts, fs = lst
-        print('\nPerforming GIM Analysis for ' + '_'.join(pop_ids) + ' ' + dadi_model +' Model...')
-        godambe(popt, pop_ids, model_ex, pts, fs, model_dir, eps, result_dir)
+        popt, model_ex, pts, fs = lst
+        print('\nPerforming GIM Analysis for ' + '_'.join(fs.pop_ids) + ' ' + dadi_model +' Model...')
+        godambe(popt, model_ex, pts, fs, model_dir, eps, result_dir)
     print('\n**GIM Analysis Complete**')
 
 

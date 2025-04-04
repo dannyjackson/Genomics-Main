@@ -19,10 +19,12 @@ File Requirements:
 
 # Required Modules
 #==========================================================
-import dadi, random, os, sys, json5
+import dadi, random, os, sys
 import matplotlib.pyplot as plt
 import pickle as pkl
+from dadi.LowPass import LowPass # Can comment out if not using LowPass workflow
 from pathlib import Path
+import json5 # Can switch to normal json module if this one causes issues
 
 # Function Definitions
 #==========================================================
@@ -44,14 +46,7 @@ def bootstrap(dd, pop_ids, num_chrom, result_dir, Nboot=100, chunk_size=1e7):
     # Set any random seed so that the same random genome chunks are selected for non/synonymous mutations
     random.seed(1762)
     # Get a list containing sfs from bootstrapped genomes for each pop combo
-    #boots = dadi.Misc.bootstraps_from_dd_chunks(chunks, Nboot, pop_ids=pop_ids, polarized=False, projections=num_chrom)
-    boots = []
-    for i in range(Nboot):
-        chosen = random.choice(chunks, k=len(chunks))
-        temp = {}
-        for j in chosen:
-            temp.update(j)
-        boots.append(dadi.Spectrum.from_data_dict(temp, pop_ids, num_chrom))
+    boots = dadi.Misc.bootstraps_from_dd_chunks(chunks, Nboot, pop_ids=pop_ids, polarized=False, projections=num_chrom)
 
     # Check for Directories for dadi sfs bootstraps
     if not os.path.exists(result_dir + 'bootstraps/'):
@@ -64,20 +59,33 @@ def bootstrap(dd, pop_ids, num_chrom, result_dir, Nboot=100, chunk_size=1e7):
     for i in range(len(boots)):
         boots[i].to_file(boot_dir + '_'.join(pop_ids) + 'boots{0}.fs'.format(str(i)))
 
-def plot_sfs(sfs, pop_ids, result_dir):
+def plot_sfs(sfs, result_dir):
     '''
     This function takes an 2D sfs object and constructs a plot to be saved to the dadi_results directory. 
     Pop0 will plot on the yaxis and Pop1 will plot on the xaxis. 
     Parameters:
         sfs: A 2D sfs object
-	    pop_ids: A 2 element list containing strings for species being plotted. ###yaxis is the first list element. xaxis is the second.####
         result_dir: A string representing the dadi results directory path to where the bootstraps will be saved
     Returns:
         None
     '''
-    plot_spectrum = dadi.Plotting.plot_single_2d_sfs(sfs, vmin=1, pop_ids=pop_ids)
-    plt.savefig(result_dir + '_'.join(pop_ids) + '_2d_spectrum.png')
+    plot_spectrum = dadi.Plotting.plot_single_2d_sfs(sfs, vmin=1, pop_ids=sfs.pop_ids)
+    plt.savefig(result_dir + '_'.join(sfs.pop_ids) + '_2d_spectrum.png')
     plt.clf()
+
+def save_cov_dist(dd, sfs):
+    '''
+    This function saves a .pkl file of a depth-of-coverage distribution for a given 2D-SFS population pair.
+    This coverage distribution is only needed if using LowPass for Low Coverage data in future model-making.
+    We generate the file here (instead of in dadi_make_2dmodel.py) to avoid having to load in the large data dictionary
+    multiple times (thus greatly reducing computational resources)
+    Parameters:
+        dd: A Data Dictionary
+        sfs: A 2D SFS object
+    '''
+    cov_dist = LowPass.compute_cov_dist(dd, sfs.pop_ids)
+    with open('_'.join(sfs.pop_ids) + '_cov_dist.pkl', 'wb') as file:
+        pkl.dump(cov_dist, file)
 
 
 # Main
@@ -135,25 +143,28 @@ def main():
     
     #========================================
     # Enter a loop to make SFS for each species combo
-    #for dct in sfsparams:
-        #print('\nGetting ' + dct + ' Parameters...')
-        #pop_ids, num_chrom, polarize = sfsparams[dct]
+    for dct in sfsparams:
+        print('\nGetting ' + dct + ' Parameters...')
+        pop_ids, num_chrom, polarize = sfsparams[dct]
 
         # Make Spectrum objects
-        #print('Generating SFS for ' + dct + '...')
-        #data_fs = dadi.Spectrum.from_data_dict(dd, pop_ids, polarized=polarize, projections=num_chrom)
+        print('Generating SFS for ' + dct + '...')
+        data_fs = dadi.Spectrum.from_data_dict(dd, pop_ids, polarized=polarize, projections=num_chrom)
         
         # Plot the SFS and save plot to file
-        #print('Plotting SFS for ' + dct + '...')
-        #plot_sfs(data_fs, pop_ids, result_dir)
+        print('Plotting SFS for ' + dct + '...')
+        plot_sfs(data_fs, result_dir)
+        
+        # If doing lowpass workflow, save coverage distribution for future modeling
+        if lowpass: save_cov_dist(dd, data_fs)
         
         # Save SFS to files
-        #print('Saving SFS for ' + dct + '...')
-        #data_fs.to_file(result_dir + '_'.join(pop_ids) + '_fs')
+        print('Saving SFS for ' + dct + '...')
+        data_fs.to_file(result_dir + '_'.join(data_fs.pop_ids) + '_fs')
         
         # Make Bootstrapped SFS files
-        #print('Generating Bootstrapped SFS for ' + dct + '...')
-        #bootstrap(dd, pop_ids, num_chrom, result_dir, num_boots, chunk_size)
+        print('Generating Bootstrapped SFS for ' + dct + '...')
+        bootstrap(dd, pop_ids, num_chrom, result_dir, num_boots, chunk_size)
 
     print('\n**SFS Creation Complete**')
 

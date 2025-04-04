@@ -54,7 +54,7 @@ def iso_inbreeding(params, ns, pts):
     fs = dadi.Spectrum.from_phi_inbreeding(phi, ns, (xx, xx), (F1, F2), (2, 2))
     return fs
 
-def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, result_dir, start_params, l_bounds, u_bounds, num_opt=20, lowpass=False):
+def make_2d_demo_model(fs, dadi_model, model_dir, start_params, l_bounds, u_bounds, num_opt=20, lowpass=False):
     '''
     This function makes a 2D demographic model. After optimizing the model, 
     it will save the model parameters into an output file in the results directory.
@@ -94,19 +94,19 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, result_dir, start_par
     model_ex = dadi.Numerics.make_extrap_func(model)
 
     if lowpass:
-        # Calculate Coverage Distribution from data dictionary
         print('---> Diverting to LowPass workflow...')
-        with open(result_dir + 'dd.pkl', 'rb') as file:
-            dd = pkl.load(file)
-        cov_dist =  LowPass.compute_cov_dist(dd, fs.pop_ids)
+        # Load coverage distribution .pkl file made in dadi_make_sfs.py
+        print('---> Loading Coverage Distribution...')
+        with open('_'.join(fs.pop_ids) + '_cov_dist.pkl', 'rb') as file:
+            cov_dist = pkl.load(file)
         print('---> Making LowPass Model Function...')
         model_ex = LowPass.make_low_pass_func_GATK_multisample(model_ex, cov_dist, fs.pop_ids, nseq=n, nsub=n, sim_threshold=1e-2, Fx=None)
 
     # Create a file to store the fitted parameters in your current working directory
     try:
-        output = open(model_dir + '_'.join(pop_ids) + '_fits.txt','a')
+        output = open(model_dir + '_'.join(fs.pop_ids) + '_fits.txt','a')
     except:
-        output = open(model_dir + '_'.join(pop_ids) + '_fits.txt','w')
+        output = open(model_dir + '_'.join(fs.pop_ids) + '_fits.txt','w')
     
     # This is where we run the optimization for our arbitrary model parameters
     # By the end, we will (presumably) get some optimal parameters and the log-liklihood for how optimal they are
@@ -128,7 +128,7 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, result_dir, start_par
 
     return popt, model_fs, model_ex, pts
 
-def compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir):
+def compare_sfs_plots(data_fs, model_fs, model_dir):
     '''
     This function plots a comparison spectra between the data and model.
     Will be useful in visually determining model accuracy.
@@ -140,8 +140,8 @@ def compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir):
     Returns:
         None
     '''
-    comp_plot = dadi.Plotting.plot_2d_comp_multinom(model_fs, data_fs, pop_ids=pop_ids)
-    plt.savefig(model_dir + '_'.join(pop_ids) + '_comp_plot.png')
+    comp_plot = dadi.Plotting.plot_2d_comp_multinom(model_fs, data_fs, pop_ids=data_fs.pop_ids)
+    plt.savefig(model_dir + '_'.join(data_fs.pop_ids) + '_comp_plot.png')
     plt.clf()
 
 
@@ -206,16 +206,16 @@ def main():
 
         # Make model SFS objects for each species comparison
         print('Generating ' + dct + '...')
-        popt, model_fs, model_ex, pts = make_2d_demo_model(data_fs, pop_ids, dadi_model, model_dir, result_dir, start_params, l_bounds, u_bounds, num_opt, lowpass)
-        gim_params.append([popt, pop_ids, model_ex, pts, data_fs])
+        popt, model_fs, model_ex, pts = make_2d_demo_model(data_fs, dadi_model, model_dir, result_dir, start_params, l_bounds, u_bounds, num_opt, lowpass)
+        gim_params.append([popt, model_ex, pts, data_fs])
 
         # Plot SFS model/data comparison
         print('Plotting SFS Comparison for ' + dct + '...')
-        compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir)
+        compare_sfs_plots(data_fs, model_fs, model_dir)
 
         # Save model SFS to files
         print('Saving SFS file for ' + dct + '...')
-        model_fs.to_file(model_dir + '_'.join(pop_ids) + '_model_fs')
+        model_fs.to_file(model_dir + '_'.join(model_fs.pop_ids) + '_model_fs')
     
     # Save GIM Params to .pkl file for Uncertainty Analysis
     print('\nSaving Intermediate GIM Params file to Model Directory...')
