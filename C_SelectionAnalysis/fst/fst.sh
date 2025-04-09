@@ -95,8 +95,8 @@ if [ -n "$CHROM" ]; then
     echo "Replacing chromosome names based on conversion file..."
     while IFS=',' read -r first second; do
         echo "Replacing $second with $first..."
-        sed "s/$second/$first/g" "$WIN_OUT" > "${WIN_OUT}.chrom.txt" 
-    done <<< "$CHROM"
+        sed "s/$second/$first/g" "$WIN_OUT" >> "${WIN_OUT}.chrom.txt" 
+    done < "$CHROM"
 fi
 
 # replace header (for whatever reason, it lacks a label for the fst column)
