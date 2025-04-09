@@ -100,12 +100,12 @@ if [ -n "$CHROM" ]; then
 fi
 
 # replace header (for whatever reason, it lacks a label for the fst column)
-sed -i '1s/^region\tchr\tmidPos\tNsites$/region\tchr\tmidPos\tNsites\tfst/' "$WIN_OUT"
+sed -i '1s/^region\tchr\tmidPos\tNsites$/region\tchr\tmidPos\tNsites\tfst/' "${WIN_OUT}.chrom.txt"
 
 
 # z transform windowed data
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/ztransform_windows.r" \
-    "${OUTDIR}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${POP1}_${POP2}"
+    "${OUTDIR}" "${CUTOFF}" "${WIN_OUT}.chrom.txt" "${WIN}" "${POP1}_${POP2}"
 
 Z_OUT="${OUTDIR}/analyses/fst/${POP1}_${POP2}/${POP1}_${POP2}.fst.${WIN}.Ztransformed.csv"
 
