@@ -89,12 +89,22 @@ else
     ${ANGSD}/misc/realSFS fst stats2 "$FST_INDEX" -win "$WIN" -step "$STEP" > "$WIN_OUT"
 fi
 
+# Filter FST file by mapability and depth file if provided
+FILTER_BED="/xdisk/mcnew/finches/dannyjackson/finches/referencelists/winmap.windepth.filtered.bed"
+WIN_OUT_FILTER="${OUTDIR}/analyses/fst/${POP1}_${POP2}/${WIN}/${POP1}_${POP2}.${WIN}.filtered.fst"
+if [ -f "$FILTER_BED" ]; then
+    echo "Filtering by windowed mappability and depth file..."
+    bedtools intersect -a $WIN_OUT -b $FILTER_BED -wa > 
+else
+    WIN_OUT_FILTER=$WIN_OUT
+fi
+
 # Replace chromosome names if conversion file is provided
 if [ -n "$CHROM" ]; then
     echo "Replacing chromosome names based on conversion file..."
     while IFS=',' read -r first second; do
         echo "Replacing $second with $first..."
-        sed -i "s/$second/$first/g" "$WIN_OUT" 
+        sed "s/$second/$first/g" "$WIN_OUT" > "${WIN_OUT}.chrom.txt" 
     done <<< "$CHROM"
 fi
 
