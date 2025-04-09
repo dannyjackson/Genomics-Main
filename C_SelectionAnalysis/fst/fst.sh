@@ -89,18 +89,19 @@ else
     ${ANGSD}/misc/realSFS fst stats2 "$FST_INDEX" -win "$WIN" -step "$STEP" > "$WIN_OUT"
 fi
 
+# replace header (for whatever reason, it lacks a label for the fst column)
+echo -e 'region\tchr\tmidPos\tNsites\tfst' > "${WIN_OUT}.chrom.txt"
+
 
 # Replace chromosome names if conversion file is provided
 if [ -n "$CHR_FILE" ]; then
     echo "Replacing chromosome names based on conversion file..."
     while IFS=',' read -r first second; do
         echo "Replacing $second with $first..."
-        sed "s/$second/$first/g" "$WIN_OUT" >> "${WIN_OUT}.chrom.txt" 
+        sed "s/$second/$first/g" "$WIN_OUT" | grep 'NC_' >> "${WIN_OUT}.chrom.txt" 
     done < "$CHR_FILE"
 fi
 
-# replace header (for whatever reason, it lacks a label for the fst column)
-sed -i '1s/^region\tchr\tmidPos\tNsites$/region\tchr\tmidPos\tNsites\tfst/' "${WIN_OUT}.chrom.txt"
 
 
 # z transform windowed data
