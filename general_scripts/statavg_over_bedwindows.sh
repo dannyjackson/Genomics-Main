@@ -14,18 +14,20 @@ REQUIRED ARGUMENTS:
     -w  Path to a bed file containing regions corresponding to the output of a windowed analysis (e.g. fst, RAiSD, etc)
     -o  Path to output file with window assigned to each site (each site can match multiple windows, as is the case in windowed analyses)
     -a  Path to output file for the average of the statistic over each window
+    -t  Number of threads to be used
 EOF
     exit 1
 fi
 
 
 # Parse command-line arguments
-while getopts "d:w:o:a:" option; do
+while getopts "d:w:o:a:t:" option; do
     case "${option}" in
         d) STAT_FILE=${OPTARG} ;;
         w) WIN_FILE=${OPTARG} ;;
         o) OUTPUT_FILE=${OPTARG} ;;
         a) AVGSTAT_FILE=${OPTARG} ;;
+        t) THREAD=${OPTARG} ;;
         *) echo "Error: Invalid option '-${OPTARG}'" >&2; exit 1 ;;
     esac
 done
@@ -114,7 +116,6 @@ process_chunk() {
     {
         chr = $1
         pos = $2 + 0
-        print "STAT_FILE line: chr=" chr ", pos=" pos
 
         # Skip stat entries with no matching chromosome in the window file
         if (!(chr in win_count)) next
@@ -130,7 +131,6 @@ process_chunk() {
 
             # Match the position with the window range
             if (pos >= wstart && pos <= wend) {
-                print "  Match found with window " label
                 print $0, label >> output_file
             }
         }
@@ -144,7 +144,7 @@ export -f process_chunk
 # Process all chunks in parallel
 echo 'processing chunks in parallel'
 
-find "$TEMP_DIR" -name 'stat_chunk_*' | parallel -j 16 process_chunk {} "$WIN_FILE" "$OUTPUT_FILE"
+find "$TEMP_DIR" -name 'stat_chunk_*' | parallel -j ${THREAD} process_chunk {} "$WIN_FILE" "$OUTPUT_FILE"
 
 # compute stat average per window
 echo 'computing average per window'
