@@ -61,8 +61,11 @@ echo 'done splitting stat file'
 process_chunk() {
     local chunk_file=$1
     local win_file=$2
-    local output_file=$3
-    
+    local temp_dir=$3
+
+    output_file=$(mktemp "$temp_dir.statavg.XXXXXX")
+    echo ${output_file}
+
     awk -v win_file="$win_file" -v output_file="$output_file" '
     BEGIN {
         FS = "\t"
@@ -119,7 +122,10 @@ export -f process_chunk
 # Process all chunks in parallel
 echo 'processing chunks in parallel'
 
-find "$TEMP_DIR" -name 'stat_chunk_*' | parallel -j ${THREAD} process_chunk {} "$WIN_FILE" "$OUTPUT_FILE"
+find "$TEMP_DIR" -name 'stat_chunk_*' | parallel -j ${THREAD} process_chunk {} "$WIN_FILE" "$TEMP_DIR"
+
+# Combine all temp files into output file 
+cat ${TEMP_DIR}/statavg* > ${OUTPUT_FILE}
 
 # compute stat average per window
 echo 'computing average per window'
@@ -129,5 +135,5 @@ awk '{sum[$4] += $3; count[$4]++} END {for (w in sum) print w, sum[w]/count[w]}'
 
 # Clean up
 rm -rf "$TEMP_DIR"
-rm "$OUTPUT_FILE"
+
 
