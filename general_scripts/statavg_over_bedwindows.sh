@@ -63,7 +63,7 @@ process_chunk() {
     local win_file=$2
     local temp_dir=$3
 
-    output_file=$(mktemp "$temp_dir.statavg.XXXXXX")
+    output_file=$(mktemp "$temp_dir/statavg.XXXXXX")
     echo ${output_file}
 
     awk -v win_file="$win_file" -v output_file="$output_file" '
