@@ -16,6 +16,7 @@ REQUIRED ARGUMENTS:
     -p  path to params file
     -n  population name
     -w  window size
+    -r reference genome
 EOF
     exit 1
 }
@@ -27,6 +28,7 @@ while getopts "p:n:w:" option; do
         p) PARAMS=${OPTARG} ;;
         n) POP=${OPTARG} ;;
         w) WIN=${OPTARG} ;;
+        r) REF=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}" >&2; usage ;;
     esac
 done
