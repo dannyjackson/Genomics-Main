@@ -29,6 +29,10 @@ while getopts "d:w:o:a:t:" option; do
     esac
 done
 
+# Load parallel 
+module load parallel
+
+
 # Check required arguments
 if [[ -z "$STAT_FILE" || -z "$WIN_FILE" || -z "$AVGSTAT_FILE" ]]; then
     echo "Missing required argument(s)."
