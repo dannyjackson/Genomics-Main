@@ -23,6 +23,8 @@
 #          --nodes=1 --ntasks-per-node=94 --time=24:00:00 \
 #          avg_depth_over_windows.sh -d ${DEPTH_FILE} -w ${WIN_FILE} -a ${AVG_OUTPUT_FILE} -t 94
 
+module load parallel
+
 set -euo pipefail
 
 # Parse command-line arguments
