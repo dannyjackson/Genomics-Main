@@ -127,12 +127,6 @@ find "$TEMP_DIR" -name 'stat_chunk_*' | parallel -j ${THREAD} process_chunk {} "
 # Combine all temp files into output file 
 cat ${TEMP_DIR}/statavg* > ${OUTPUT_FILE}
 
-# compute stat average per window
-echo 'computing average per window'
-
-awk '{sum[$4] += $3; count[$4]++} END {for (w in sum) print w, sum[w]/count[w]}' "$OUTPUT_FILE" > "$AVGSTAT_FILE"
-
-
 # Clean up
 rm -rf "$TEMP_DIR"
 
