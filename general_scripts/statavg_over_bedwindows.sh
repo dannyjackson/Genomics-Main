@@ -1,133 +1,148 @@
 #!/bin/bash
+#
+# avg_depth_over_windows.sh
+#
+# This script computes the average depth across specified genome windows.
+# It takes as input:
+#   - A depth file with columns: chromosome, position, depth
+#   - A windows file with columns: chromosome, starting position, ending position
+#
+# It outputs a file with five columns:
+#   chromosome, starting position, ending position, average depth, number of sites
+#
+# The script splits the depth file into chunks, processes each chunk in parallel,
+# and finally merges results from all chunks.
+#
+# Usage:
+#   avg_depth_over_windows.sh -d <DEPTH_FILE> -w <WIN_FILE> -a <AVG_OUTPUT_FILE> -t <THREADS>
+#
+# Example sbatch call:
+#   sbatch --account=mcnew --job-name=fstavgdepthfastparallel \
+#          --partition=standard --mail-type=ALL \
+#          --output=slurm_output/output.%j \
+#          --nodes=1 --ntasks-per-node=94 --time=24:00:00 \
+#          avg_depth_over_windows.sh -d ${DEPTH_FILE} -w ${WIN_FILE} -a ${AVG_OUTPUT_FILE} -t 94
 
-# Ensure at least one argument is provided
-if [ $# -lt 1 ]; then
-    cat <<EOF
-Usage: $(basename "$0") -p <parameter_file> -i <input_file> -n <population_name> -m <metric> -w <window_size>
+module load parallel
 
-This script takes a bed file of windows and a file with a statistic per site and computes the average of the statistic across each window. Useful for computing 
-
-Ensure you read and understand the entire script before running it.
-
-REQUIRED ARGUMENTS:
-    -d  Path to a file containing a statistic (e.g. average depth, mapability, etc) at each site over a reference genome
-    -w  Path to a bed file containing regions corresponding to the output of a windowed analysis (e.g. fst, RAiSD, etc)
-    -o  Path to output file with window assigned to each site (each site can match multiple windows, as is the case in windowed analyses)
-    -a  Path to output file for the average of the statistic over each window
-    -t  Number of threads to be used
-EOF
-    exit 1
-fi
-
+set -euo pipefail
 
 # Parse command-line arguments
-while getopts "d:w:o:a:t:" option; do
-    case "${option}" in
-        d) STAT_FILE=${OPTARG} ;;
+usage() {
+    cat <<EOF
+Usage: $(basename "$0") -d <depth_file> -w <win_file> -a <avg_output_file> -t <threads>
+
+This script computes the average of depth values across genomic windows.
+Required arguments:
+  -d   Path to the depth file (chromosome, position, depth)
+  -w   Path to the windows file (chromosome, start, end)
+  -a   Path to the output file (chromosome, start, end, average depth, count)
+  -t   Number of threads to use
+
+EOF
+    exit 1
+}
+
+while getopts "d:w:a:t:" opt; do
+    case "${opt}" in
+        d) DEPTH_FILE=${OPTARG} ;;
         w) WIN_FILE=${OPTARG} ;;
-        o) OUTPUT_FILE=${OPTARG} ;;
-        a) AVGSTAT_FILE=${OPTARG} ;;
-        t) THREAD=${OPTARG} ;;
-        *) echo "Error: Invalid option '-${OPTARG}'" >&2; exit 1 ;;
+        a) AVG_OUTPUT_FILE=${OPTARG} ;;
+        t) THREADS=${OPTARG} ;;
+        *) usage ;;
     esac
 done
 
-
-# Load parallel (if available, or use another parallelization tool)
-module load parallel
-
-
-# Check if required arguments are passed
-if [[ -z "$STAT_FILE" || -z "$WIN_FILE" || -z "$OUTPUT_FILE" || -z "$AVGSTAT_FILE" ]]; then
-    echo "Usage: $0 <stat_file> <win_file> <output_file> <avgstat_file>"
-    exit 1
+if [[ -z "${DEPTH_FILE:-}" || -z "${WIN_FILE:-}" || -z "${AVG_OUTPUT_FILE:-}" || -z "${THREADS:-}" ]]; then
+    usage
 fi
 
-# Temporary directory to store chunked files
+# Create a temporary working directory (will be removed on exit)
 TEMP_DIR=$(mktemp -d)
-
-echo ${TEMP_DIR}
-
 trap "rm -rf $TEMP_DIR" EXIT
 
-echo 'splitting stat file'
+echo "Splitting depth file into chunks..."
+# Split the depth file into chunks of 100,000 lines (adjust if needed)
+split -l 100000 "$DEPTH_FILE" "$TEMP_DIR/depth_chunk_"
 
-# Split the stat file into chunks of 100,000 lines each
-split -l 100000 "$STAT_FILE" "$TEMP_DIR/stat_chunk_"
-
-echo 'done splitting stat file'
-
-# Function to process each chunk
+# Function to process a single depth chunk
 process_chunk() {
     local chunk_file=$1
     local win_file=$2
-    local temp_dir=$3
-
-    output_file=$(mktemp "$temp_dir/statavg.XXXXXX")
-    echo ${output_file}
-
-    awk -v win_file="$win_file" -v output_file="$output_file" '
+    local out_dir=$3
+    local out_file
+    out_file=$(mktemp "$out_dir/chunk_result.XXXXXX")
+    
+    # Using AWK to:
+    #  1. Read the windows file (assumes it is sorted by chromosome and start).
+    #  2. For each depth record in the chunk, check (in order) which windows it falls into.
+    #  3. Accumulate the sum of depths and count for each window.
+    #
+    # Output columns for each window found in the chunk:
+    #   chromosome, start, end, sum_of_depths, count_of_sites
+    awk -v win_file="$win_file" -v out_file="$out_file" '
     BEGIN {
-        FS = "\t"
-        print "Reading WIN_FILE..."
-        
-        # Read window file and organize by chromosome
+        OFS="\t";
+        FS = "[ \t]+";  # works if files are whitespace or tab separated
+        # Read windows file and store by chromosome.
         while ((getline line < win_file) > 0) {
-            split(line, fields, FS)
-            chr = fields[1]
-            start = fields[2] + 0
-            end = fields[3] + 0
-            label = chr "_" start "_" end
-
-            # Store windows by chromosome
-            win_count[chr]++
-            i = win_count[chr]
-            win_start[chr, i] = start
-            win_end[chr, i] = end
-            win_label[chr, i] = label
+            split(line, fields, FS);
+            chr = fields[1];
+            start = fields[2] + 0;
+            end = fields[3] + 0;
+            win_count[chr]++; 
+            i = win_count[chr];
+            win_start[chr,i] = start;
+            win_end[chr,i] = end;
         }
-        close(win_file)
-
-        print "Finished reading and indexing WIN_FILE\n"
-        FS = " "
+        close(win_file);
+        # Set FS for depth file input (assumed whitespace separated)
+        FS = "[ \t]+";
     }
     {
-        chr = $1
-        pos = $2 + 0
-
-        # Skip stat entries with no matching chromosome in the window file
-        if (!(chr in win_count)) next
-
-        # Check all windows for the given chromosome
+        chr = $1;
+        pos = $2 + 0;
+        depth = $3 + 0;
+        if (!(chr in win_count)) next;
         for (i = 1; i <= win_count[chr]; i++) {
-            wstart = win_start[chr, i]
-            wend = win_end[chr, i]
-            label = win_label[chr, i]
-
-            # Stop early if position is smaller than the start of the current window (because sorted)
-            if (pos < wstart) break
-
-            # Match the position with the window range
-            if (pos >= wstart && pos <= wend) {
-                print $0, label >> output_file
+            # Because windows are sorted by start, if pos is less than the current window start, 
+            # no later window can contain it.
+            if (pos < win_start[chr,i])
+                break;
+            if (pos >= win_start[chr,i] && pos <= win_end[chr,i]) {
+                key = chr "\t" win_start[chr,i] "\t" win_end[chr,i];
+                sum[key] += depth;
+                count[key]++;
             }
+        }
+    }
+    END {
+        for (key in sum) {
+            print key, sum[key], count[key] > out_file;
         }
     }
     ' "$chunk_file"
 }
-
-# Export the function to be used by parallel
 export -f process_chunk
 
-# Process all chunks in parallel
-echo 'processing chunks in parallel'
+echo "Processing chunks in parallel..."
+# Process each chunk in parallel
+find "$TEMP_DIR" -type f -name 'depth_chunk_*' | parallel -j "$THREADS" process_chunk {} "$WIN_FILE" "$TEMP_DIR"
 
-find "$TEMP_DIR" -name 'stat_chunk_*' | parallel -j ${THREAD} process_chunk {} "$WIN_FILE" "$TEMP_DIR"
+echo "Merging intermediate results..."
+# Merge results from all chunks. In case the same window was processed in multiple chunks,
+# we sum the depths and counts, then compute the final average depth.
+awk 'BEGIN { OFS="\t" }
+{
+    key = $1 "\t" $2 "\t" $3;
+    total_sum[key] += $4;
+    total_count[key] += $5;
+}
+END {
+    for (k in total_sum) {
+        avg_depth = total_sum[k] / total_count[k];
+        print k, avg_depth, total_count[k]
+    }
+}' "$TEMP_DIR"/chunk_result.* > "$AVG_OUTPUT_FILE"
 
-# Combine all temp files into output file 
-cat ${TEMP_DIR}/statavg* > ${OUTPUT_FILE}
-
-# Clean up
-rm -rf "$TEMP_DIR"
-
-
+echo "Done. Final output written to ${AVG_OUTPUT_FILE}"
