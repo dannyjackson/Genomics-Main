@@ -145,4 +145,10 @@ END {
     }
 }' "$TEMP_DIR"/chunk_result.* > "$AVG_OUTPUT_FILE"
 
-echo "Done. Final output written to ${AVG_OUTPUT_FILE}"
+echo "Done processing. Output written to ${AVG_OUTPUT_FILE}"
+echo "Filtering to just chromosomes and autoomes"
+
+grep "${CHRLEAD}" "${AVG_OUTPUT_FILE}" > "${AVG_OUTPUT_FILE}.chromosomes"
+grep -v "${SEXCHR}" "${AVG_OUTPUT_FILE}.chromosomes" > "${AVG_OUTPUT_FILE}.autosomes"
+
+echo "Done. Script complete."
