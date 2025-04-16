@@ -16,7 +16,7 @@ mean_depth <- mean(df$avg_stat, na.rm=TRUE)
 sd_depth <- sd(df$avg_stat, na.rm=TRUE)
 
 # Define cutoffs (±2 SD)
-lower_cutoff <- mean_depth - 2 * sd_depthcd
+lower_cutoff <- mean_depth - 2 * sd_depth
 upper_cutoff <- mean_depth + 2 * sd_depth
 
 # Filter data
