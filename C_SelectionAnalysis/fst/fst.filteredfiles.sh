@@ -59,6 +59,6 @@ Z_OUT="${FILE}.numchrom.Ztransformed.csv"
 # Run R script for plotting
 echo "Generating Manhattan plot from ${Z_OUT}..."
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" \
-    "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${Z_OUT}" "${WIN}" "fst" "${POP1}" "${POP2}"
+    "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${Z_OUT}" "fst" 
 
 echo "Script completed successfully!"
