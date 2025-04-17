@@ -40,9 +40,9 @@ CHROM=$(cat "$CHR_FILE")
 # Replace chromosome names if conversion file is provided
 if [ -n "$CHR_FILE" ]; then
     echo "Replacing chromosome names based on conversion file..."
+    cp ${FILE} "${FILE}.numchrom" 
     while IFS=',' read -r first second; do
         echo "Replacing $second with $first..."
-        cp ${FILE} "${FILE}.numchrom" 
         sed -i "s/$second/$first/g" "${FILE}.numchrom" 
     done < "$CHR_FILE"
 fi
