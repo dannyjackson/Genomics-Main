@@ -27,7 +27,8 @@ cat("Reading in file...\n")
 # Read file
 data <- fread(input, sep = "\t", na.strings = c("", "NA"), data.table = TRUE)
 
-data[[position]] <- as.numeric(data[[position]])
+data$position <- as.numeric(data$position)
+
 data[[metric]] <- as.numeric(data[[metric]])
 
 cat("identifying top snps...\n")
