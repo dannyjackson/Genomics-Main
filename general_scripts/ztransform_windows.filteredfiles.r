@@ -60,6 +60,7 @@ names(data) <- new_names
 
 # option 1
 # Z-transform metric values
+data[[metric]] <- as.numeric(data[[metric]])
 
 # Compute mean and SD 
 cat("Computing mean and SD...\n")
