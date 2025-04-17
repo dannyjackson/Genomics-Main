@@ -36,5 +36,5 @@ writeLines(c(
   paste("Upper cutoff:", upper_cutoff),
   paste("Original file length:", df_length),
   paste("Filtered file length:", filtered_df_length),
-  paste("Number of rows removes:", diff_length)
+  paste("Number of rows removed:", diff_length)
 ), con = stats_file)
