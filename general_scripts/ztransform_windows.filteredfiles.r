@@ -78,6 +78,6 @@ df <- data[ -c(1) ]
 
 # save file
 cat("Saving Z-transformed data...\n")
-z_file <- file.path(input, ".Ztransformed.csv")
+z_file <- paste0(input, ".Ztransformed.csv")
 write_delim(df, z_file, quote = "none", delim = "\t")
   

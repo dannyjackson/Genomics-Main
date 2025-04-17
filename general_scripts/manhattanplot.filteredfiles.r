@@ -50,12 +50,12 @@ metric_cutoff <- min(top_snps_dt[[metric]], na.rm = TRUE)
 
 # Save cutoff value
 cat("Saving cutoff value...\n")
-cutoff_file <- file.path(input, "_stats.txt"))
+cutoff_file <- paste0(input, "_stats.txt")
 cat(metric, "cutoff:", metric_cutoff, "\n", file = cutoff_file, append = TRUE)
 
 # Save outliers
 cat("Saving outliers data...\n")
-outlier_file <- file.path(input, ".outlier.csv"))
+outlier_file <- paste0(input, ".outlier.csv")
 write.csv(top_snps_dt, outlier_file, row.names = FALSE)
 
 # Prepare data for plotting
@@ -94,7 +94,7 @@ ggplot(plot_data, aes(x = BPcum, y = !!sym(metric))) +
     panel.grid.minor.x = element_blank()
   )
 
-ggsave(filename = file.path(input, ".sigline.png")), 
+ggsave(filename = paste0(input, ".sigline.png"), 
        width = 20, height = 5, units = "in")
 
 cat("Script completed successfully!\n")
