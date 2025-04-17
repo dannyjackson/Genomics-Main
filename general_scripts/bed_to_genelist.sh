@@ -53,9 +53,6 @@ GENENAMES=${OUTDIR}/analyses/genelist/gene_names/${POP}.${METRIC}.${WIN}kb.genen
 
 python3 ${SCRIPTDIR}/Genomics-Main/general_scripts/outlier_to_bed.py ${IN_FILE} ${WIN} ${OUT_FILE} ${CHR_FILE}
 
-cat -t ${OUT_FILE} > tmpfile
-mv tmpfile ${OUT_FILE}
-
 bedtools intersect -a ${GFF} -b ${OUT_FILE} -wa > ${GENES_FILE}
 
 grep 'ID\=gene' ${GENES_FILE} | awk '{OFS = "\t"} {split($9, arr, ";"); print(arr[1])}' | sed 's/ID\=gene\-//g' | sort -u > ${GENENAMES}
