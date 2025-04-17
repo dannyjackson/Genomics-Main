@@ -20,7 +20,7 @@ color1 <- args[2]
 color2 <- args[3]
 cutoff <- as.numeric(args[4])  # Convert to numeric
 input <- args[5]
-metric <- args[7]
+metric <- args[6]
 
 # Define parameters
 cat("Reading in file...\n")
@@ -46,8 +46,6 @@ top_snps_dt <- data_nona_sorted[order(chromo, position)]
 cat("Get metric cutoff...\n")
 # Get metric cutoff
 metric_cutoff <- min(top_snps_dt[[metric]], na.rm = TRUE)
-
-
 
 
 
