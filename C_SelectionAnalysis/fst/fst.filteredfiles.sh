@@ -36,11 +36,11 @@ source "${PARAMS}"
 # Read chromosome file 
 CHROM=$(cat "$CHR_FILE")
 
+cp ${FILE} "${FILE}.numchrom" 
 
 # Replace chromosome names if conversion file is provided
 if [ -n "$CHR_FILE" ]; then
     echo "Replacing chromosome names based on conversion file..."
-    cp ${FILE} "${FILE}.numchrom" 
     while IFS=',' read -r first second; do
         echo "Replacing $second with $first..."
         sed -i "s/$second/$first/g" "${FILE}.numchrom" 

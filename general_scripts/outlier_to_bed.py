@@ -14,7 +14,7 @@ chromconversion = sys.argv[4]
 df = pd.read_csv(input_data)
 
 # Compute start and end positions based on window size
-if 'start' not in df.co`lumns:
+if 'start' not in df.columns:
     df['start'] = df['position'] - (window // 2) if window else df['position'] - 1
 if 'end' not in df.columns:
     df['end'] = df['position'] + (window // 2) if window else df['position']
