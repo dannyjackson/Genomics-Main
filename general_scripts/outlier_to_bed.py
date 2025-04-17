@@ -19,6 +19,9 @@ if 'start' not in df.columns:
 if 'end' not in df.columns:
     df['end'] = df['position'] + (window // 2) if window else df['position']
 
+# Cast to integers for BED format compatibility
+df['start'] = df['start'].astype(int)
+df['end'] = df['end'].astype(int)
 
 # Create a BED file DataFrame
 bed_df = df[['chromo', 'start', 'end']].copy()  # Copy to avoid modifying df
