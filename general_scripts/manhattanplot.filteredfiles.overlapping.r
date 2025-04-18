@@ -15,13 +15,13 @@ for (pkg in required_packages) {
 # Parse command-line arguments
 args <- commandArgs(trailingOnly = TRUE)
 outdir <- args[1]
-color1 <- args[1]
-color2 <- args[1]
-cutoff <- as.numeric(args[1])  # Convert to numeric
-input1 <- args[1]
-input2 <- args[1]
-metric <- "raisd"
-outfile <- args[1]
+color1 <- args[2]
+color2 <- args[3]
+cutoff <- as.numeric(args[4])  # Convert to numeric
+input1 <- args[5]
+input2 <- args[6]
+metric <- args[7]
+outfile <- args[8]
 
 # Define parameters
 cat("Reading in file...\n")
