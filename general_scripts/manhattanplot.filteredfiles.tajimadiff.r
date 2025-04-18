@@ -124,6 +124,6 @@ ggplot(plot_data, aes(x = BPcum, y = !!sym(metric))) +
 
 
 ggsave(filename = paste0(input, ".sigline.png", 
-       width = 20, height = 5, units = "in")
+       width = 20, height = 5, units = "in"))
 
 cat("Script completed successfully!\n")
