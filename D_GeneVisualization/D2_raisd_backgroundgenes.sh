@@ -18,7 +18,7 @@ fi
 # Parse command-line arguments
 while getopts "p:" option; do
     case "${option}" in
-        p) POP=${OPTARG} ;;
+        p) pop=${OPTARG} ;;
     esac
 done
 
