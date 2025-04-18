@@ -14,18 +14,20 @@
 # and finally merges results from all chunks.
 #
 # Usage:
-#   avg_depth_over_windows.sh -d <DEPTH_FILE> -w <WIN_FILE> -a <AVG_OUTPUT_FILE> -t <THREADS>
+#   avg_depth_over_windows.sh -d <DEPTH_FILE> -w <WIN_FILE> -a <AVG_OUTPUT_FILE> -t <THREADS> -p <PARAM_FILE>
 #
 # Example sbatch call:
-#   sbatch --account=mcnew --job-name=fstavgdepthfastparallel \
+#   sbatch --account=mcnew --job-name=fstavgdepth \
 #          --partition=standard --mail-type=ALL \
 #          --output=slurm_output/output.%j \
 #          --nodes=1 --ntasks-per-node=94 --time=24:00:00 \
-#          avg_depth_over_windows.sh -d ${DEPTH_FILE} -w ${WIN_FILE} -a ${AVG_OUTPUT_FILE} -t 94
+#          statavg_over_bedwindows.sh -d ${DEPTH_FILE} -w ${WIN_FILE} -a ${AVG_OUTPUT_FILE} -t 94 -p ~/programs/DarwinFinches/param_files/params_base.sh 
+
 
 module load parallel
 
 set -euo pipefail
+
 
 # Parse command-line arguments
 usage() {
@@ -49,6 +51,7 @@ while getopts "d:w:a:t:" opt; do
         w) WIN_FILE=${OPTARG} ;;
         a) AVG_OUTPUT_FILE=${OPTARG} ;;
         t) THREADS=${OPTARG} ;;
+        p) PARAMS=${OPTARG} ;;
         *) usage ;;
     esac
 done
@@ -56,6 +59,8 @@ done
 if [[ -z "${DEPTH_FILE:-}" || -z "${WIN_FILE:-}" || -z "${AVG_OUTPUT_FILE:-}" || -z "${THREADS:-}" ]]; then
     usage
 fi
+
+source ${PARAMS}
 
 # Create a temporary working directory (will be removed on exit)
 TEMP_DIR=$(mktemp -d)
