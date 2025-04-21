@@ -22,15 +22,22 @@ file <- args[1]
 # file <- "intersection.noca_all.nocorrection.GO"
 # file <- "intersection.pyrr_all.nocorrection.GO"
 # file <- "noca.all.genenames_filtered.GO"
-cat("reading go list\n")
 
 
-go_list_na <- read.delim(paste0(file, ".txt"))
+cat("Reading GO term list...\n")
 
+# Read as a data frame, assuming the first column contains GO terms
+go_df <- read.delim(paste0(file, ".txt"), header = FALSE, stringsAsFactors = FALSE)
+
+# If you know the column name, e.g., "GO.Term", extract it:
+go_list_na <- go_df[[1]]  # safer than go_df$GO.Term if you're unsure of column name
+
+# Clean: remove NAs and empty strings
 go_list <- go_list_na[!is.na(go_list_na) & go_list_na != ""]
 
-# Check the cleaned vector
+# Check results
 print(go_list)
+
 
 
 # go_list <- c("GO:XXXXXXX","GO:XXXXXXX")
