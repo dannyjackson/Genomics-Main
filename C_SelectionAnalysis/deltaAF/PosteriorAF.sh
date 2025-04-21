@@ -20,8 +20,8 @@ fi
 while getopts "p:s:q:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
-        s) SP={OPTARG} ;;
-        q) POP={OPTARG} ;;
+        s) SP=${OPTARG} ;;
+        q) POP=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1 ;;
     esac
 done
@@ -34,13 +34,6 @@ fi
 
 # Load parameters
 source "${PARAMS}"
-
-# Set defaults if not provided
-WIN=${WIN:-10000}
-STEP=${STEP:-10000}
-
-# Read chromosome file 
-CHROM=$(cat "$CHR_FILE")
 
 
 # Print script info
