@@ -44,7 +44,7 @@ CHROM=$(cat "$CHR_FILE")
 
 
 # Print script info
-echo "\nRunning FST computation script"
+echo "\nRunning posterior estimation script"
 
 
 # Re-run with posterior MAFs using the SFS as prior
