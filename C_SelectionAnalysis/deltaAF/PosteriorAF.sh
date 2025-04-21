@@ -43,12 +43,12 @@ echo "\nRunning posterior estimation script"
 # Re-run with posterior MAFs using the SFS as prior
 mkdir -p ${OUTDIR}/analyses/deltaAF/${SP}/
 
-${ANGSD}/angsd -b /xdisk/mcnew/finches/dannyjackson/finches/referencelists/${SP}${POP}bams.txt \
+${ANGSD}/angsd -b ${OUTDIR}/referencelists/${SP}${POP}bams.txt \
   -ref /xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/GCF_901933205.1_STF_HiC_genomic.fna \
   -out ${OUTDIR}/analyses/deltaAF/${SP}/${SP}_${POP}_postmafs \
   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 \
-  -minMapQ 30 -minQ 20 \
+  -minMapQ ${MINMAPQ} -minQ ${MINQ} \
   -GL 1 \
   -doMaf 1 -doMajorMinor 1 -doPost 1 \
   -pest ${OUTDIR}/datafiles/safs/${SP}${POP}.sfs \
-  -minInd 3
+  -minInd ${MININD}
