@@ -51,4 +51,5 @@ ${ANGSD}/angsd -b ${OUTDIR}/referencelists/${SP}${POP}bams.txt \
   -GL 1 \
   -doMaf 1 -doMajorMinor 1 -doPost 1 \
   -pest ${OUTDIR}/datafiles/safs/${SP}${POP}.sfs \
+  -sites /xdisk/mcnew/finches/dannyjackson/finches/referencelists/allsnps.sites.mafs \
   -minInd ${MININD}
