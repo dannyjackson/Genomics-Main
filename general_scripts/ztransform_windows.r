@@ -47,7 +47,10 @@ if ("dxy" %in% names(data)) {
   metric <- "Tajima"
 } else if ("raisd" %in% names(data)) {
   metric <- "raisd"
-} else {
+} else if ("delta_af" %in% names(data)) {
+  metric <- "delta_af"
+} 
+  else {
   stop("Unknown data format. Ensure the input file contains dxy, fst, or tajima's D column.")
 }
 
