@@ -9,10 +9,6 @@ if (length(args) != 2) stop("Usage: Rscript lrt_delta_af.R pre.mafs.gz post.mafs
 dir <- args[1]
 species <- args[2]
 
-# Construct file paths
-pre_file <- file.path(dir, paste0(species, "_pre.mafs.gz"))
-post_file <- file.path(dir, paste0(species, "_post.mafs.gz"))
-
 
 # define signasel functions
 ################################################################
@@ -315,6 +311,8 @@ run_signasel_on_mafs <- function(pre_file, post_file, Ne = 1000, generations = 5
 }
 
 results <- run_signasel_on_mafs(
+  pre_file <- paste0(species, "/" species, "_pre.mafs.gz"),
+  post_file <- paste0(species, "/" species, "_post.mafs.gz"),
   Ne = 1000,
   generations = 5,
   max_s = 1
