@@ -5,23 +5,24 @@ suppressPackageStartupMessages(library(data.table))
 
 # Read command-line arguments
 args <- commandArgs(trailingOnly = TRUE)
-if (length(args) != 2) {
-  stop("Usage: Rscript compute_delta_af.R <dir> <species>")
+if (length(args) != 3) {
+  stop("Usage: Rscript compute_delta_af.R <output_dir> <species_name> <mafs_dir>")
 }
 
-dir <- args[1]
+output_dir <- args[1]
 species <- args[2]
+mafs_dir <- args[3]
 
 # Construct file paths
-pre_file <- file.path(dir, paste0(species, "_pre.mafs"))
-post_file <- file.path(dir, paste0(species, "_post.mafs"))
+pre_file <- file.path(mafs_dir, paste0(species, "pre.mafs.gz"))
+post_file <- file.path(mafs_dir, paste0(species, "post.mafs.gz"))
 
-# Read only needed columns
+# Read only needed columns: chrom, pos, freq (i.e. minor allele frequency)
 cat("Reading pre file...\n")
-pre <- fread(pre_file, select = c("chromo", "position", "major", "minor", "knownEM", "nInd"))
+pre <- fread(cmd = paste("zcat", pre_file), select = c("chromo", "position", "major", "minor", "knownEM", "nInd"))
 
 cat("Reading post file...\n")
-post <- fread(post_file, select = c("chromo", "position", "major", "minor", "knownEM", "nInd"))
+post <- fread(cmd = paste("zcat", post_file), select = c("chromo", "position", "major", "minor", "knownEM", "nInd"))
 
 # Merge by chromosome and position
 cat("Merging files...\n")
@@ -55,13 +56,15 @@ merged[, delta_se := sqrt(pre_se^2 + post_se^2)]
 # Z-test
 merged[, z := delta_af / delta_se]
 merged[, p := 2 * pnorm(-abs(z))]
+
+# Adjust p-values
 merged[, q := p.adjust(p, method = "fdr")]
 
 # Filter for significant sites
 significant_sites <- merged[q < 0.05 & !is.na(q)]
 
 # Output
-fwrite(merged, file.path(dir, paste0(species, "_deltaAF_with_significance.tsv")), sep = "\t")
-fwrite(significant_sites, file.path(dir, paste0(species, "_sig_deltaAF.tsv")), sep = "\t")
+fwrite(merged, file.path(output_dir, paste0(species, "_deltaAF_with_significance.tsv")), sep = "\t")
+fwrite(significant_sites, file.path(output_dir, paste0(species, "_sig_deltaAF.tsv")), sep = "\t")
 
 cat("Done.\n")
