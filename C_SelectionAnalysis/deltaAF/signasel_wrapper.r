@@ -14,12 +14,6 @@ pre_file <- file.path(dir, paste0(species, "_pre.mafs.gz"))
 post_file <- file.path(dir, paste0(species, "_post.mafs.gz"))
 
 
-cat("Reading pre...\n")
-pre <- fread(pre_file)
-
-cat("Reading post...\n")
-post <- fread(post_file)
-
 # define signasel functions
 ################################################################
 ## signasel3s
@@ -284,8 +278,8 @@ compute_allele_counts <- function(freq, nInd) {
 run_signasel_on_mafs <- function(pre_file, post_file, Ne = 1000, generations = 5, max_s = 1) {
   
   cat("Reading files...\n")
-  maf_pre <- read_maf_file(pre_file)
-  maf_post <- read_maf_file(post_file)
+  maf_pre <- fread(pre_file)
+  maf_post <- fread(post_file)
   
   # Sanity check
   if (!all(maf_pre$chromo == maf_post$chromo & maf_pre$position == maf_post$position)) {
