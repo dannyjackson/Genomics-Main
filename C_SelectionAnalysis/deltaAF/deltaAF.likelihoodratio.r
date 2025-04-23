@@ -49,13 +49,15 @@ df[, qval := p.adjust(pval, method = "fdr")]
 
 
 # Save full output
-fwrite(df, "cra/deltaAF_lrt_full.tsv", sep = "\t")
+fwrite(df,  paste0(species, "/deltaAF_lrt_full.tsv"), sep = "\t")
 
 # Save filtered significant results
 sig_p <- df[pval < 0.001]
-fwrite(sig_p, "cra/deltaAF_lrt_significant_p0.001.tsv", sep = "\t")
+fwrite(sig_p,  paste0(species, "/deltaAF_lrt_significant_p0.001.tsv"), sep = "\t")
+
+cat("Done. Significant SNPs (p < 0.001):", nrow(sig_p), "\n")
 
 sig_q <- df[qval < 0.05]
-fwrite(sig_q, "cra/deltaAF_lrt_significant_q0.05.tsv", sep = "\t")
+fwrite(sig_q,  paste0(species, "/deltaAF_lrt_significant_q0.05.tsv"), sep = "\t")
 
-cat("Done. Significant SNPs (p < 0.001):", nrow(sig), "\n")
+cat("Done. Significant SNPs (q < 0.05):", nrow(sig_q), "\n")
