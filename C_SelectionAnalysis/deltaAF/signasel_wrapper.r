@@ -271,6 +271,16 @@ compute_allele_counts <- function(freq, nInd) {
 }
 
 # Wrapper function to run selection test across sites
+
+cat("Merging on SNP coordinates...\n")
+maf_merged <- merge(maf_pre, maf_post, by = c("chromo", "position"), suffixes = c(".pre", ".post"))
+
+if (nrow(maf_merged) == 0) {
+  stop("No overlapping SNPs found between pre and post files.")
+}
+
+
+
 run_signasel_on_mafs <- function(pre_file, post_file, Ne = 1000, generations = 5, max_s = 1) {
   
   cat("Reading files...\n")
@@ -283,32 +293,29 @@ run_signasel_on_mafs <- function(pre_file, post_file, Ne = 1000, generations = 5
   }
   
   cat("Preparing input matrix...\n")
-  results_list <- vector("list", nrow(maf_pre))
+  results_list <- vector("list", nrow(maf_merged))
+
+for (i in seq_len(nrow(maf_merged))) {
+  i_pre <- compute_allele_counts(maf_merged$knownEM.pre[i], maf_merged$nInd.pre[i])
+  S_pre <- maf_merged$nInd.pre[i]
   
-  for (i in seq_len(nrow(maf_pre))) {
-    i_pre <- compute_allele_counts(maf_pre$knownEM[i], maf_pre$nInd[i])
-    S_pre <- maf_pre$nInd[i]
-    
-    i_post <- compute_allele_counts(maf_post$knownEM[i], maf_post$nInd[i])
-    S_post <- maf_post$nInd[i]
-    
-    data_mat <- matrix(c(
-      0, i_pre, S_pre, Ne,
-      generations, i_post, S_post, Ne
-    ), ncol = 4, byrow = TRUE)
-    
-    res <- tryCatch({
-      signaseltest(data_mat, maxs = max_s)
-    }, error = function(e) {
-      c(L0 = NA, Lmax = NA, smax = NA, LRT = NA, `-log10pvalue` = NA, warn = 1)
-    })
-    
-    results_list[[i]] <- cbind(maf_pre[i, .(chromo, position)], as.data.frame(res))
-  }
+  i_post <- compute_allele_counts(maf_merged$knownEM.post[i], maf_merged$nInd.post[i])
+  S_post <- maf_merged$nInd.post[i]
   
-  results_df <- rbindlist(results_list)
-  return(results_df)
+  data_mat <- matrix(c(
+    0, i_pre, S_pre, Ne,
+    generations, i_post, S_post, Ne
+  ), ncol = 4, byrow = TRUE)
+  
+  res <- tryCatch({
+    signaseltest(data_mat, maxs = max_s)
+  }, error = function(e) {
+    c(L0 = NA, Lmax = NA, smax = NA, LRT = NA, `-log10pvalue` = NA, warn = 1)
+  })
+  
+  results_list[[i]] <- cbind(maf_merged[i, .(chromo, position)], as.data.frame(res))
 }
+
 
 results <- run_signasel_on_mafs(
   pre_file = paste0(species, "/", species, "_pre.mafs.gz"),
