@@ -16,12 +16,12 @@ species <- args[2]
 pre_file <- file.path(dir, paste0(species, "_pre.mafs.gz"))
 post_file <- file.path(dir, paste0(species, "_post.mafs.gz"))
 
-# Read only needed columns
+# Read files
 cat("Reading pre file...\n")
-pre <- fread(pre_file, select = c("chromo", "position", "major", "minor", "knownEM", "nInd"))
+pre <- fread(pre_file)
 
 cat("Reading post file...\n")
-post <- fread(post_file, select = c("chromo", "position", "major", "minor", "knownEM", "nInd"))
+post <- fread(post_file)
 
 # Merge by chromosome and position
 cat("Merging files...\n")
