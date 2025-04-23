@@ -270,6 +270,11 @@ signaseltest <- function(data, maxs = 1) {
   return(res)
 }
 
+# Function to read .mafs.gz ANGSD file
+read_maf_file <- function(path) {
+  fread(cmd = paste("zcat", path))
+}
+
 # Function to compute allele count from frequency and sample size
 compute_allele_counts <- function(freq, nInd) {
   round(freq * 2 * nInd)
