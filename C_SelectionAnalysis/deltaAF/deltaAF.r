@@ -13,8 +13,8 @@ dir <- args[1]
 species <- args[2]
 
 # Construct file paths
-pre_file <- file.path(dir, paste0(species, "_pre.mafs"))
-post_file <- file.path(dir, paste0(species, "_post.mafs"))
+pre_file <- file.path(dir, paste0(species, "_pre.mafs.gz"))
+post_file <- file.path(dir, paste0(species, "_post.mafs.gz"))
 
 # Read only needed columns
 cat("Reading pre file...\n")
