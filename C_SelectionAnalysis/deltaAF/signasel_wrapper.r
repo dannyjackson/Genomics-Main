@@ -2,63 +2,65 @@
 
 suppressPackageStartupMessages(library(data.table))
 
-# Command-line args: pre.mafs.gz post.mafs.gz
+# Command-line args: species_name directory_with_mafs_files
 args <- commandArgs(trailingOnly = TRUE)
-if (length(args) != 2) stop("Usage: Rscript lrt_delta_af.R pre.mafs.gz post.mafs.gz")
+if (length(args) != 2) stop("Usage: Rscript lrt_delta_af.R <species> <directory>")
 
-dir <- args[1]
-species <- args[2]
+species <- args[1]
+dir <- args[2]
 
+# Paths to input files
+pre_file <- paste0(dir, "/", species, "_pre.mafs.gz")
+post_file <- paste0(dir, "/", species, "_post.mafs.gz")
 
-# define signasel functions
-################################################################
-## signasel3s
-################################################################
-## PARADIGME:
-################################################################
-## For each sample (row) the columns are: g, i, S, N:
-## g0 i0 S0 N0 (1st temporal sample)
-## g1 i1 S1 N1 (2nd temporal sample)
-## g2 i2 S2 N2 (3rd temporal sample)
-## etc.
-## with g: generation, i: number of allele copies, S: sample size,
-## N: (effective) population size
-################################################################
-## A simple usage example is given at the bottom
-################################################################
-## TWO ALLELES ONLY
-## DIPLOID VERSION
-################################################################
-## This program is aimed at detecting selection by computing the
-## likelihood of SNP allele frequencies.
-##
-## GENERAL NOTATIONS:
-##
-## '1' and '2' refer to the 'first' (initial) and 'last' (final)
-## populations, respectively, regardless of the number of generations
-## between them.
-## ng: total number of generations from population 1 to population 2.
-## So, ng = 1 if pop 2 is the direct offspring of pop 1. More generally,
-## ng = t2 - t1 if pop 1 lives at time t1 and pop 2 at time t2.
-## n1, n2: sizes of populations 1 and 2, resp. Warning: if ng > 1, the
-## size of population(s) at intermediate(s) generation(s) is n2, so:
-## generation 1: pop size n1->n2
-## generations 2 to (ng-1): pop size n2->n2
-## generation ng: pop size n2->S2 (if ng>1) or n1->S2 (if ng=1)
-## S1, S2: sizes of the samples taken from populations 1 and 2, resp.
-## NB: Computations are made as if the total size of population 2 was S2
-## (not n2). This is strictly equivalent to first considering n2
-## individuals then drawing S2 individuals among those n2, and obviously
-## saves time. Important: as a generalization S2 > n2 is allowed.
-## i1, i2: number of copies of the allele in samples S1 and S2, resp.
-## s: coefficient of selection, such that the fitnesses are 1, 1+s,
-## 1+2s for genotypes aa, aA, AA (in the case where A is the
-## positively selected allele)
-##
-## IMPORTANT: population sizes (n1, n2) and sample sizes (S1, S2) are
-## expressed in number of (diploid) individuals, so allele frequency
-## reads p = i / 2n
-##
+# Function to read .mafs.gz ANGSD file
+read_maf_file <- function(path) {
+  fread(cmd = paste("zcat", path))
+}
+
+# Function to compute allele count from frequency and sample size
+compute_allele_counts <- function(freq, nInd) {
+  round(freq * 2 * nInd)
+}
+
+# Selection test function for one SNP
+run_signasel_on_mafs <- function(pre_file, post_file, Ne = 1000, generations = 5, max_s = 1) {
+  cat("Reading files...\n")
+  maf_pre <- read_maf_file(pre_file)
+  maf_post <- read_maf_file(post_file)
+
+  cat("Merging on SNP coordinates...\n")
+  maf_merged <- merge(maf_pre, maf_post, by = c("chromo", "position"), suffixes = c(".pre", ".post"))
+  if (nrow(maf_merged) == 0) stop("No overlapping SNPs found between pre and post files.")
+
+  cat("Running selection tests...\n")
+  results_list <- vector("list", nrow(maf_merged))
+
+  for (i in seq_len(nrow(maf_merged))) {
+    i_pre <- compute_allele_counts(maf_merged$knownEM.pre[i], maf_merged$nInd.pre[i])
+    S_pre <- maf_merged$nInd.pre[i]
+
+    i_post <- compute_allele_counts(maf_merged$knownEM.post[i], maf_merged$nInd.post[i])
+    S_post <- maf_merged$nInd.post[i]
+
+    data_mat <- matrix(c(
+      0, i_pre, S_pre, Ne,
+      generations, i_post, S_post, Ne
+    ), ncol = 4, byrow = TRUE)
+
+    res <- tryCatch({
+      signaseltest(data_mat, maxs = max_s)
+    }, error = function(e) {
+      matrix(c(NA, NA, NA, NA, NA, 1), nrow = 1)
+    })
+
+    results_list[[i]] <- cbind(maf_merged[i, .(chromo, position)], as.data.frame(res))
+  }
+
+  rbindlist(results_list)
+}
+
+# ---- signasel functions (abbreviated for clarity here, you already included full defs above) ----
 ################################################################
 WFVecProbS <- function(p, N, s) {
 ################################################################
@@ -260,70 +262,13 @@ signaseltest <- function(data, maxs = 1) {
   return(res)
 }
 
-# Function to read .mafs.gz ANGSD file
-read_maf_file <- function(path) {
-  fread(cmd = paste("zcat", path))
-}
-
-# Function to compute allele count from frequency and sample size
-compute_allele_counts <- function(freq, nInd) {
-  round(freq * 2 * nInd)
-}
-
-# Wrapper function to run selection test across sites
-
-cat("Merging on SNP coordinates...\n")
-maf_merged <- merge(maf_pre, maf_post, by = c("chromo", "position"), suffixes = c(".pre", ".post"))
-
-if (nrow(maf_merged) == 0) {
-  stop("No overlapping SNPs found between pre and post files.")
-}
+################################################################
 
 
 
-run_signasel_on_mafs <- function(pre_file, post_file, Ne = 1000, generations = 5, max_s = 1) {
-  
-  cat("Reading files...\n")
-  maf_pre <- fread(pre_file)
-  maf_post <- fread(post_file)
-  
-  # Sanity check
-  if (!all(maf_pre$chromo == maf_post$chromo & maf_pre$position == maf_post$position)) {
-    stop("Mismatch in SNP positions between files.")
-  }
-  
-  cat("Preparing input matrix...\n")
-  results_list <- vector("list", nrow(maf_merged))
-
-for (i in seq_len(nrow(maf_merged))) {
-  i_pre <- compute_allele_counts(maf_merged$knownEM.pre[i], maf_merged$nInd.pre[i])
-  S_pre <- maf_merged$nInd.pre[i]
-  
-  i_post <- compute_allele_counts(maf_merged$knownEM.post[i], maf_merged$nInd.post[i])
-  S_post <- maf_merged$nInd.post[i]
-  
-  data_mat <- matrix(c(
-    0, i_pre, S_pre, Ne,
-    generations, i_post, S_post, Ne
-  ), ncol = 4, byrow = TRUE)
-  
-  res <- tryCatch({
-    signaseltest(data_mat, maxs = max_s)
-  }, error = function(e) {
-    c(L0 = NA, Lmax = NA, smax = NA, LRT = NA, `-log10pvalue` = NA, warn = 1)
-  })
-  
-  results_list[[i]] <- cbind(maf_merged[i, .(chromo, position)], as.data.frame(res))
-}
-
-
-results <- run_signasel_on_mafs(
-  pre_file = paste0(species, "/", species, "_pre.mafs.gz"),
-  post_file = paste0(species, "/", species, "_post.mafs.gz"),
-  Ne = 1000,
-  generations = 5,
-  max_s = 1
-)
+# Run the analysis
+results <- run_signasel_on_mafs(pre_file, post_file)
 
 # Save results
-fwrite(results, paste0(species, "/signasel_selection_results.tsv"), sep = "\t")
+fwrite(results, paste0(dir, "/", species, "_signasel_selection_results.tsv"), sep = "\t")
+cat("Results saved.\n")
