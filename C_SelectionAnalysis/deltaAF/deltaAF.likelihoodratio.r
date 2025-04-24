@@ -45,7 +45,7 @@ df[, pval := pchisq(LRT, df = 1, lower.tail = FALSE)]
 df[, delta_af := knownEM.y - knownEM.x]
 
 # Filter out sites where delta_af <= 0.1 before FDR correction
-df_nonzero <- df[delta_af != 0 & abs(delta_af) > 0.1]
+df_nonzero <- df[delta_af != 0 & abs(delta_af) > 0.25]
 
 # FDR correction on nonzero delta AF sites
 df_nonzero[, qval := p.adjust(pval, method = "fdr")]
