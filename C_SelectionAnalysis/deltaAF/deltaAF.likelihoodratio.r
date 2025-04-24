@@ -80,6 +80,11 @@ fwrite(sig_q,  paste0(species, "/deltaAF_lrt_significant_q0.10.tsv"), sep = "\t"
 
 cat("Done. Significant SNPs (q < 0.10):", nrow(sig_q), "\n")
 
+sig_q <- df_nonzero[qval < 0.08]
+fwrite(sig_q,  paste0(species, "/deltaAF_lrt_significant_q0.08.tsv"), sep = "\t")
+
+cat("Done. Significant SNPs (q < 0.08):", nrow(sig_q), "\n")
+
 sig_q <- df_nonzero[qval < 0.05]
 fwrite(sig_q,  paste0(species, "/deltaAF_lrt_significant_q0.05.tsv"), sep = "\t")
 
