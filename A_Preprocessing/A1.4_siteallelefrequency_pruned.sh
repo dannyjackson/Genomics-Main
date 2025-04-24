@@ -37,7 +37,7 @@ if [ -f "${OUTDIR}/datafiles/safs/${POP}"* ]
             echo "${POP} files present in SAFs directory, assuming they are already generated and moving on!"
         else
             echo "Computing SAFs for population 1"
-            ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP}bams.txt -out ${OUTDIR}/datafiles/safs/${POP}_pruned -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd ${MINDEPTHIND} -minInd ${MININD} -minQ ${MINQ} -minMapQ ${MINMAPQ} -sites ${OUTDIR}/datafiles/geno_likelihoods/all/genolike_pruned.sites.bed -anc ${REF} -nThreads ${THREADS} 
+            ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP}bams.txt -out ${OUTDIR}/datafiles/safs/${POP}_pruned -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd ${MINDEPTHIND} -minInd ${MININD} -minQ ${MINQ} -minMapQ ${MINMAPQ} -sites ${OUTDIR}/referencelists/allsnps.sites_headless.ldpruned.mafs -anc ${REF} -nThreads ${THREADS} 
 fi
 
 
