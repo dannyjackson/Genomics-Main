@@ -60,6 +60,16 @@ fwrite(sig_p,  paste0(species, "/deltaAF_lrt_significant_p0.001.tsv"), sep = "\t
 
 cat("Done. Significant SNPs (p < 0.001):", nrow(sig_p), "\n")
 
+sig_p <- df_nonzero[pval < 0.01]
+fwrite(sig_p,  paste0(species, "/deltaAF_lrt_significant_p0.01.tsv"), sep = "\t")
+
+cat("Done. Significant SNPs (p < 0.01):", nrow(sig_p), "\n")
+
+sig_p <- df_nonzero[pval < 0.05]
+fwrite(sig_p,  paste0(species, "/deltaAF_lrt_significant_p0.05.tsv"), sep = "\t")
+
+cat("Done. Significant SNPs (p < 0.05):", nrow(sig_p), "\n")
+
 sig_q <- df_nonzero[qval < 0.20]
 fwrite(sig_q,  paste0(species, "/deltaAF_lrt_significant_q0.20.tsv"), sep = "\t")
 
