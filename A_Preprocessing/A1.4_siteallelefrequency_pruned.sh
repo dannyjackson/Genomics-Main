@@ -1,12 +1,12 @@
 #!/bin/sh
 
-# FST script (1/4)
+# Delta AF script (1/4)
 
 if [ $# -lt 1 ]
   then
     echo "This script computes the genome-wide site allele frequency spectrum within a population of genomes using a genotype likelihood framework implemented in ANGSD. It requires a list of pre-processed bam files, the scripts for which are A1-A4 in this repository. 
 
-    This is an essential step for analyzing fst, dxy, and Tajima's D.
+    This is an essential step for analyzing snp-wise delta allele frequency.
     
     REQUIRED ARGUMENTS
     [-p] Path to parameter file (example is saved in the GitHub repository as params.sh)."
@@ -27,7 +27,7 @@ source "${PARAMS}"
 
 printf "\n \n \n \n"
 date
-echo "Current script: fst.sh"
+echo "Current script: deltaAF.md"
 
 
 # Generate SAF files for each population in ANGSD. Skip if output already exists.
@@ -37,7 +37,7 @@ if [ -f "${OUTDIR}/datafiles/safs/${POP}"* ]
             echo "${POP} files present in SAFs directory, assuming they are already generated and moving on!"
         else
             echo "Computing SAFs for population 1"
-            ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP}bams.txt -out ${OUTDIR}/datafiles/safs/${POP} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd ${MINDEPTHIND} -minInd ${MININD} -minQ ${MINQ} -minMapQ ${MINMAPQ} -sites ${OUTDIR}/referencelists/allsnps.sites_headless.mafs -anc ${REF} -nThreads ${THREADS} 
+            ~/programs/angsd/angsd -bam ${OUTDIR}/referencelists/${POP}bams.txt -out ${OUTDIR}/datafiles/safs/${POP}_pruned -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 -setMinDepthInd ${MINDEPTHIND} -minInd ${MININD} -minQ ${MINQ} -minMapQ ${MINMAPQ} -sites ${OUTDIR}/datafiles/geno_likelihoods/all/genolike_pruned.sites.bed -anc ${REF} -nThreads ${THREADS} 
 fi
 
 
