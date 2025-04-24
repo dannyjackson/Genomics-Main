@@ -44,8 +44,8 @@ df[, pval := pchisq(LRT, df = 1, lower.tail = FALSE)]
 # Delta AF
 df[, delta_af := knownEM.y - knownEM.x]
 
-# Filter out sites where delta_af == 0 before FDR correction
-df_nonzero <- df[delta_af != 0]
+# Filter out sites where delta_af <= 0.1 before FDR correction
+df_nonzero <- df[delta_af != 0 & abs(delta_af) > 0.1]
 
 # FDR correction on nonzero delta AF sites
 df_nonzero[, qval := p.adjust(pval, method = "fdr")]
@@ -63,4 +63,4 @@ cat("Done. Significant SNPs (p < 0.001):", nrow(sig_p), "\n")
 sig_q <- df_nonzero[qval < 0.20]
 fwrite(sig_q,  paste0(species, "/deltaAF_lrt_significant_q0.20.tsv"), sep = "\t")
 
-cat("Done. Significant SNPs (q < 0.05):", nrow(sig_q), "\n")
+cat("Done. Significant SNPs (q < 0.20):", nrow(sig_q), "\n")
