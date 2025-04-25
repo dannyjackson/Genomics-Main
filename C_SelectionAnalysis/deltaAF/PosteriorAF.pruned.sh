@@ -2,6 +2,7 @@
 
 # Delta AF computation script using ANGSD
 # Computes change in allele frequency between two genome groups using genotype likelihoods
+# Differs from PosteriorAF.sh in that it uses files with suffix "_pruned", which I use for LD pruned files. PosteriorAF.sh is used for analyzing all SNPs and then looking at windowed statistics.
 
 # Ensure at least one argument is provided
 if [ $# -lt 1 ]; then
@@ -41,15 +42,15 @@ echo "\nRunning posterior estimation script"
 
 
 # Re-run with posterior MAFs using the SFS as prior
-mkdir -p ${OUTDIR}/analyses/deltaAF/${SP}/
+mkdir -p ${OUTDIR}/analyses/deltaAF/${SP}_pruned/
 
 ${ANGSD}/angsd -b ${OUTDIR}/referencelists/${SP}${POP}bams.txt \
   -ref /xdisk/mcnew/dannyjackson/cardinals/datafiles/referencegenome/ncbi_dataset/data/GCF_901933205.1/GCF_901933205.1_STF_HiC_genomic.fna \
-  -out ${OUTDIR}/analyses/deltaAF/${SP}/${SP}_${POP}_postmafs \
+  -out ${OUTDIR}/analyses/deltaAF/${SP}_pruned/${SP}_pruned_${POP}_postmafs \
   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 \
   -minMapQ ${MINMAPQ} -minQ ${MINQ} \
   -GL 1 \
   -doMaf 1 -doMajorMinor 1 -doPost 1 \
-  -pest ${OUTDIR}/datafiles/safs/${SP}${POP}.sfs \
+  -pest ${OUTDIR}/datafiles/safs/${SP}${POP}_pruned.sfs \
   -sites /xdisk/mcnew/finches/dannyjackson/finches/referencelists/allsnps.sites_headless.mafs \
   -minInd ${MININD}

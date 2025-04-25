@@ -32,7 +32,7 @@ set -euo pipefail
 # Parse command-line arguments
 usage() {
     cat <<EOF
-Usage: $(basename "$0") -d <depth_file> -w <win_file> -a <avg_output_file> -t <threads>
+Usage: $(basename "$0") -d <depth_file> -w <win_file> -a <avg_output_file> -t <threads> -p <params_file>
 
 This script computes the average of depth values across genomic windows.
 Required arguments:
@@ -40,12 +40,12 @@ Required arguments:
   -w   Path to the windows file (chromosome, start, end)
   -a   Path to the output file (chromosome, start, end, average depth, count)
   -t   Number of threads to use
-
+  -p   Path to parameter file
 EOF
     exit 1
 }
 
-while getopts "d:w:a:t:" opt; do
+while getopts "d:w:a:t:p:" opt; do
     case "${opt}" in
         d) DEPTH_FILE=${OPTARG} ;;
         w) WIN_FILE=${OPTARG} ;;
@@ -56,7 +56,7 @@ while getopts "d:w:a:t:" opt; do
     esac
 done
 
-if [[ -z "${DEPTH_FILE:-}" || -z "${WIN_FILE:-}" || -z "${AVG_OUTPUT_FILE:-}" || -z "${THREADS:-}" ]]; then
+if [[ -z "${DEPTH_FILE:-}" || -z "${WIN_FILE:-}" || -z "${AVG_OUTPUT_FILE:-}" || -z "${THREADS:-}" || -z "${PARAMS:-}" ]]; then
     usage
 fi
 
