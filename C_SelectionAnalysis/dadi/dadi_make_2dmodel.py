@@ -28,9 +28,15 @@ import dill as pkl
 from pathlib import Path
 from dadi.LowPass import LowPass # Can comment out if not using LowPass workflow
 import json5 # Can switch to normal json module if this one causes issues
+import demes
+import demesdraw # Can comment out if not making deme plots
+
 
 # Function Definitions
 #==========================================================
+
+# Model Functions
+#========================
 def iso_inbreeding(params, ns, pts):
     '''
     This function can be used to simulate the diverge of two diploid populations and 
@@ -41,8 +47,8 @@ def iso_inbreeding(params, ns, pts):
             T: Time of split
             nu1 & nu 2: Respective sizes of both populations
             F1 & F2: Respective inbreeding coefficients for both populations
-        ns: Sample sizes
-        pts: Number of grid points for the model when plotted
+            ns: Sample sizes
+            pts: Number of grid points for the model when plotted
     Returns:
         fs: A frequency spectrum object
     '''
@@ -54,6 +60,9 @@ def iso_inbreeding(params, ns, pts):
     fs = dadi.Spectrum.from_phi_inbreeding(phi, ns, (xx, xx), (F1, F2), (2, 2))
     return fs
 
+
+# Model Optimization
+#========================
 def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, result_dir, start_params, l_bounds, u_bounds, num_opt=20, lowpass=False):
     '''
     This function makes a 2D demographic model. After optimizing the model, 
@@ -128,6 +137,9 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, result_dir, start_par
 
     return popt, model_fs, model_ex, pts
 
+
+# Plotting Functions
+#========================
 def compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir):
     '''
     This function plots a comparison spectra between the data and model.
@@ -144,6 +156,19 @@ def compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir):
     plt.savefig(model_dir + '_'.join(pop_ids) + '_comp_plot.png')
     plt.clf()
 
+def make_demes_plot(model_dir, pop_ids):
+    '''
+    This function makes a demes plot from dadi model information
+    Parameters:
+        model_dir: A string representing the model_specific dadi results directory
+        pop_ids: A 2 element list containing strings of species names
+    Returns:
+        None
+    '''
+    deme_model = dadi.Demes.output(Nref=200)
+    deme_plot = demesdraw.tubes(deme_model)
+    deme_plot.figure.savefig(model_dir + '_'.join(pop_ids) + '_demes_plot.png')
+    plt.clf()
 
 # Main
 #==========================================================
