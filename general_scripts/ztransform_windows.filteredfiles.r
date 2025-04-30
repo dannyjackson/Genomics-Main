@@ -18,12 +18,6 @@ args <- commandArgs(trailingOnly = TRUE)
 outdir <- args[1]
 cutoff <- as.numeric(args[2])  # Convert to numeric
 input <- args[3]
-win <- args[4]
-pop1 <- args[5]
-pop2 <- ifelse(length(args) > 5 && args[6] != "", args[6], NA)
-
-# Determine naming convention
-pop_name <- ifelse(is.na(pop2), pop1, paste0(pop1, "_", pop2))
 
 # Detect file type based on header
 cat("Detecting input data type...\n")
@@ -47,8 +41,6 @@ if ("dxy" %in% names(data)) {
   metric <- "Tajima"
 } else if ("raisd" %in% names(data)) {
   metric <- "raisd"
-} else if ("delta_af" %in% names(data)) {
-  metric <- "delta_af"
 } else {
   stop("Unknown data format. Ensure the input file contains dxy, fst, or tajima's D column.")
 }
@@ -86,6 +78,6 @@ df <- data[ -c(1) ]
 
 # save file
 cat("Saving Z-transformed data...\n")
-z_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "/", pop_name, ".", metric, ".", win, ".Ztransformed.csv"))
+z_file <- paste0(input, ".Ztransformed.csv")
 write_delim(df, z_file, quote = "none", delim = "\t")
   
