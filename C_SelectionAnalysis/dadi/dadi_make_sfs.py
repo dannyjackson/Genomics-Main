@@ -2,11 +2,11 @@
 Author: <Logan Vossler>
 
 ==========================================================
-Make 2-Dimensional Site Frequency Spectra
+Make Site Frequency Spectra
 ==========================================================
 
 Description:
-This script uses dadi to make and export 2-Dimensional Allele Frequency Spectrum files and plots.
+This script uses dadi to make and export 1 or 2 Dimensional Allele Frequency Spectrum files and plots.
 It will also save bootstrapped SFS data for later use in dadi uncertainty analysis.
 
 File Requirements:
@@ -21,7 +21,7 @@ File Requirements:
 #==========================================================
 import dadi, random, os, sys
 import matplotlib.pyplot as plt
-import pickle as pkl
+import dill as pkl
 from dadi.LowPass import LowPass # Can comment out if not using LowPass workflow
 from pathlib import Path
 import json5 # Can switch to normal json module if this one causes issues
@@ -59,32 +59,44 @@ def bootstrap(dd, pop_ids, num_chrom, result_dir, Nboot=100, chunk_size=1e7):
     for i in range(len(boots)):
         boots[i].to_file(boot_dir + '_'.join(pop_ids) + 'boots{0}.fs'.format(str(i)))
 
-def plot_sfs(sfs, result_dir):
+def plot_sfs(sfs, result_dir, pop_ids, dim=2):
     '''
-    This function takes an 2D sfs object and constructs a plot to be saved to the dadi_results directory. 
-    Pop0 will plot on the yaxis and Pop1 will plot on the xaxis. 
+    This function takes an sfs object and constructs a plot to be saved to the dadi_results directory. 
+    It can create 1 and 2 dimensional sfs
+    If the plot is 2D, Pop0 will plot on the yaxis and Pop1 will plot on the xaxis. 
     Parameters:
         sfs: A 2D sfs object
         result_dir: A string representing the dadi results directory path to where the bootstraps will be saved
+        pop_ids: pop_ids: A list containing strings of pop names
+        dim: An integer representing the dimensionality of the sfs plot being created
     Returns:
         None
     '''
-    plot_spectrum = dadi.Plotting.plot_single_2d_sfs(sfs, vmin=1, pop_ids=sfs.pop_ids)
-    plt.savefig(result_dir + '_'.join(sfs.pop_ids) + '_2d_spectrum.png')
+    if dim == 1:
+        # Plot 1d SFS
+        spectrum_plot = dadi.Plotting.plot_1d_fs(sfs)
+        plt.savefig(result_dir + pop_ids[0] + '_1d_spectrum.png')
+    elif dim == 2:
+        # Plot 2d SFS
+        spectrum_plot = dadi.Plotting.plot_single_2d_sfs(sfs, vmin=1, pop_ids=pop_ids)
+        plt.savefig(result_dir + '_'.join(pop_ids) + '_2d_spectrum.png')
     plt.clf()
 
-def save_cov_dist(dd, sfs):
+def save_cov_dist(dd, result_dir, pop_ids, dim=2):
     '''
-    This function saves a .pkl file of a depth-of-coverage distribution for a given 2D-SFS population pair.
+    This function saves a .pkl file of a depth-of-coverage distribution for a given population.
     This coverage distribution is only needed if using LowPass for Low Coverage data in future model-making.
     We generate the file here (instead of in dadi_make_2dmodel.py) to avoid having to load in the large data dictionary
     multiple times (thus greatly reducing computational resources)
     Parameters:
         dd: A Data Dictionary
         sfs: A 2D SFS object
+        pop_ids: pop_ids: pop_ids: A list containing strings of pop names
+        dim: An integer representing the dimensionality of the sfs plot being created
     '''
-    cov_dist = LowPass.compute_cov_dist(dd, sfs.pop_ids)
-    with open('_'.join(sfs.pop_ids) + '_cov_dist.pkl', 'wb') as file:
+    fname = pop_ids[0] if dim == 1 else '_'.join(pop_ids)
+    cov_dist = LowPass.compute_cov_dist(dd, pop_ids)
+    with open(result_dir + fname + '_cov_dist.pkl', 'wb') as file:
         pkl.dump(cov_dist, file)
 
 
@@ -135,17 +147,21 @@ def main():
 
     #========================================
     # Make Data dictionary and save to file.
-    print('\nMaking Data Dictionary...')
-    dd = dadi.Misc.make_data_dict_vcf(vcffile, popfile, calc_coverage=True)
-    print('Saving Data Dictionary to results directory...')
-    with open(result_dir + 'dd.pkl', 'wb') as file:
-        pkl.dump(dd, file)
-    
+    if os.path.exists(result_dir + 'dd.pkl'):
+        print('Data Dictionary .pkl file found in result directory. Loading this file into job...')
+        with open(result_dir + 'dd.pkl', 'rb') as file:
+            dd = pkl.load(file)
+    else:
+        print('\nMaking Data Dictionary...')
+        dd = dadi.Misc.make_data_dict_vcf(vcffile, popfile, calc_coverage=True)
+        print('Saving Data Dictionary to results directory...')
+        with open(result_dir + 'dd.pkl', 'wb') as file:
+            pkl.dump(dd, file)
     #========================================
     # Enter a loop to make SFS for each species combo
     for dct in sfsparams:
         print('\nGetting ' + dct + ' Parameters...')
-        pop_ids, num_chrom, polarize = sfsparams[dct]
+        pop_ids, num_chrom, polarize, dim = sfsparams[dct]
 
         # Make Spectrum objects
         print('Generating SFS for ' + dct + '...')
@@ -153,14 +169,16 @@ def main():
         
         # Plot the SFS and save plot to file
         print('Plotting SFS for ' + dct + '...')
-        plot_sfs(data_fs, result_dir)
+        plot_sfs(data_fs, result_dir, pop_ids, dim)
         
         # If doing lowpass workflow, save coverage distribution for future modeling
-        if lowpass: save_cov_dist(dd, data_fs)
+        if lowpass:
+            print('Saving lowpass coverage distribution to temp file...')
+            save_cov_dist(dd, data_fs, result_dir, pop_ids, dim)
         
         # Save SFS to files
         print('Saving SFS for ' + dct + '...')
-        data_fs.to_file(result_dir + '_'.join(data_fs.pop_ids) + '_fs')
+        data_fs.to_file(result_dir + '_'.join(pop_ids) + '_fs')
         
         # Make Bootstrapped SFS files
         print('Generating Bootstrapped SFS for ' + dct + '...')

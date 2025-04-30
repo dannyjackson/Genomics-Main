@@ -7,6 +7,7 @@ Make 2-Dimensional Demography Model
 
 Description:
 This script uses dadi to construct 2D models to predict demographic events between species.
+We may want to edit it for 1D functionality, but not yet. 
 Model parameters, optimizations, and uncertainty analyses will be saved in relevant model results directories
 
 File Requirements:
@@ -25,7 +26,6 @@ import dadi, nlopt, os, sys
 import matplotlib.pyplot as plt
 import dill as pkl
 from pathlib import Path
-import pycuda, skcuda # Can comment out if not parallelizing
 from dadi.LowPass import LowPass # Can comment out if not using LowPass workflow
 import json5 # Can switch to normal json module if this one causes issues
 
@@ -54,7 +54,7 @@ def iso_inbreeding(params, ns, pts):
     fs = dadi.Spectrum.from_phi_inbreeding(phi, ns, (xx, xx), (F1, F2), (2, 2))
     return fs
 
-def make_2d_demo_model(fs, dadi_model, model_dir, start_params, l_bounds, u_bounds, num_opt=20, lowpass=False):
+def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, result_dir, start_params, l_bounds, u_bounds, num_opt=20, lowpass=False):
     '''
     This function makes a 2D demographic model. After optimizing the model, 
     it will save the model parameters into an output file in the results directory.
@@ -63,6 +63,7 @@ def make_2d_demo_model(fs, dadi_model, model_dir, start_params, l_bounds, u_boun
         pop_ids: A 2 element list containing strings of species names
         dadi_model: A string specifying the desired dadi model to run. This will also be used as model results folder name
         model_dir: A string representing the model_specific dadi results directory
+        result_dir: A string representing the dadi results directory
         start_params: List of floats/ints of arbitrary starting parameters for model to optimize
         l_bounds: List of floats/ints of lower param optimization bounds
         u_bounds: List of floats/ints of upper param optimization bounds
@@ -95,18 +96,17 @@ def make_2d_demo_model(fs, dadi_model, model_dir, start_params, l_bounds, u_boun
 
     if lowpass:
         print('---> Diverting to LowPass workflow...')
-        # Load coverage distribution .pkl file made in dadi_make_sfs.py
         print('---> Loading Coverage Distribution...')
-        with open('_'.join(fs.pop_ids) + '_cov_dist.pkl', 'rb') as file:
+        with open(result_dir + '_'.join(pop_ids) + '_cov_dist.pkl', 'rb') as file:
             cov_dist = pkl.load(file)
         print('---> Making LowPass Model Function...')
-        model_ex = LowPass.make_low_pass_func_GATK_multisample(model_ex, cov_dist, fs.pop_ids, nseq=n, nsub=n, sim_threshold=1e-2, Fx=None)
+        model_ex = LowPass.make_low_pass_func_GATK_multisample(model_ex, cov_dist, pop_ids, nseq=n, nsub=n, sim_threshold=1e-2, Fx=None)
 
     # Create a file to store the fitted parameters in your current working directory
     try:
-        output = open(model_dir + '_'.join(fs.pop_ids) + '_fits.txt','a')
+        output = open(model_dir + '_'.join(pop_ids) + '_fits.txt','a')
     except:
-        output = open(model_dir + '_'.join(fs.pop_ids) + '_fits.txt','w')
+        output = open(model_dir + '_'.join(pop_ids) + '_fits.txt','w')
     
     # This is where we run the optimization for our arbitrary model parameters
     # By the end, we will (presumably) get some optimal parameters and the log-liklihood for how optimal they are
@@ -114,7 +114,7 @@ def make_2d_demo_model(fs, dadi_model, model_dir, start_params, l_bounds, u_boun
     for i in range(num_opt):
         # Slightly alter parameters
         p0 = dadi.Misc.perturb_params(start_params, fold=1, upper_bound=u_bounds,lower_bound=l_bounds)
-        popt, ll_model = dadi.Inference.opt(p0, fs, model_ex, pts, lower_bound=l_bounds, upper_bound=u_bounds,algorithm=nlopt.LN_BOBYQA,maxeval=400, verbose=100)
+        popt, ll_model = dadi.Inference.opt(p0, fs, model_ex, pts, lower_bound=l_bounds, upper_bound=u_bounds, algorithm=nlopt.LN_BOBYQA, maxeval=400, verbose=100)
         # Calculate the synonymous theta
         # Also finding optimal scaling factor for data
         model_fs = model_ex(popt, n, pts)
@@ -128,7 +128,7 @@ def make_2d_demo_model(fs, dadi_model, model_dir, start_params, l_bounds, u_boun
 
     return popt, model_fs, model_ex, pts
 
-def compare_sfs_plots(data_fs, model_fs, model_dir):
+def compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir):
     '''
     This function plots a comparison spectra between the data and model.
     Will be useful in visually determining model accuracy.
@@ -140,8 +140,8 @@ def compare_sfs_plots(data_fs, model_fs, model_dir):
     Returns:
         None
     '''
-    comp_plot = dadi.Plotting.plot_2d_comp_multinom(model_fs, data_fs, pop_ids=data_fs.pop_ids)
-    plt.savefig(model_dir + '_'.join(data_fs.pop_ids) + '_comp_plot.png')
+    comp_plot = dadi.Plotting.plot_2d_comp_multinom(model_fs, data_fs, pop_ids=pop_ids)
+    plt.savefig(model_dir + '_'.join(pop_ids) + '_comp_plot.png')
     plt.clf()
 
 
@@ -183,12 +183,13 @@ def main():
     lowpass = dadi_params['LOWPASS']
     # Check if CUDA Enabled
     dadi.cuda_enabled(dadi_params['CUDA ENABLED'])
+    print('dadi.cuda status: ' + str(dadi.cuda_enabled()))
 
     #========================================
     # Check if dadi-specific results directories exists in specified outdir. If not, create them.
     print('Verifying Directories...')
-    # If using lowpass, make a lowpass directory inside specified results folder
-    result_dir = outdir + job_name + '/lowpass/' if lowpass else outdir + job_name + '/'
+    # If using lowpass, make a lowpass directory
+    result_dir = outdir + job_name + '/lowpass/' if lowpass else outdir + 'dadi_results/'
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
 
@@ -206,16 +207,16 @@ def main():
 
         # Make model SFS objects for each species comparison
         print('Generating ' + dct + '...')
-        popt, model_fs, model_ex, pts = make_2d_demo_model(data_fs, dadi_model, model_dir, result_dir, start_params, l_bounds, u_bounds, num_opt, lowpass)
-        gim_params.append([popt, model_ex, pts, data_fs])
+        popt, model_fs, model_ex, pts = make_2d_demo_model(data_fs, pop_ids, dadi_model, model_dir, result_dir, start_params, l_bounds, u_bounds, num_opt, lowpass)
+        gim_params.append([popt, pop_ids, model_ex, pts, data_fs])
 
         # Plot SFS model/data comparison
         print('Plotting SFS Comparison for ' + dct + '...')
-        compare_sfs_plots(data_fs, model_fs, model_dir)
+        compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir)
 
         # Save model SFS to files
         print('Saving SFS file for ' + dct + '...')
-        model_fs.to_file(model_dir + '_'.join(model_fs.pop_ids) + '_model_fs')
+        model_fs.to_file(model_dir + '_'.join(pop_ids) + '_model_fs')
     
     # Save GIM Params to .pkl file for Uncertainty Analysis
     print('\nSaving Intermediate GIM Params file to Model Directory...')
