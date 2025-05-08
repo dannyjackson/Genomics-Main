@@ -40,6 +40,23 @@ def load_bootstraps(result_dir, pop_ids):
     boots_syn = [dadi.Spectrum.from_file(fid) for fid in boots_fids]
     return boots_syn
 
+def write_to_file(fi, uncerts, steps, popt):
+    '''
+    Helper function to write uncertainty results to file. Just made this to clean up other funcs
+    Parameters:
+        fi: File object
+        uncerts_str: List of uncertainty values
+        steps: Step Size
+        popt: List of int/floats of Optimal model parameters
+    Returns:
+        None
+    '''
+    uncerts_str = ',  '.join([str(ele) for ele in uncerts])
+    fi.write('GIM Array Output: [' + uncerts_str + ']\n')
+    fi.write('Estimated 95% uncerts (with step size '+str(steps)+'): {0}\n'.format(1.96*uncerts[:-1]))
+    fi.write('Lower bounds of 95% confidence interval : {0}\n'.format(popt-1.96*uncerts[:-1]))
+    fi.write('Upper bounds of 95% confidence interval : {0}\n\n'.format(popt+1.96*uncerts[:-1]))
+
 def godambe(popt, model_ex, pts, fs, model_dir, eps, result_dir, pop_ids):
     '''
     This function performs dadi Godambe Uncertainty Analysis on 2D demographic models.
@@ -67,11 +84,7 @@ def godambe(popt, model_ex, pts, fs, model_dir, eps, result_dir, pop_ids):
     # We want to try a few different step sizes (eps) to see if uncertainties very wildly with changes to step size. (Ideally they shoud not)
     for steps in eps:
         uncerts_adj = dadi.Godambe.GIM_uncert(func_ex=model_ex, grid_pts=pts, all_boot=boots_syn, p0=popt, data=fs, eps=steps, log=True)
-        uncerts_str = ',  '.join([str(ele) for ele in uncerts_adj])
-        fi.write('GIM Array Output: [' + uncerts_str + ']\n')
-        fi.write('Estimated 95% uncerts (with step size '+str(steps)+'): {0}\n'.format(1.96*uncerts_adj[:-1]))
-        fi.write('Lower bounds of 95% confidence interval : {0}\n'.format(popt-1.96*uncerts_adj[:-1]))
-        fi.write('Upper bounds of 95% confidence interval : {0}\n\n'.format(popt+1.96*uncerts_adj[:-1]))
+        write_to_file(fi, uncerts_adj, steps, popt)
     fi.close()
 
 def likelihood(popt, model_ex, pts, fs, model_dir, eps, result_dir, pop_ids, lrt_indices):
@@ -100,11 +113,7 @@ def likelihood(popt, model_ex, pts, fs, model_dir, eps, result_dir, pop_ids, lrt
 
     for steps in eps:
         adj = dadi.Godambe.LRT_adjust(func_ex=model_ex, grid_pts=pts, all_boot=boots_syn, p0=popt, data=fs, nested_indices=lrt_indices, multinom = True, eps=steps)
-        uncerts_str = ',  '.join([str(ele) for ele in adj])
-        fi.write('LRT Array Output: [' + uncerts_str + ']\n')
-        fi.write('Estimated 95% uncerts (with step size '+str(steps)+'): {0}\n'.format(1.96*adj[:-1]))
-        fi.write('Lower bounds of 95% confidence interval : {0}\n'.format(popt-1.96*adj[:-1]))
-        fi.write('Upper bounds of 95% confidence interval : {0}\n\n'.format(popt+1.96*adj[:-1]))
+        write_to_file(fi, adj, steps, popt)
     fi.close()
 
 # Main
@@ -148,9 +157,9 @@ def main():
     # If using lowpass, make a lowpass directory inside specified results folder
     result_dir = outdir + job_name + '/lowpass/' if lowpass else outdir + job_name + '/'
     if not os.path.exists(result_dir):
-        os.makedirs(result_dir)
+        raise FileNotFoundError("Couldn't find specified result directory. Check that specified Result Directory matches the previously generated directory in data SFS creation.")
 
-    # If using lowpass, make a lowpass directory
+    # Specify model directory
     model_dir = result_dir + dadi_model + '/'
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)

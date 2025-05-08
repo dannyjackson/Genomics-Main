@@ -82,7 +82,7 @@ def plot_sfs(sfs, result_dir, pop_ids, dim=2):
         plt.savefig(result_dir + '_'.join(pop_ids) + '_2d_spectrum.png')
     plt.clf()
 
-def save_cov_dist(dd, result_dir, pop_ids, dim=2):
+def save_cov_dist(dd, lowpass_dir, pop_ids, dim=2):
     '''
     This function saves a .pkl file of a depth-of-coverage distribution for a given population.
     This coverage distribution is only needed if using LowPass for Low Coverage data in future model-making.
@@ -96,7 +96,7 @@ def save_cov_dist(dd, result_dir, pop_ids, dim=2):
     '''
     fname = pop_ids[0] if dim == 1 else '_'.join(pop_ids)
     cov_dist = LowPass.compute_cov_dist(dd, pop_ids)
-    with open(result_dir + fname + '_cov_dist.pkl', 'wb') as file:
+    with open(lowpass_dir + fname + '_cov_dist.pkl', 'wb') as file:
         pkl.dump(cov_dist, file)
 
 
@@ -140,10 +140,17 @@ def main():
     #========================================
     # Check if dadi-specific results directory exists in specified outdir. If not, create it.
     print('Verifying Directories...')
-    # If using lowpass, make a lowpass directory inside specified results folder
-    result_dir = outdir + job_name + '/lowpass/' if lowpass else outdir + job_name + '/'
+    # We will store our SFS data in a general results folder for each job...
+    result_dir = outdir + job_name + '/'
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
+
+    #...but if using lowpass in models later, also make a lowpass directory inside specified results folder
+    if lowpass:
+        print('Generating Lowpass directory...')
+        lowpass_dir = result_dir + '/lowpass/'
+        if not os.path.exists(lowpass_dir):
+            os.makedirs(lowpass)
 
     #========================================
     # Make Data dictionary and save to file.
@@ -173,8 +180,8 @@ def main():
         
         # If doing lowpass workflow, save coverage distribution for future modeling
         if lowpass:
-            print('Saving lowpass coverage distribution to temp file...')
-            save_cov_dist(dd, data_fs, result_dir, pop_ids, dim)
+            print('Saving lowpass coverage distribution to temp file in lowpass dir...')
+            save_cov_dist(dd, data_fs, lowpass_dir, pop_ids, dim)
         
         # Save SFS to files
         print('Saving SFS for ' + dct + '...')

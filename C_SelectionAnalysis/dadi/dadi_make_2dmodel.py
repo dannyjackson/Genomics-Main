@@ -14,9 +14,9 @@ File Requirements:
     - Base Parameter File from Genomics Main Lab Repository
     - Dadi-Specific Parameter File from Genomics Main Lab Repository
     - Bootstrapped SFS files in proper result directory for use in Godambe Uncertainty Analysis
-    - If using LowPass workflow, your data dictionary generated in dadi_make_sfs.py is needed in the dadi_results directory
+    - If using LowPass workflow, a coverage distribution generated in dadi_make_sfs.py is needed in the dadi_results directory
     - If parallelizing this script using CUDA Enabled GPUs (recommended for if doing many runs), you will also need Python's PYCUDA 
-        and scikit-cuda modules (along with loading the Nvidia CUDA toolkits from an HPC)
+      and scikit-cuda modules (along with loading the Nvidia CUDA toolkits from an HPC)
 '''
 
 
@@ -28,42 +28,15 @@ import dill as pkl
 from pathlib import Path
 from dadi.LowPass import LowPass # Can comment out if not using LowPass workflow
 import json5 # Can switch to normal json module if this one causes issues
-import demes
 import demesdraw # Can comment out if not making deme plots
-
+import dfdemomodels
 
 # Function Definitions
 #==========================================================
 
-# Model Functions
-#========================
-def iso_inbreeding(params, ns, pts):
-    '''
-    This function can be used to simulate the diverge of two diploid populations and 
-    the presence of inbreeding within them. The function is outlined in DADI documentation
-    but is not included in the out-of-the-box models, so we must explicity define it here.
-    Parameters:
-        params: A 5 element list of arbitrary parameters including (in order):
-            T: Time of split
-            nu1 & nu 2: Respective sizes of both populations
-            F1 & F2: Respective inbreeding coefficients for both populations
-            ns: Sample sizes
-            pts: Number of grid points for the model when plotted
-    Returns:
-        fs: A frequency spectrum object
-    '''
-    T, nu1, nu2, F1, F2 = params
-    xx = dadi.Numerics.default_grid(pts)
-    phi = dadi.PhiManip.phi_1D(xx)
-    phi = dadi.PhiManip.phi_1D_to_2D(xx, phi)
-    phi = dadi.Integration.two_pops(phi, xx, T, nu1, nu2)
-    fs = dadi.Spectrum.from_phi_inbreeding(phi, ns, (xx, xx), (F1, F2), (2, 2))
-    return fs
-
-
 # Model Optimization
 #========================
-def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, result_dir, start_params, l_bounds, u_bounds, num_opt=20, lowpass=False):
+def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, result_dir, start_params, l_bounds, u_bounds, num_opt=20, lowpass=False, plot_demes=True):
     '''
     This function makes a 2D demographic model. After optimizing the model, 
     it will save the model parameters into an output file in the results directory.
@@ -90,10 +63,10 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, result_dir, start_par
     pts = [max(n)+20, max(n)+30, max(n)+40]
 
     # State our model
-    if dadi_model == 'iso_inbreeding':
-        model = iso_inbreeding
-    else:
+    try:
         model = getattr(dadi.Demographics2D, dadi_model)
+    except:
+        model = getattr(dfdemomodels, dadi_model)
 
     if not fs.folded:
         # Since we have unfolded data, we will wrap the model in a function that adds a parameter to estimate misidentification rate
@@ -104,7 +77,6 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, result_dir, start_par
     model_ex = dadi.Numerics.make_extrap_func(model)
 
     if lowpass:
-        print('---> Diverting to LowPass workflow...')
         print('---> Loading Coverage Distribution...')
         with open(result_dir + '_'.join(pop_ids) + '_cov_dist.pkl', 'rb') as file:
             cov_dist = pkl.load(file)
@@ -118,14 +90,13 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, result_dir, start_par
         output = open(model_dir + '_'.join(pop_ids) + '_fits.txt','w')
     
     # This is where we run the optimization for our arbitrary model parameters
-    # By the end, we will (presumably) get some optimal parameters and the log-liklihood for how optimal they are
+    # By the end, we will (presumably) get some optimal parameters and the log-likelihood for how optimal they are
     print('---> Optimizing Starting Parameters...')
     for i in range(num_opt):
         # Slightly alter parameters
         p0 = dadi.Misc.perturb_params(start_params, fold=1, upper_bound=u_bounds,lower_bound=l_bounds)
         popt, ll_model = dadi.Inference.opt(p0, fs, model_ex, pts, lower_bound=l_bounds, upper_bound=u_bounds, algorithm=nlopt.LN_BOBYQA, maxeval=400, verbose=100)
-        # Calculate the synonymous theta
-        # Also finding optimal scaling factor for data
+        # Calculate the synonymous theta (Also finding optimal scaling factor for data)
         model_fs = model_ex(popt, n, pts)
         theta0 = dadi.Inference.optimal_sfs_scaling(model_fs, fs)
 
@@ -135,12 +106,18 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, result_dir, start_par
     output.write('\t'.join([str(ele) for ele in res])+'\n')
     output.close()
 
+    # If want to plot demes, do so here after model params are optimized
+    if plot_demes:
+        print('---> Saving Demes Plot...')
+        make_demes_plot(model_dir, pop_ids)
+
+
     return popt, model_fs, model_ex, pts
 
 
 # Plotting Functions
 #========================
-def compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir):
+def plot_model_fs(data_fs, model_fs, pop_ids, model_dir):
     '''
     This function plots a comparison spectra between the data and model.
     Will be useful in visually determining model accuracy.
@@ -153,7 +130,7 @@ def compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir):
         None
     '''
     comp_plot = dadi.Plotting.plot_2d_comp_multinom(model_fs, data_fs, pop_ids=pop_ids)
-    plt.savefig(model_dir + '_'.join(pop_ids) + '_comp_plot.png')
+    plt.savefig(model_dir + '_'.join(pop_ids) + '_model_plot.png')
     plt.clf()
 
 def make_demes_plot(model_dir, pop_ids):
@@ -175,7 +152,7 @@ def make_demes_plot(model_dir, pop_ids):
 def main():
     '''
     1) Import Base Parameters
-    2) Import Dadi-SFS Specific Parameters
+    2) Import dadi-Specific Parameters
     3) Check for required directories
     6) Generate demography model SFS and save fits to files
     7) Plot SFS / Model SFS comparisons/residuals
@@ -206,6 +183,7 @@ def main():
     model_params = dadi_params['MODEL PARAMS']
     num_opt = dadi_params['PARAM OPTIMIZATIONS']
     lowpass = dadi_params['LOWPASS']
+    plot_demes = dadi_params['PLOT DEMES']
     # Check if CUDA Enabled
     dadi.cuda_enabled(dadi_params['CUDA ENABLED'])
     print('dadi.cuda status: ' + str(dadi.cuda_enabled()))
@@ -213,17 +191,18 @@ def main():
     #========================================
     # Check if dadi-specific results directories exists in specified outdir. If not, create them.
     print('Verifying Directories...')
-    # If using lowpass, make a lowpass directory
-    result_dir = outdir + job_name + '/lowpass/' if lowpass else outdir + 'dadi_results/'
+    # If using lowpass, set result dir to lowpass dir
+    result_dir = outdir + job_name + '/lowpass/' if lowpass else outdir + job_name + '/'
     if not os.path.exists(result_dir):
-        os.makedirs(result_dir)
+        raise FileNotFoundError("Couldn't find specified result directory. Check that specified Result Directory matches the previously generated directory in data SFS creation.")
 
+    # Make new directory for model
     model_dir = result_dir + dadi_model + '/'
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
     
     #========================================
-    # Enter a loop to perform model-making runs for each species combo
+    # Enter a loop to perform model-making runs
     gim_params = []
     for dct in model_params:
         print('\nGetting ' + dct + ' Parameters...')
@@ -232,12 +211,13 @@ def main():
 
         # Make model SFS objects for each species comparison
         print('Generating ' + dct + '...')
-        popt, model_fs, model_ex, pts = make_2d_demo_model(data_fs, pop_ids, dadi_model, model_dir, result_dir, start_params, l_bounds, u_bounds, num_opt, lowpass)
+        popt, model_fs, model_ex, pts = make_2d_demo_model(data_fs, pop_ids, dadi_model, model_dir, result_dir, 
+                                                           start_params, l_bounds, u_bounds, num_opt, lowpass, plot_demes)
         gim_params.append([popt, pop_ids, model_ex, pts, data_fs])
 
         # Plot SFS model/data comparison
         print('Plotting SFS Comparison for ' + dct + '...')
-        compare_sfs_plots(data_fs, model_fs, pop_ids, model_dir)
+        plot_model_fs(data_fs, model_fs, pop_ids, model_dir)
 
         # Save model SFS to files
         print('Saving SFS file for ' + dct + '...')

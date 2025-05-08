@@ -23,10 +23,12 @@
     // Your Bootstrap parameters stating how many bootstraps you want and the size of your data chunks (in base pairs)
     "BOOTSTRAP PARAMS": [100, 1e7],
 
-    // Desired dadi model MUST be a 2D model offered in dadi.Demographics2D submodule. State model as actual method name (Refer to dadi documentation)
-    "DADI MODEL": "split_mig",
+    // Desired dadi model MUST be a 2D model offered in dadi.Demographics2D submodule. State model as full function name.
+    "DADI MODEL": "dadi.Demographics2D.split_mig",
 
     "LOWPASS": false,
+
+    "PLOT DEMES": true,
 
     // Recommended to run 20 rounds of optimizations for testing and 100 rounds on HPC for full analyses
     "PARAM OPTIMIZATIONS": 20,
