@@ -160,7 +160,9 @@ def main():
             dd = pkl.load(file)
     else:
         print('\nMaking Data Dictionary...')
-        dd = dadi.Misc.make_data_dict_vcf(vcffile, popfile, calc_coverage=True)
+        # First, if not doing lowpass, then don't bother including coverage info in dd
+        cov = True if lowpass else False
+        dd = dadi.Misc.make_data_dict_vcf(vcffile, popfile, calc_coverage=cov)
         print('Saving Data Dictionary to results directory...')
         with open(result_dir + 'dd.pkl', 'wb') as file:
             pkl.dump(dd, file)
