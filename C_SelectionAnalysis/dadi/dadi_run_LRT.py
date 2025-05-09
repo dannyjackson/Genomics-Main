@@ -13,7 +13,6 @@ Description:
 # Required Modules
 #==========================================================
 import dadi, glob, os, sys
-import dill as pkl
 from pathlib import Path
 import dfinbredmodels
 import json5 # Can switch to normal json module if this one causes issues
@@ -21,7 +20,7 @@ import json5 # Can switch to normal json module if this one causes issues
 
 # Function Definitions
 #==========================================================
-def load_bootstraps(boot_dir, pop_ids):
+def load_bootstraps(boot_dir):
     '''
     This is a helper function that gets the bootstrap data for our uncertainty analyses.
     Parameters:
@@ -34,33 +33,6 @@ def load_bootstraps(boot_dir, pop_ids):
     boots_fids = glob.glob(os.path.join(boot_dir, '*'))
     boots_syn = [dadi.Spectrum.from_file(fid) for fid in boots_fids]
     return boots_syn
-
-def likelihood(popt, model_ex, pts, fs, model_dir, eps, result_dir, pop_ids, lrt_indices):
-    '''
-    This function performs dadi likelihood ratio test on 2D demographic models.
-    It requires SFS bootstraps generated from dadi_make_sfs.py and will save the results to text files in the dadi model results directory.
-    Parameters:
-        popt: List of int/floats of Optimal model parameters
-        model_ex: Our final model function
-        pts: ist of integers of number of grid points for model
-        fs: An SFS object containing data across 2 populations
-        model_dir: A string representing the model_specific dadi results directory
-        eps: List of floats of step sizes to test in our confidence intervals
-        result_dir: A string representing the dadi results directory
-        pop_ids: A 2 element list containing strings of species names
-        lrt_indices: List of indices to fix for simple model
-    Returns:
-        None
-    '''
-    # Get Bootstrapped datasets
-    boots_syn = load_bootstraps(result_dir, pop_ids)
-
-    # Start a file to contain the confidence intervals
-    fi = open(model_dir  + '_'.join(pop_ids) +'LRT_results.txt','w')
-
-    for steps in eps:
-        adj = dadi.Godambe.LRT_adjust(func_ex=model_ex, grid_pts=pts, all_boot=boots_syn, p0=popt, data=fs, nested_indices=lrt_indices, multinom = True, eps=steps)
-    fi.close()
 
 # Main
 #==========================================================
@@ -130,12 +102,12 @@ def main():
     ll_test = dadi.Inference.ll_multinom(model_test, data_fs)
     ll_null = dadi.Inference.ll_multinom(model_null, data_fs)
 
-# Since LRT evaluates the complex model using the best-fit parameters from the
-# simple model, we need to create list of parameters for the complex model
-# using the simple (no-mig) best-fit params.  Since evalution is done with more
-# complex model, need to insert zero migration value at corresponding migration
-# parameter index in complex model. And we need to tell the LRT adjust function
-# that the 3rd parameter (counting from 0) is the nested one.
+    # Since LRT evaluates the complex model using the best-fit parameters from the
+    # simple model, we need to create list of parameters for the complex model
+    # using the simple (no-mig) best-fit params.  Since evalution is done with more
+    # complex model, need to insert zero migration value at corresponding migration
+    # parameter index in complex model. And we need to tell the LRT adjust function
+    # that the 3rd parameter (counting from 0) is the nested one.
 
     # Grab Bootstraps
     boot_syn = load_bootstraps(boot_dir)
@@ -143,10 +115,16 @@ def main():
     adj = dadi.Godambe.LRT_adjust(test_ex, pts, boot_syn, null_model_params, data_fs, nested_indices=nested_idx, multinom=True)
     D_adj = adj*2*(ll_test - ll_null)
     print('Adjusted D statistic: {0:.4f}'.format(D_adj))
+    Dstat_str = 'Adjusted D statistic: {0:.4f}'.format(D_adj)
 
-# Because this is test of a parameter on the boundary of parameter space 
-# (m cannot be less than zero), our null distribution is an even proportion 
-# of chi^2 distributions with 0 and 1 d.o.f. To evaluate the p-value, we use the
-# point percent function for a weighted sum of chi^2 dists.
+    # Because this is test of a parameter on the boundary of parameter space 
+    # (m cannot be less than zero), our null distribution is an even proportion 
+    # of chi^2 distributions with 0 and 1 d.o.f. To evaluate the p-value, we use the
+    # point percent function for a weighted sum of chi^2 dists.
     pval = dadi.Godambe.sum_chi2_ppf(D_adj, weights=(0.5,0.5))
     print('p-value for rejecting no-migration model: {0:.4f}'.format(pval))
+    pval_str = 'p-value for rejecting no-migration model: {0:.4f}'.format(pval)
+
+    with open(os.path.join(result_dir, test_model + '_' + null_model + 'LRT.out'), 'w') as file:
+        file.write(Dstat_str)
+        file.write(pval_str)

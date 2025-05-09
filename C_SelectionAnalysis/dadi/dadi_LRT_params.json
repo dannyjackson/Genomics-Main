@@ -14,7 +14,7 @@
     // See dadi documentation for in-depth description on how to use LRT
     "NESTED INDICES": [3],
 
-    "RESULT OUTDIR": "path/to/store/results",
+    "RESULT OUTDIR": "path/to/store/results/",
 
-    "BOOTSTRAP DIR"
+    "BOOTSTRAP DIR": "path/to/folder/with/bootstrap/files/"
 }

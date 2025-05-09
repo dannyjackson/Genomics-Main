@@ -26,7 +26,6 @@ import dadi, nlopt, os, sys
 import matplotlib.pyplot as plt
 import dill as pkl
 from pathlib import Path
-from dadi.LowPass import LowPass # Can comment out if not using LowPass workflow
 import json5 # Can switch to normal json module if this one causes issues
 import demesdraw # Can comment out if not making deme plots
 import dfinbredmodels
@@ -77,6 +76,7 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, result_dir, start_par
     model_ex = dadi.Numerics.make_extrap_func(model)
 
     if lowpass:
+        from dadi.LowPass import LowPass
         print('---> Loading Coverage Distribution...')
         with open(result_dir + '_'.join(pop_ids) + '_cov_dist.pkl', 'rb') as file:
             cov_dist = pkl.load(file)
