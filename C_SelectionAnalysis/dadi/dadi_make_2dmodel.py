@@ -129,7 +129,7 @@ def plot_model_fs(data_fs, model_fs, pop_ids, model_dir):
     Returns:
         None
     '''
-    comp_plot = dadi.Plotting.plot_2d_comp_multinom(model_fs, data_fs, pop_ids=pop_ids)
+    comp_plot = dadi.Plotting.plot_2d_comp_multinom(model_fs, data_fs, vmin=1, pop_ids=pop_ids)
     plt.savefig(model_dir + '_'.join(pop_ids) + '_model_plot.png')
     plt.clf()
 
