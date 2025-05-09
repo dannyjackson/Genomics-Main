@@ -7,25 +7,22 @@ from dadi import Numerics, PhiManip, Integration
 from dadi.Spectrum_mod import Spectrum
 from dadi.PortikModels.portik_models_2d import *
 
-def df_snm_2d(params, ns, pts, inbred=False):
+def df_snm_2d(params, ns, pts):
     """
     ns = (n1,n2)
 
     Standard neutral model, populations never diverge.
     """
+    F1, F2 = params[0]
     xx = Numerics.default_grid(pts)
     phi = PhiManip.phi_1D(xx)
     phi = PhiManip.phi_1D_to_2D(xx, phi)
-    if inbred:
-        F1, F2 = params[0]
-        fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,), (F1,F2), (2,2))
-    else:
-        fs = Spectrum.from_phi(phi, ns, (xx,xx))
+    fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,), (F1,F2), (2,2))
     return fs
 df_snm_2d.__param_names__ = []
 snm = df_snm_2d
 
-def df_bottlegrowth_2d(params, ns, pts, inbred=False):
+def df_bottlegrowth_2d(params, ns, pts):
     """
     params = (nuB,nuF,T)
     ns = (n1,n2)
@@ -41,15 +38,12 @@ def df_bottlegrowth_2d(params, ns, pts, inbred=False):
     n1,n2: Sample sizes of resulting Spectrum
     pts: Number of grid points to use in integration.
     """
-    nuB,nuF,T,F1,F2 = params if inbred else nuB,nuF,T
-    if inbred:
-        return df_bottlegrowth_split_mig((nuB,nuF,0,T,0,F1,F2), ns, pts, inbred)
-    else:
-        return df_bottlegrowth_split_mig((nuB,nuF,0,T,0), ns, pts, inbred)
+    nuB,nuF,T,F1,F2 = params
+    return df_bottlegrowth_split_mig((nuB,nuF,0,T,0,F1,F2), ns, pts)
 df_bottlegrowth_2d.__param_names__ = ['nuB', 'nuF', 'T']
 bottlegrowth = df_bottlegrowth_2d
 
-def df_bottlegrowth_split(params, ns, pts, inbred=False):
+def df_bottlegrowth_split(params, ns, pts):
     """
     params = (nuB,nuF,T,Ts)
     ns = (n1,n2)
@@ -65,14 +59,11 @@ def df_bottlegrowth_split(params, ns, pts, inbred=False):
     n1,n2: Sample sizes of resulting Spectrum
     pts: Number of grid points to use in integration.
     """
-    nuB,nuF,T,Ts,F1, F2 = params if inbred else nuB,nuF,T,Ts
-    if inbred:
-        return df_bottlegrowth_split_mig((nuB,nuF,0,T,Ts,F1,F2), ns, pts, inbred)
-    else:
-        return df_bottlegrowth_split_mig((nuB,nuF,0,T,Ts), ns, pts, inbred)
+    nuB,nuF,T,Ts,F1, F2 = params
+    return df_bottlegrowth_split_mig((nuB,nuF,0,T,Ts,F1,F2), ns, pts)
 df_bottlegrowth_split.__param_names__ = ['nuB', 'nuF', 'T', 'Ts']
 
-def df_bottlegrowth_split_mig(params, ns, pts, inbred=False):
+def df_bottlegrowth_split_mig(params, ns, pts):
     """
     params = (nuB,nuF,m,T,Ts)
     ns = (n1,n2)
@@ -90,7 +81,7 @@ def df_bottlegrowth_split_mig(params, ns, pts, inbred=False):
     n1,n2: Sample sizes of resulting Spectrum
     pts: Number of grid points to use in integration.
     """
-    nuB,nuF,m,T,Ts,F1,F2 = params if inbred else nuB,nuF,m,T,Ts
+    nuB,nuF,m,T,Ts,F1,F2 = params
 
     xx = Numerics.default_grid(pts)
     phi = PhiManip.phi_1D(xx)
@@ -109,14 +100,11 @@ def df_bottlegrowth_split_mig(params, ns, pts, inbred=False):
         nu_func = lambda t: nuB*numpy.exp(numpy.log(nuF/nuB) * t/T)
         phi = Integration.two_pops(phi, xx, T, nu_func, nu_func, m12=m, m21=m)
 
-    if inbred:
-        fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,xx), (F1,F2), (2,2))
-    else:
-        fs = Spectrum.from_phi(phi, ns, (xx,xx))
+    fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,xx), (F1,F2), (2,2))
     return fs
 df_bottlegrowth_split_mig.__param_names__ = ['nuB', 'nuF', 'm', 'T', 'Ts']
 
-def df_split_mig(params, ns, pts, inbred=False):
+def df_split_mig(params, ns, pts):
     """
     params = (nu1,nu2,T,m)
     ns = (n1,n2)
@@ -130,7 +118,7 @@ def df_split_mig(params, ns, pts, inbred=False):
     n1,n2: Sample sizes of resulting Spectrum
     pts: Number of grid points to use in integration.
     """
-    nu1,nu2,T,m,F1,F2 = params if inbred else nu1,nu2,T,m
+    nu1,nu2,T,m,F1,F2 = params
 
     xx = Numerics.default_grid(pts)
 
@@ -138,10 +126,8 @@ def df_split_mig(params, ns, pts, inbred=False):
     phi = PhiManip.phi_1D_to_2D(xx, phi)
 
     phi = Integration.two_pops(phi, xx, T, nu1, nu2, m12=m, m21=m)
-    if inbred:
-        fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,xx), (F1,F2), (2,2))
-    else:
-        fs = Spectrum.from_phi(phi, ns, (xx,xx))
+
+    fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,xx), (F1,F2), (2,2))
     return fs
 df_split_mig.__param_names__ = ['nu1', 'nu2', 'T', 'm']
 
@@ -160,7 +146,7 @@ def split_mig_mscore(params):
     return command % sub_dict
 split_mig_mscore.__param_names__ = ['nu1', 'nu2', 'T', 'm']
 
-def df_split_asym_mig(params, ns, pts, inbred=False):
+def df_split_asym_mig(params, ns, pts):
     """
     params = (nu1,nu2,T,m12,m21)
     ns = (n1,n2)
@@ -175,7 +161,7 @@ def df_split_asym_mig(params, ns, pts, inbred=False):
     n1,n2: Sample sizes of resulting Spectrum
     pts: Number of grid points to use in integration.
     """
-    nu1,nu2,T,m12,m21,F1,F2 = params if inbred else nu1,nu2,T,m12,m21
+    nu1,nu2,T,m12,m21,F1,F2 = params
 
     xx = Numerics.default_grid(pts)
 
@@ -183,14 +169,12 @@ def df_split_asym_mig(params, ns, pts, inbred=False):
     phi = PhiManip.phi_1D_to_2D(xx, phi)
 
     phi = Integration.two_pops(phi, xx, T, nu1, nu2, m12=m12, m21=m21)
-    if inbred:
-        fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,xx), (F1,F2), (2,2))
-    else:
-        fs = Spectrum.from_phi(phi, ns, (xx,xx))
+
+    fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,xx), (F1,F2), (2,2))
     return fs
 df_split_asym_mig.__param_names__ = ['nu1', 'nu2', 'T', 'm12', 'm21']
 
-def df_split_delay_mig(params, ns, pts, inbred=True):
+def df_split_delay_mig(params, ns, pts):
     """
     params = (nu1,nu2,Tpre,Tmig,m12,m21)
     ns = (n1,n2)
@@ -206,7 +190,7 @@ def df_split_delay_mig(params, ns, pts, inbred=True):
     n1,n2: Sample sizes of resulting Spectrum
     pts: Number of grid points to use in integration.
     """
-    nu1,nu2,Tpre,Tmig,m12,m21,F1,F2 = params if inbred else nu1,nu2,Tpre,Tmig,m12,m21
+    nu1,nu2,Tpre,Tmig,m12,m21,F1,F2 = params
 
     xx = Numerics.default_grid(pts)
 
@@ -214,14 +198,12 @@ def df_split_delay_mig(params, ns, pts, inbred=True):
     phi = PhiManip.phi_1D_to_2D(xx, phi)
     phi = Integration.two_pops(phi, xx, Tpre, nu1, nu2, m12=0, m21=0)
     phi = Integration.two_pops(phi, xx, Tmig, nu1, nu2, m12=m12, m21=m21)
-    if inbred:
-        fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,xx), (F1,F2), (2,2))
-    else:
-        fs = Spectrum.from_phi(phi, ns, (xx,xx))
+    
+    fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,xx), (F1,F2), (2,2))
     return fs
 df_split_delay_mig.__param_names__ = ['nu1', 'nu2', 'Tpre', 'Tmig', 'm12', 'm21']
 
-def df_IM(params, ns, pts, inbred=False):
+def df_IM(params, ns, pts):
     """
     ns = (n1,n2)
     params = (s,nu1,nu2,T,m12,m21)
@@ -237,7 +219,7 @@ def df_IM(params, ns, pts, inbred=False):
     n1,n2: Sample sizes of resulting Spectrum
     pts: Number of grid points to use in integration.
     """
-    s,nu1,nu2,T,m12,m21,F1,F2 = params if inbred else s,nu1,nu2,T,m12,m21
+    s,nu1,nu2,T,m12,m21,F1,F2 = params
 
     xx = Numerics.default_grid(pts)
 
@@ -248,10 +230,7 @@ def df_IM(params, ns, pts, inbred=False):
     nu2_func = lambda t: (1-s) * (nu2/(1-s))**(t/T)
     phi = Integration.two_pops(phi, xx, T, nu1_func, nu2_func,
                                m12=m12, m21=m21)
-    if inbred:
-        fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,xx), (F1,F2), (2,2))
-    else:
-        fs = Spectrum.from_phi(phi, ns, (xx,xx))
+    fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,xx), (F1,F2), (2,2))
     return fs
 df_IM.__param_names__ = ['s', 'nu1', 'nu2', 'T', 'm12', 'm21']
 
@@ -274,7 +253,7 @@ def IM_mscore(params):
     return command % sub_dict
 IM_mscore.__param_names__ = ['s', 'nu1', 'nu2', 'T', 'm12', 'm21']
 
-def df_IM_pre(params, ns, pts, inbred=False):
+def df_IM_pre(params, ns, pts):
     """
     params = (nuPre,TPre,s,nu1,nu2,T,m12,m21)
     ns = (n1,n2)
@@ -293,7 +272,7 @@ def df_IM_pre(params, ns, pts, inbred=False):
     n1,n2: Sample sizes of resulting Spectrum
     pts: Number of grid points to use in integration.
     """
-    nuPre,TPre,s,nu1,nu2,T,m12,m21,F1,F2 = params if inbred else nuPre,TPre,s,nu1,nu2,T,m12,m21
+    nuPre,TPre,s,nu1,nu2,T,m12,m21,F1,F2 = params
 
     xx = Numerics.default_grid(pts)
 
@@ -307,10 +286,8 @@ def df_IM_pre(params, ns, pts, inbred=False):
     nu2_func = lambda t: nu2_0 * (nu2/nu2_0)**(t/T)
     phi = Integration.two_pops(phi, xx, T, nu1_func, nu2_func,
                                m12=m12, m21=m21)
-    if inbred:
-        fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,xx), (F1,F2), (2,2))
-    else:
-        fs = Spectrum.from_phi(phi, ns, (xx,xx))
+
+    fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,xx), (F1,F2), (2,2))
     return fs
 df_IM_pre.__param_names__ = ['nuPre', 'TPre', 's', 'nu1', 'nu2', 'T', 'm12', 'm21']
 
@@ -336,14 +313,12 @@ def IM_pre_mscore(params):
     return command % sub_dict
 IM_pre_mscore.__param_names__ = ['nuPre', 'TPre', 's', 'nu1', 'nu2', 'T', 'm12', 'm21']
 
-def df_iso(params, ns, pts, inbred=False):
-    T, nu1, nu2, F1, F2 = params if inbred else T, nu1, nu2
+def df_iso(params, ns, pts):
+    T, nu1, nu2, F1, F2 = params
     xx = Numerics.default_grid(pts)
     phi = PhiManip.phi_1D(xx)
     phi = PhiManip.phi_1D_to_2D(xx, phi)
     phi = phi.Integration.two_pops(phi, xx, T, nu1, nu2)
-    if inbred:
-        fs = Spectrum.from_phi_inbreeding(phi, ns, (xx, xx), (F1, F2), (2, 2))
-    else:
-        fs = Spectrum.from_phi(phi, ns, (xx,xx))
+
+    fs = Spectrum.from_phi_inbreeding(phi, ns, (xx, xx), (F1, F2), (2, 2))
     return fs

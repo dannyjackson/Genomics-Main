@@ -74,33 +74,6 @@ def godambe(popt, model_ex, pts, fs, model_dir, eps, result_dir, pop_ids):
         fi.write('Upper bounds of 95% confidence interval : {0}\n\n'.format(popt+1.96*uncerts_str[:-1]))
     fi.close()
 
-def likelihood(popt, model_ex, pts, fs, model_dir, eps, result_dir, pop_ids, lrt_indices):
-    '''
-    This function performs dadi likelihood ratio test on 2D demographic models.
-    It requires SFS bootstraps generated from dadi_make_sfs.py and will save the results to text files in the dadi model results directory.
-    Parameters:
-        popt: List of int/floats of Optimal model parameters
-        model_ex: Our final model function
-        pts: ist of integers of number of grid points for model
-        fs: An SFS object containing data across 2 populations
-        model_dir: A string representing the model_specific dadi results directory
-        eps: List of floats of step sizes to test in our confidence intervals
-        result_dir: A string representing the dadi results directory
-        pop_ids: A 2 element list containing strings of species names
-        lrt_indices: List of indices to fix for simple model
-    Returns:
-        None
-    '''
-    # Get Bootstrapped datasets
-    boots_syn = load_bootstraps(result_dir, pop_ids)
-
-    # Start a file to contain the confidence intervals
-    fi = open(model_dir  + '_'.join(pop_ids) +'LRT_results.txt','w')
-
-    for steps in eps:
-        adj = dadi.Godambe.LRT_adjust(func_ex=model_ex, grid_pts=pts, all_boot=boots_syn, p0=popt, data=fs, nested_indices=lrt_indices, multinom = True, eps=steps)
-    fi.close()
-
 # Main
 #==========================================================
 def main():

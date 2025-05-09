@@ -29,7 +29,7 @@ from pathlib import Path
 from dadi.LowPass import LowPass # Can comment out if not using LowPass workflow
 import json5 # Can switch to normal json module if this one causes issues
 import demesdraw # Can comment out if not making deme plots
-import dfdemomodels
+import dfinbredmodels
 
 # Function Definitions
 #==========================================================
@@ -66,7 +66,7 @@ def make_2d_demo_model(fs, pop_ids, dadi_model, model_dir, result_dir, start_par
     try:
         model = getattr(dadi.Demographics2D, dadi_model)
     except:
-        model = getattr(dfdemomodels, dadi_model)
+        model = getattr(dfinbredmodels, dadi_model)
 
     if not fs.folded:
         # Since we have unfolded data, we will wrap the model in a function that adds a parameter to estimate misidentification rate
@@ -179,7 +179,7 @@ def main():
     with open(sys.argv[2], 'r') as file:
         dadi_params = json5.load(file)
     job_name = dadi_params['JOB NAME']
-    dadi_model = dadi_params['DADI MODEL']
+    dadi_model = dadi_params['DADI MODEL'].split('.')[-1]
     model_params = dadi_params['MODEL PARAMS']
     num_opt = dadi_params['PARAM OPTIMIZATIONS']
     lowpass = dadi_params['LOWPASS']
