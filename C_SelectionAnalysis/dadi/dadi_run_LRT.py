@@ -15,12 +15,13 @@ Description:
 import dadi, glob, os, sys
 import dill as pkl
 from pathlib import Path
+import dfinbredmodels
 import json5 # Can switch to normal json module if this one causes issues
 
 
 # Function Definitions
 #==========================================================
-def load_bootstraps(result_dir, pop_ids):
+def load_bootstraps(boot_dir, pop_ids):
     '''
     This is a helper function that gets the bootstrap data for our uncertainty analyses.
     Parameters:
@@ -30,7 +31,7 @@ def load_bootstraps(result_dir, pop_ids):
         boots_syn: A list of bootstrapped SFS objects
     '''
     # Get Bootstrapped datasets
-    boots_fids = glob.glob(result_dir + 'bootstraps/' + '_'.join(pop_ids) + '/' + '_'.join(pop_ids) + 'boots*.fs')
+    boots_fids = glob.glob(os.path.join(boot_dir, '*'))
     boots_syn = [dadi.Spectrum.from_file(fid) for fid in boots_fids]
     return boots_syn
 
@@ -87,22 +88,65 @@ def main():
         raise NameError("Couldn't find Out-Directory. Check that OUTDIR is specified as in example Genomics-Main base_params.sh.")
 
     # Import dadi-specific parameters needed for GIM Analysis from user-inputted dadi_params.json file
-    print('Storing Needed dadi Parameters...')
+    print('Storing Needed dadi_LRT Parameters...')
     with open(sys.argv[2], 'r') as file:
-        dadi_params = json5.load(file)
-    job_name = dadi_params['JOB NAME']
-    dadi_model = dadi_params['DADI MODEL']
-    lowpass = dadi_params['LOWPASS']
+        dadi_LRT_params = json5.load(file)
+    data_fs = dadi_LRT_params['DATA SFS']
+    test_model = dadi_LRT_params['TEST MODEL'][0].split('.')[-1]
+    test_model_params = dadi_LRT_params['TEST MODEL'][1]
+    null_model = dadi_LRT_params['NULL MODEL'][0].split('.')[-1]
+    null_model_params = dadi_LRT_params['NULL MODEL'][1]
+    nested_idx = dadi_LRT_params['NESTED INDICES']
+    result_dir = dadi_LRT_params['RESULT OUTDIR']
+    boot_dir = dadi_LRT_params['BOOTSTRAP DIR']
 
     #========================================
     # Check if dadi-specific results directories exists in specified outdir. If not, create them.
     print('Verifying Directories...')
-    # If using lowpass, make a lowpass directory inside specified results folder
-    result_dir = outdir + job_name + '/lowpass/' if lowpass else outdir + job_name + '/'
     if not os.path.exists(result_dir):
-        raise FileNotFoundError("Couldn't find specified result directory. Check that specified Result Directory matches the previously generated directory in data SFS creation.")
+        os.makedirs(result_dir)
 
-    # Specify model directory
-    model_dir = result_dir + dadi_model + '/'
-    if not os.path.exists(model_dir):
-        os.makedirs(model_dir)
+    #========================================
+    # Get function for test model
+    try:
+        test_func = getattr(dadi.Demographics2D, test_model)
+    except:
+        test_func = getattr(dfinbredmodels, test_model)
+    # Get function for null model
+    try:
+        null_func = getattr(dadi.Demographics2D, null_model)
+    except:
+        null_func = getattr(dfinbredmodels, null_model)
+    
+    # Put wrapper around funcs
+    test_ex = dadi.Numerics.make_extrap_log_func(test_func)
+    null_ex = dadi.Numerics.make_extrap_log_func(null_func)
+
+    # Get log-likelihoods for each model
+    n = data_fs.sample_sizes
+    pts = [max(n)+20, max(n)+30, max(n)+40]
+    model_test = test_ex(test_model_params, n, pts)
+    model_null = null_ex(null_model_params, n, pts)
+    ll_test = dadi.Inference.ll_multinom(model_test, data_fs)
+    ll_null = dadi.Inference.ll_multinom(model_null, data_fs)
+
+# Since LRT evaluates the complex model using the best-fit parameters from the
+# simple model, we need to create list of parameters for the complex model
+# using the simple (no-mig) best-fit params.  Since evalution is done with more
+# complex model, need to insert zero migration value at corresponding migration
+# parameter index in complex model. And we need to tell the LRT adjust function
+# that the 3rd parameter (counting from 0) is the nested one.
+
+    # Grab Bootstraps
+    boot_syn = load_bootstraps(boot_dir)
+
+    adj = dadi.Godambe.LRT_adjust(test_ex, pts, boot_syn, null_model_params, data_fs, nested_indices=nested_idx, multinom=True)
+    D_adj = adj*2*(ll_test - ll_null)
+    print('Adjusted D statistic: {0:.4f}'.format(D_adj))
+
+# Because this is test of a parameter on the boundary of parameter space 
+# (m cannot be less than zero), our null distribution is an even proportion 
+# of chi^2 distributions with 0 and 1 d.o.f. To evaluate the p-value, we use the
+# point percent function for a weighted sum of chi^2 dists.
+    pval = dadi.Godambe.sum_chi2_ppf(D_adj, weights=(0.5,0.5))
+    print('p-value for rejecting no-migration model: {0:.4f}'.format(pval))
