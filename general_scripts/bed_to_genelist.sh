@@ -38,7 +38,7 @@ done
 
 # load modules
 
-i# has to be done on elgato for now
+# has to be done on elgato for now
 module load gnu8/8.3.0
 module load bedtools2/2.29.2
 

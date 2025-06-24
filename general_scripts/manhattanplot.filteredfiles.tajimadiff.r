@@ -20,71 +20,69 @@ color1 <- args[2]
 color2 <- args[3]
 cutoff <- as.numeric(args[4])  # Convert to numeric
 input <- args[5]
-win <- args[6]
-metric <- args[7]
-pop1 <- args[8]
-pop2 <- ifelse(length(args) > 8 && args[9] != "", args[9], NA)
+metric <- args[6]
 
-# Determine naming convention
-pop_name <- ifelse(is.na(pop2), pop1, paste0(pop1, "_", pop2))
-
-# Identify top outliers using chunking approach
 # Define parameters
-chunk_size <- 1e6  # Adjust based on available memory
+cat("Reading in file...\n")
+# Read file
+data <- fread(input, sep = "\t", na.strings = c("", "NA"), data.table = TRUE)
 
+cat("identifying top snps...\n")
+# Identify top SNPs
+data_nona <- data[!is.na(Tajima)]
+top_snps_count <- round(nrow(data_nona) * cutoff)
+cat("identifying top snps 2...\n")
+data_nona_sorted <- data_nona %>%
+  arrange(desc(Tajima)) %>%
+  slice_head(n = top_snps_count)
 
-# Read header to get column names
-header <- fread(input, nrows = 0, sep = "\t", data.table = TRUE)
-col_names <- names(header)
-
-# Initialize an empty data.table for top SNPs
-top_snps_dt <- NULL
-
-# Read file in chunks
-con <- file(input, "r")
-readLines(con, n = 1)  # Skip header
-
-chunk_num <- 1
-repeat {
-  # Read a chunk of data
-  chunk <- fread(input, skip = (chunk_num - 1) * chunk_size + 1, nrows = chunk_size, sep = ",", data.table = TRUE, header = FALSE)
-  if (nrow(chunk) == 0) break  # Stop if no more data
-  
-  # Assign column names
-  setnames(chunk, col_names)
-  
-  # Combine current chunk with previous top SNPs
-  if (!is.null(top_snps_dt)) {
-    chunk <- rbind(top_snps_dt, chunk)
-  }
-  
-  # Identify top SNPs
-  top_snps_count <- round(nrow(chunk) * cutoff)
-  top_snps_dt <- chunk[order(-neg_log_pvalues_one_tailed, na.last = TRUE)][1:top_snps_count]
-  
-  chunk_num <- chunk_num + 1
-}
-
-close(con)
-
+cat("sorting top snps...\n")
 # Final sorting
-top_snps_dt <- top_snps_dt[order(chromo, position)]
+top_snps_dt <- data_nona_sorted[order(chromo, position)]
 
+cat("Get metric cutoff...\n")
 # Get metric cutoff
-metric_cutoff <- min(top_snps_dt[[metric]], na.rm = TRUE)
-
-
-
+metric_cutoff_top <- min(top_snps_dt[[metric]], na.rm = TRUE)
 
 
 # Save cutoff value
 cat("Saving cutoff value...\n")
-cutoff_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "_", metric, "_", win, "_stats.txt"))
-cat(metric, "cutoff:", metric_cutoff, "\n", file = cutoff_file, append = TRUE)
+cutoff_file <- paste0(input, ".top.stats.txt")
+cat(metric, "cutoff:", metric_cutoff_top, "\n", file = cutoff_file, append = TRUE)
 
 # Save outliers
 cat("Saving outliers data...\n")
-outlier_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "/", pop_name, ".", metric, "_", win, ".outlier.csv"))
+outlier_file <- paste0(input, ".top.outlier.csv")
+write.csv(top_snps_dt, outlier_file, row.names = FALSE)
+
+# identify bottom snps
+
+cat("identifying top snps...\n")
+# Identify top SNPs
+data_nona <- data[!is.na(Tajima)]
+top_snps_count <- round(nrow(data_nona) * cutoff)
+cat("identifying top snps 2...\n")
+data_nona_sorted <- data_nona %>%
+  arrange(desc(Tajima)) %>%
+  slice_tail(n = top_snps_count)
+
+cat("sorting top snps...\n")
+# Final sorting
+top_snps_dt <- data_nona_sorted[order(chromo, position)]
+
+cat("Get metric cutoff...\n")
+# Get metric cutoff
+metric_cutoff_bottom <- min(top_snps_dt[[metric]], na.rm = TRUE)
+
+
+# Save cutoff value
+cat("Saving cutoff value...\n")
+cutoff_file <- paste0(input, ".bottom.stats.txt")
+cat(metric, "cutoff:", metric_cutoff_bottom, "\n", file = cutoff_file, append = TRUE)
+
+# Save outliers
+cat("Saving outliers data...\n")
+outlier_file <- paste0(input, ".bottom.outlier.csv")
 write.csv(top_snps_dt, outlier_file, row.names = FALSE)
 
 # Prepare data for plotting
@@ -111,9 +109,10 @@ ggplot(plot_data, aes(x = BPcum, y = !!sym(metric))) +
   geom_point(aes(color = as.factor(chromo)), alpha = 0.8, size = 1) +
   scale_color_manual(values = rep(c(color1, color2), length.out = length(unique(plot_data$chromo)))) +
   scale_x_continuous(labels = axisdf$chromo, breaks = axisdf$center, guide = guide_axis(n.dodge = 2)) +
-  scale_y_continuous(expand = c(0, 0)) +
+  scale_y_continuous(limits = c(-4, 4), expand = c(0, 0)) +
   labs(x = "Chromosome", y = metric) +
-  geom_hline(yintercept = metric_cutoff) +
+  geom_hline(yintercept = metric_cutoff_top) +
+  geom_hline(yintercept = metric_cutoff_bottom) +
   theme_bw(base_size = 22) +
   theme(
     plot.title = element_text(hjust = 0.5),
@@ -123,7 +122,8 @@ ggplot(plot_data, aes(x = BPcum, y = !!sym(metric))) +
     panel.grid.minor.x = element_blank()
   )
 
-ggsave(filename = file.path(outdir, "analyses", metric, paste0(pop_name, "/", win, "/", pop_name, ".", metric, ".", win, ".sigline.png")), 
+
+ggsave(filename = paste0(input, ".sigline.png"), 
        width = 20, height = 5, units = "in")
 
 cat("Script completed successfully!\n")
