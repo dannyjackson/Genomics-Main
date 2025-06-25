@@ -13,10 +13,20 @@ Description:
 # Required Modules
 #==========================================================
 import dadi, glob, os, sys
-from pathlib import Path
 import dfinbredmodels
-import json5 # Can switch to normal json module if this one causes issues
 
+print('define arguments')
+parser=argparse.ArgumentParser()
+parser.add_argument("-j", "--job_name", type=str, help='Name of Job')
+parser.add_argument("-n", "--null_model", type=str, help='Null Demographic Model')
+parser.add_argument("-s", "--sfs_path", type=str, help='Path to Data SFS')
+parser.add_argument("-o","--outdir", type=str, help='Out Directory Path')
+parser.add_argument("-t","--test_model", type=str, help='Test Demographic Model')
+parser.add_argument("-i", "--nested_idx", type=str, nargs='+', help='List of indices')
+parser.add_argument("--null_popt", type=str, nargs='+', help='List of optimized null model params')
+parser.add_argument("--test_popt", type=str, nargs='+', help='List of optimized test model params')
+parser.add_argument("-b", "--boot_dir", type=str, help='Path to Bootstrap Directory')
+args = parser.parse_args()
 
 # Function Definitions
 #==========================================================
@@ -45,36 +55,17 @@ def main():
     5) Perform GIM Uncertainty Analysis and write results to files
     '''
     #========================================
-    # Basic check for enough parameter files inputted
-    print('Checking File Arguments...')
-    if len(sys.argv) != 3:
-        raise IndexError('Not enough arguments. Did you include the Base Params and dadi-specific params files?')
+    test_model = args.test_model.split('.')[-1]
+    null_model = args.null_model.split('.')[-1]
+    nest_idx = args.nested_idx[0].split()
+    null_popt = args.null_popt[0].split()
+    test_popt = args.test_popt[0].split()
     
-    # Import base parameters from user-inputted params_base.sh file
-    print('Storing Needed Base Parameters...')
-    base_params = Path(sys.argv[1]).read_text().strip().split('\n')
-    outdir = None
-    for line in base_params:
-        if 'OUTDIR=' in line: outdir = line.split('=')[1].split('#')[0].strip() 
-    if not outdir:
-        raise NameError("Couldn't find Out-Directory. Check that OUTDIR is specified as in example Genomics-Main base_params.sh.")
-
-    # Import dadi-specific parameters needed for GIM Analysis from user-inputted dadi_params.json file
-    print('Storing Needed dadi_LRT Parameters...')
-    with open(sys.argv[2], 'r') as file:
-        dadi_LRT_params = json5.load(file)
-    data_fs = dadi_LRT_params['DATA SFS']
-    test_model = dadi_LRT_params['TEST MODEL'][0].split('.')[-1]
-    test_model_params = dadi_LRT_params['TEST MODEL'][1]
-    null_model = dadi_LRT_params['NULL MODEL'][0].split('.')[-1]
-    null_model_params = dadi_LRT_params['NULL MODEL'][1]
-    nested_idx = dadi_LRT_params['NESTED INDICES']
-    result_dir = dadi_LRT_params['RESULT OUTDIR']
-    boot_dir = dadi_LRT_params['BOOTSTRAP DIR']
 
     #========================================
     # Check if dadi-specific results directories exists in specified outdir. If not, create them.
     print('Verifying Directories...')
+    result_dir = args.outdir + 'LRT_outputs/'
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
 
@@ -94,11 +85,14 @@ def main():
     test_ex = dadi.Numerics.make_extrap_log_func(test_func)
     null_ex = dadi.Numerics.make_extrap_log_func(null_func)
 
+    # Get data_fs
+    data_fs = dadi.Spectrum.from_file(args.sfs_path)
+
     # Get log-likelihoods for each model
     n = data_fs.sample_sizes
     pts = [max(n)+20, max(n)+30, max(n)+40]
-    model_test = test_ex(test_model_params, n, pts)
-    model_null = null_ex(null_model_params, n, pts)
+    model_test = test_ex(test_popt, n, pts)
+    model_null = null_ex(null_popt, n, pts)
     ll_test = dadi.Inference.ll_multinom(model_test, data_fs)
     ll_null = dadi.Inference.ll_multinom(model_null, data_fs)
 
@@ -110,9 +104,9 @@ def main():
     # that the 3rd parameter (counting from 0) is the nested one.
 
     # Grab Bootstraps
-    boot_syn = load_bootstraps(boot_dir)
+    boot_syn = load_bootstraps(args.boot_dir)
 
-    adj = dadi.Godambe.LRT_adjust(test_ex, pts, boot_syn, null_model_params, data_fs, nested_indices=nested_idx, multinom=True)
+    adj = dadi.Godambe.LRT_adjust(test_ex, pts, boot_syn, null_popt, data_fs, nested_indices=nest_idx, multinom=True)
     D_adj = adj*2*(ll_test - ll_null)
     print('Adjusted D statistic: {0:.4f}'.format(D_adj))
     Dstat_str = 'Adjusted D statistic: {0:.4f}'.format(D_adj)

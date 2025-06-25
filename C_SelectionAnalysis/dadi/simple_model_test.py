@@ -2,6 +2,7 @@ import dadi, nlopt, demesdraw
 import matplotlib.pyplot as plt
 import dill as pkl
 import glob
+import dfinbredmodels
 
 dadi.cuda_enabled(True)
 
@@ -9,13 +10,13 @@ fs = dadi.Spectrum.from_file('dadi_results_cra_TEST_simple/CRA_pre_CRA_post_fs')
 
 ns = fs.sample_sizes
 pts = [max(ns)+20, max(ns)+30, max(ns)+40]
-model = dadi.Demographics2D.split_mig
+model = dfinbredmodels.df_split_mig
 # SFS is folded, so we will not add misid param
 model_ex = dadi.Numerics.make_extrap_func(model)
 
-params = [1, 1, 0.01, 0.01]
-lower_bounds = [1e-2, 1e-2, 1e-3, 1e-3]
-upper_bounds = [3, 3, 1, 1]
+params = [0.01, 1, 1, 0.01, 0.5, 0.5]
+lower_bounds = [1e-4, 1e-4, 1e-4, 1e-4, 1e-4, 1e-4]
+upper_bounds = [10, 10, 10, 20, 1, 1]
 
 try:
   fid = open('dadi_results_cra_TEST_simple/demo_fits.txt','a')
@@ -96,4 +97,4 @@ def likelihood(popt, model_ex, pts, fs, model_dir, eps, result_dir, pop_ids, lrt
     
 godambe(popt, model_ex, pts, fs, 'dadi_results_cra_TEST_simple/', [0.01,0.001, 0.0001, 0.00001], 'dadi_results_cra_TEST_simple/', fs.pop_ids)
 
-likelihood(popt, model_ex, pts, fs, 'dadi_results_cra_TEST_simple/', [0.01,0.001, 0.0001, 0.00001], 'dadi_results_cra_TEST_simple/', fs.pop_ids, [3])
+#likelihood(popt, model_ex, pts, fs, 'dadi_results_cra_TEST_simple/', [0.01,0.001, 0.0001, 0.00001], 'dadi_results_cra_TEST_simple/', fs.pop_ids, [3])

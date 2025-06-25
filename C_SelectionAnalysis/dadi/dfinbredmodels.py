@@ -7,7 +7,7 @@ from dadi import Numerics, PhiManip, Integration
 from dadi.Spectrum_mod import Spectrum
 from dadi.PortikModels.portik_models_2d import *
 
-def df_snm_2d(params, ns, pts):
+def snm_2d_inbred(params, ns, pts):
     """
     ns = (n1,n2)
 
@@ -19,10 +19,10 @@ def df_snm_2d(params, ns, pts):
     phi = PhiManip.phi_1D_to_2D(xx, phi)
     fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,), (F1,F2), (2,2))
     return fs
-df_snm_2d.__param_names__ = []
-snm = df_snm_2d
+snm_2d_inbred.__param_names__ = []
+snm = snm_2d_inbred
 
-def df_bottlegrowth_2d(params, ns, pts):
+def bottlegrowth_2d_inbred(params, ns, pts):
     """
     params = (nuB,nuF,T)
     ns = (n1,n2)
@@ -39,11 +39,11 @@ def df_bottlegrowth_2d(params, ns, pts):
     pts: Number of grid points to use in integration.
     """
     nuB,nuF,T,F1,F2 = params
-    return df_bottlegrowth_split_mig((nuB,nuF,0,T,0,F1,F2), ns, pts)
-df_bottlegrowth_2d.__param_names__ = ['nuB', 'nuF', 'T']
-bottlegrowth = df_bottlegrowth_2d
+    return bottlegrowth_split_mig_inbred((nuB,nuF,0,T,0,F1,F2), ns, pts)
+bottlegrowth_2d_inbred.__param_names__ = ['nuB', 'nuF', 'T']
+bottlegrowth = bottlegrowth_2d_inbred
 
-def df_bottlegrowth_split(params, ns, pts):
+def bottlegrowth_split_inbred(params, ns, pts):
     """
     params = (nuB,nuF,T,Ts)
     ns = (n1,n2)
@@ -60,10 +60,10 @@ def df_bottlegrowth_split(params, ns, pts):
     pts: Number of grid points to use in integration.
     """
     nuB,nuF,T,Ts,F1, F2 = params
-    return df_bottlegrowth_split_mig((nuB,nuF,0,T,Ts,F1,F2), ns, pts)
-df_bottlegrowth_split.__param_names__ = ['nuB', 'nuF', 'T', 'Ts']
+    return bottlegrowth_split_mig_inbred((nuB,nuF,0,T,Ts,F1,F2), ns, pts)
+bottlegrowth_split_inbred.__param_names__ = ['nuB', 'nuF', 'T', 'Ts']
 
-def df_bottlegrowth_split_mig(params, ns, pts):
+def bottlegrowth_split_mig_inbred(params, ns, pts):
     """
     params = (nuB,nuF,m,T,Ts)
     ns = (n1,n2)
@@ -102,9 +102,9 @@ def df_bottlegrowth_split_mig(params, ns, pts):
 
     fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,xx), (F1,F2), (2,2))
     return fs
-df_bottlegrowth_split_mig.__param_names__ = ['nuB', 'nuF', 'm', 'T', 'Ts']
+bottlegrowth_split_mig_inbred.__param_names__ = ['nuB', 'nuF', 'm', 'T', 'Ts']
 
-def df_split_mig(params, ns, pts):
+def split_mig_inbred(params, ns, pts):
     """
     params = (nu1,nu2,T,m)
     ns = (n1,n2)
@@ -129,7 +129,7 @@ def df_split_mig(params, ns, pts):
 
     fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,xx), (F1,F2), (2,2))
     return fs
-df_split_mig.__param_names__ = ['nu1', 'nu2', 'T', 'm']
+split_mig_inbred.__param_names__ = ['nu1', 'nu2', 'T', 'm']
 
 def split_mig_mscore(params):
     """
@@ -146,7 +146,7 @@ def split_mig_mscore(params):
     return command % sub_dict
 split_mig_mscore.__param_names__ = ['nu1', 'nu2', 'T', 'm']
 
-def df_split_asym_mig(params, ns, pts):
+def split_asym_mig_inbred(params, ns, pts):
     """
     params = (nu1,nu2,T,m12,m21)
     ns = (n1,n2)
@@ -172,9 +172,9 @@ def df_split_asym_mig(params, ns, pts):
 
     fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,xx), (F1,F2), (2,2))
     return fs
-df_split_asym_mig.__param_names__ = ['nu1', 'nu2', 'T', 'm12', 'm21']
+split_asym_mig_inbred.__param_names__ = ['nu1', 'nu2', 'T', 'm12', 'm21']
 
-def df_split_delay_mig(params, ns, pts):
+def split_delay_mig_inbred(params, ns, pts):
     """
     params = (nu1,nu2,Tpre,Tmig,m12,m21)
     ns = (n1,n2)
@@ -201,9 +201,9 @@ def df_split_delay_mig(params, ns, pts):
     
     fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,xx), (F1,F2), (2,2))
     return fs
-df_split_delay_mig.__param_names__ = ['nu1', 'nu2', 'Tpre', 'Tmig', 'm12', 'm21']
+split_delay_mig_inbred.__param_names__ = ['nu1', 'nu2', 'Tpre', 'Tmig', 'm12', 'm21']
 
-def df_IM(params, ns, pts):
+def IM_inbred(params, ns, pts):
     """
     ns = (n1,n2)
     params = (s,nu1,nu2,T,m12,m21)
@@ -232,7 +232,7 @@ def df_IM(params, ns, pts):
                                m12=m12, m21=m21)
     fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,xx), (F1,F2), (2,2))
     return fs
-df_IM.__param_names__ = ['s', 'nu1', 'nu2', 'T', 'm12', 'm21']
+IM_inbred.__param_names__ = ['s', 'nu1', 'nu2', 'T', 'm12', 'm21']
 
 def IM_mscore(params):
     """
@@ -253,7 +253,7 @@ def IM_mscore(params):
     return command % sub_dict
 IM_mscore.__param_names__ = ['s', 'nu1', 'nu2', 'T', 'm12', 'm21']
 
-def df_IM_pre(params, ns, pts):
+def IM_pre_inbred(params, ns, pts):
     """
     params = (nuPre,TPre,s,nu1,nu2,T,m12,m21)
     ns = (n1,n2)
@@ -289,7 +289,7 @@ def df_IM_pre(params, ns, pts):
 
     fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,xx), (F1,F2), (2,2))
     return fs
-df_IM_pre.__param_names__ = ['nuPre', 'TPre', 's', 'nu1', 'nu2', 'T', 'm12', 'm21']
+IM_pre_inbred.__param_names__ = ['nuPre', 'TPre', 's', 'nu1', 'nu2', 'T', 'm12', 'm21']
 
 def IM_pre_mscore(params):
     """
@@ -313,7 +313,7 @@ def IM_pre_mscore(params):
     return command % sub_dict
 IM_pre_mscore.__param_names__ = ['nuPre', 'TPre', 's', 'nu1', 'nu2', 'T', 'm12', 'm21']
 
-def df_iso(params, ns, pts):
+def iso_inbred(params, ns, pts):
     T, nu1, nu2, F1, F2 = params
     xx = Numerics.default_grid(pts)
     phi = PhiManip.phi_1D(xx)

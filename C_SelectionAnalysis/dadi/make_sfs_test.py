@@ -23,8 +23,21 @@ import dadi, random, os, sys
 import matplotlib.pyplot as plt
 import dill as pkl
 from dadi.LowPass import LowPass # Can comment out if not using LowPass workflow
-from pathlib import Path
-import json5 # Can switch to normal json module if this one causes issues
+import argparse
+
+print('define arguments')
+parser=argparse.ArgumentParser()
+parser.add_argument("-j", "--job_name", type=str, help='Name of Job')
+parser.add_argument("-f", "--folder_name", type=str, help='The name of the folder (under your general OUTDIR) you want to generate containing your results')
+parser.add_argument("-p","--pop_ids", type=str, help='List of Pop_IDs Params', nargs='+')
+parser.add_argument("-n", "--num_chroms", type=str, help='List of ints representing number of chromosomes per population', nargs'+')
+parser.add_argument("-l", "--lowpass", type=bool, help='Do Lowpass Pipeline')
+parser.add_argument("-o","--outdir", type=str, help='Out Directory Path')
+parser.add_argument("-v","--vcfpath", type=str, help='Path to vcf file')
+parser.add_argument("-i","--poppath", type=str, help='Path to pop assignment file')
+parser.add_argument("-b","--bootparams", type=str, help='List of bootstrapping params', nargs='+', default="100 1e-7")
+parser.add_argument("-t","--polarize", type=bool, help='State this parameter to UNFOLD the SFS')
+args = parser.parse_args()
 
 # Function Definitions
 #==========================================================
@@ -112,41 +125,24 @@ def main():
     6) Generate Bootstrapped SFS
     '''
     #========================================
-    # Basic check for enough parameter files inputted
-    print('Checking File Arguments...')
-    if len(sys.argv) != 3:
-        raise IndexError('Not enough arguments. Did you include both the Base and dadi-specific parameter files?')
-    
-    # Import base parameters from user-inputted params_base.sh file
-    print('Storing Needed Base Parameters...')
-    base_params = Path(sys.argv[1]).read_text().strip().split('\n')
-    outdir = None
-    for line in base_params:
-        if 'OUTDIR=' in line: outdir = line.split('=')[1].split('#')[0].strip() 
-    if not outdir:
-        raise NameError("Couldn't find Out-Directory. Check that OUTDIR is specified as in example Genomics-Main base_params.sh.")
-    
-    # Import dadi-specific parameters for sfs creation from user-inputted dadi_params.json file
-    print('Storing Needed dadi Parameters...')
-    with open(sys.argv[2], 'r') as file:
-        dadi_params = json5.load(file)
-    job_name = dadi_params['JOB NAME']
-    vcffile = dadi_params['VCF PATH']
-    popfile = dadi_params['POP PATH']
-    sfsparams = dadi_params['SFS PARAMS']
-    num_boots, chunk_size = dadi_params['BOOTSTRAP PARAMS']
-    lowpass = dadi_params['LOWPASS']
+    # Clean up some arguments
+    pop_ids = args.pop_ids[0].split()
+    num_boots, chunk_size = args.bootparams[0].split()
+    num_chroms = [int(num) for num in args.num_chroms[0].split()]
+    print(pop_ids)
+    print(num_boots, chunk_size)
+    print(num_chroms)
     
     #========================================
     # Check if dadi-specific results directory exists in specified outdir. If not, create it.
     print('Verifying Directories...')
-    # We will store our SFS data in a general results folder for each job...
-    result_dir = outdir + job_name + '/'
+    # We will store our SFS data in a general results folder for each population combo...
+    result_dir = args.outdir + args.folder_name + '/'
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
 
     #...but if using lowpass in models later, also make a lowpass directory inside specified results folder
-    if lowpass:
+    if args.lowpass:
         print('Generating Lowpass directory...')
         lowpass_dir = result_dir + '/lowpass/'
         if not os.path.exists(lowpass_dir):
@@ -161,37 +157,32 @@ def main():
     else:
         print('\nMaking Data Dictionary...')
         # First, if not doing lowpass, then don't bother including coverage info in dd
-        cov = True if lowpass else False
-        dd = dadi.Misc.make_data_dict_vcf(vcffile, popfile, calc_coverage=cov)
+        cov = True if args.lowpass else False
+        dd = dadi.Misc.make_data_dict_vcf(args.vcfpath, args.poppath, calc_coverage=cov)
         print('Saving Data Dictionary to results directory...')
         with open(result_dir + 'dd.pkl', 'wb') as file:
             pkl.dump(dd, file)
     #========================================
-    # Enter a loop to make SFS for each species combo
-    for dct in sfsparams:
-        print('\nGetting ' + dct + ' Parameters...')
-        pop_ids, num_chrom, polarize, dim = sfsparams[dct]
-
-        # Make Spectrum objects
-        print('Generating SFS for ' + dct + '...')
-        data_fs = dadi.Spectrum.from_data_dict(dd, pop_ids, polarized=polarize, projections=num_chrom)
-        
-        # Plot the SFS and save plot to file
-        print('Plotting SFS for ' + dct + '...')
-        plot_sfs(data_fs, result_dir, pop_ids, dim)
-        
-        # If doing lowpass workflow, save coverage distribution for future modeling
-        if lowpass:
-            print('Saving lowpass coverage distribution to temp file in lowpass dir...')
-            save_cov_dist(dd, lowpass_dir, pop_ids, dim)
-        
-        # Save SFS to files
-        print('Saving SFS for ' + dct + '...')
-        data_fs.to_file(result_dir + '_'.join(pop_ids) + '_fs')
-        
-        # Make Bootstrapped SFS files
-        print('Generating Bootstrapped SFS for ' + dct + '...')
-        bootstrap(dd, pop_ids, num_chrom, result_dir, num_boots, chunk_size)
+    # Make Spectrum objects
+    print('Generating SFS for ' + ' '.join(pop_ids) + '...')
+    data_fs = dadi.Spectrum.from_data_dict(dd, pop_ids, polarized=args.fold, projections=num_chroms)
+    
+    # Plot the SFS and save plot to file
+    print('Plotting SFS for ' + ' '.join(pop_ids) + '...')
+    plot_sfs(data_fs, result_dir, pop_ids)
+    
+    # If doing lowpass workflow, save coverage distribution for future modeling
+    if args.lowpass:
+        print('Saving lowpass coverage distribution to temp file in lowpass dir...')
+        save_cov_dist(dd, lowpass_dir, pop_ids)
+    
+    # Save SFS to files
+    print('Saving SFS for ' + dct + '...')
+    data_fs.to_file(result_dir + '_'.join(pop_ids) + '_fs')
+    
+    # Make Bootstrapped SFS files
+    print('Generating Bootstrapped SFS for ' + dct + '...')
+    bootstrap(dd, pop_ids, num_chroms, result_dir, num_boots, chunk_size)
 
     print('\n**SFS Creation Complete**')
 
