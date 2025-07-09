@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# This script generates a mask for a reference genome to determine which regions are "snpable".
-
 # Check for at least one argument (parameter file path)
 if [ $# -lt 1 ]; then
     echo "Usage: $0 -p <path_to_parameter_file>"
@@ -44,7 +42,7 @@ while read -r IND; do
     echo "Processing individual: $IND"
 
     # Check if scaffold list file exists
-    if [ ! -f "${OUTDIR}/referencelists/SCAFFOLDS.txt" ]; then
+    if [ ! -f "${INDIR}/referencelists/SCAFFOLDS.txt" ]; then
         echo "Error: Scaffold list 'SCAFFOLDS.txt' not found." >&2
         exit 1
     fi
@@ -53,7 +51,7 @@ while read -r IND; do
     while read -r SCAFFOLD; do
         echo "Working on scaffold: $SCAFFOLD"
 
-        VCF="${OUTDIR}/vcf/${IND}.${SCAFFOLD}.${METHOD}.vcf.gz"
+        VCF="${INDIR}/datafiles/vcf2/${IND}.${SCAFFOLD}.phased.vcf.gz"
 
         MSMC_INPUT="${OUTDIR}/input/msmc_input.${IND}.${SCAFFOLD}.txt"
 
@@ -72,8 +70,8 @@ while read -r IND; do
             echo "VCF exists, generating MSMC2 input!"
 
             # Define mask files
-            MASK_INDIV="${OUTDIR}/mask/ind_mask.${IND}.${SCAFFOLD}.${METHOD}.bed.gz"
-            MASK_GENOME="${OUTDIR}/mask/prefix_${SCAFFOLD}.mask.${k}.50.bed.gz"
+            MASK_INDIV="${OUTDIR}/mask/ind/ind_mask.${IND}.${SCAFFOLD}.bed.gz"
+            MASK_GENOME="${OUTDIR}/mask/genom/${prefix}_revised_${SCAFFOLD}_mask.${k}.50.bed.gz"
 
             echo "Individual Mask: ${MASK_INDIV}"
             echo "Genome-wide Mappability Mask: ${MASK_GENOME}"
@@ -81,7 +79,7 @@ while read -r IND; do
             if [ "$METHOD" == "samtools" ]; then
                 echo "Creating MSMC input file using individual mask (samtools method)."
 
-                generate_multihetsep.py --mask="${MASK_INDIV}" --mask="${MASK_GENOME}" "${VCF}" > "${MSMC_INPUT}"
+                msmc-tools/generate_multihetsep.py --mask="${MASK_INDIV}" --mask="${MASK_GENOME}" "${VCF}" > "${MSMC_INPUT}"
 
             else
                 # NOTE: This method was modified on 10 FEB 2024 and may need verification.
@@ -90,11 +88,11 @@ while read -r IND; do
                 VCF_OUT="${VCF}.parsed.vcf"
 
                 # Parse VCF file
-                vcfAllSiteParser.py "$SCAFFOLD" "$MASK_INDIV" "$VCF_OUT"
+                msmc-tools/vcfAllSiteParser.py "$SCAFFOLD" "$MASK_INDIV" "$VCF_OUT"
 
                 echo "Creating MSMC input file with new individual mask."
 
-                generate_multihetsep.py --mask="${MASK_INDIV}" --mask="${MASK_GENOME}" "${VCF}" > "${MSMC_INPUT}"
+                msmc-tools/generate_multihetsep.py --mask="${MASK_INDIV}" --mask="${MASK_GENOME}" "${VCF}" > "${MSMC_INPUT}"
             fi
 
         else
@@ -102,7 +100,7 @@ while read -r IND; do
         fi
 
         echo "Finished processing scaffold ${SCAFFOLD}."
-    done < ${OUTDIR}/referencelists/SCAFFOLDS.txt
+    done < ${INDIR}/referencelists/SCAFFOLDS.txt
 
     echo "Finished processing individual ${IND}."
 
