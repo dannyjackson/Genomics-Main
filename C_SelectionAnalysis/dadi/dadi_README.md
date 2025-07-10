@@ -1,4 +1,4 @@
-# dadi Demographies Pipeline
+# dadi Pipeline - Inferring Demographic Histories
 ===========================================
 ## Script Requirements
 Each dadi script requires the base_params.sh file and params_dadi.sh file.
