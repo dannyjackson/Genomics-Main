@@ -2,16 +2,17 @@
 # --------------------
 ### Directives Section
 # --------------------
-#SBATCH --job-name=make_2d_sfs_plots
+#SBATCH --job-name=make_sfs_plot
 #SBATCH --account=mcnew
 #SBATCH --partition=standard
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --time=02:00:00
 #SBATCH --constraint=hi_mem
-#SBATCH --mem-per-cpu=41gb
-#SBATCH -o dadi_sfs_outs/data_sfs_creation_par.out
-#SBATCH -e dadi_sfs_outs/data_sfs_creation_par.err
+#SBATCH --mem-per-cpu=42gb
+##SBATCH --mem=100gb
+#SBATCH -o sfs_test.out
+#SBATCH -e sfs_test.err
 
 # --------------------
 ### Code Section
@@ -37,5 +38,5 @@ echo "Lowpass: ${LOWPASS}"
 echo "Polarized: ${POLARIZE}"
 echo "Bootstrap Parameters: ${BOOTSTRAP_PARAMS}"
 
-python3 scripts/Genomics-Main/C_SelectionAnalysis/dadi/make_sfs_test.py -j ${JOB_NAME} -f ${OUT_FOLDER} -p "${POP_IDS}" -n "${NUM_CHROMS}" -l ${LOWPASS} -t ${POLARIZE} -o ${OUTDIR} -v ${VCF_PATH} -i ${POP_PATH} -b "${BOOTSTRAP_PARAMS}"
+python3 /xdisk/mcnew/finches/ljvossler/finches/dadi/scripts/Genomics-Main/C_SelectionAnalysis/dadi/dadi_2_sfs.py -f ${OUT_FOLDER} -p "${POP_IDS}" -n "${NUM_CHROMS}" -l ${LOWPASS} -o ${OUTDIR} -v ${VCF_PATH} -i ${POP_PATH} -b "${BOOTSTRAP_PARAMS}"
 

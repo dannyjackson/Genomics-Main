@@ -8,7 +8,7 @@
 #SBATCH --partition=standard
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --time=01:00:00
+#SBATCH --time=00:10:00
 ##SBATCH --gres=gpu:1
 #SBATCH -o start_model_runs.out
 #SBATCH -e start_model_runs.err
@@ -28,11 +28,10 @@ source param_files/params_dadi.sh
 echo 'Loading Python 3.11.4...'
 module load python/3.11/3.11.4
 
-echo $POP_IDS
 
-for i in `seq 0 $(python -c "import json; print(len(json.load(open('${MODEL_JSON}')).keys())-1)")`; 
+for i in `seq 0 $(python3 -c "import json; print(len(json.load(open('${MODEL_JSON}')).keys())-1)")`; 
     do echo $i
-    CURRENT_MODEL=$(python -c "import json; print(list(json.load(open('${MODEL_JSON}')).keys())[$i])")
+    CURRENT_MODEL=$(python3 -c "import json; print(list(json.load(open('${MODEL_JSON}')).keys())[$i])")
     echo '============================'
     echo 'Current Model: ' $CURRENT_MODEL
     sbatch --account=mcnew \
@@ -43,6 +42,6 @@ for i in `seq 0 $(python -c "import json; print(len(json.load(open('${MODEL_JSON
     --nodes=1 \
     --ntasks=1 \
     --time=04:00:00 \
-    /xdisk/mcnew/finches/ljvossler/finches/dadi/scripts/2d_demo_model.sh ${JOB_NAME} ${NUM_OPT} ${LOWPASS} ${PLOT_DEMES} ${OUTDIR} ${CURRENT_MODEL} ${POP_IDS} ${SFS_PATH} ${MODEL_JSON} ${OUT_FOLDER}
+    /xdisk/mcnew/finches/ljvossler/finches/dadi/scripts/submit_demo_model.sh ${JOB_NAME} ${NUM_OPT} ${LOWPASS} ${PLOT_DEMES} ${OUTDIR} ${CURRENT_MODEL} ${SFS_PATH} ${MODEL_JSON} ${OUT_FOLDER}
     echo '============================'
 done

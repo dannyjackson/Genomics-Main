@@ -1,5 +1,5 @@
 """
-Two population demographic models edited for inbreeding inclusion
+Population demographic models edited for inbreeding inclusion
 """
 import numpy
 
@@ -7,17 +7,89 @@ from dadi import Numerics, PhiManip, Integration
 from dadi.Spectrum_mod import Spectrum
 from dadi.PortikModels.portik_models_2d import *
 
+def growth_inbreeding(params, ns, pts):
+    """
+    Exponential growth beginning some time ago.
+
+    params = (nu,T)
+    ns = (n1,)
+
+    nu: Ratio of contemporary to ancient population size
+    T: Time in the past at which growth began (in units of 2*Na 
+       generations) 
+    n1: Number of samples in resulting Spectrum
+    pts: Number of grid points to use in integration.
+    """
+    nu,T, F = params
+
+    xx = Numerics.default_grid(pts)
+    phi = PhiManip.phi_1D(xx)
+
+    nu_func = lambda t: numpy.exp(numpy.log(nu) * t/T)
+    phi = Integration.one_pop(phi, xx, T, nu_func)
+
+    fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,), (F,), (2,))
+    return fs
+
+def two_epoch_inbreeding(params, ns, pts):
+    """
+    Instantaneous size change some time ago.
+
+    params = (nu,T)
+    ns = (n1,)
+
+    nu: Ratio of contemporary to ancient population size
+    T: Time in the past at which size change happened (in units of 2*Na 
+       generations) 
+    n1: Number of samples in resulting Spectrum
+    pts: Number of grid points to use in integration.
+    """
+    nu,T, F = params
+
+    xx = Numerics.default_grid(pts)
+    phi = PhiManip.phi_1D(xx)
+    
+    phi = Integration.one_pop(phi, xx, T, nu)
+
+    fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,), (F,), (2,))
+    return fs
+
+def bottlegrowth_1d_inbreeding(params, ns, pts):
+    """
+    Instantanous size change followed by exponential growth.
+
+    params = (nuB,nuF,T)
+    ns = (n1,)
+
+    nuB: Ratio of population size after instantanous change to ancient
+         population size
+    nuF: Ratio of contemporary to ancient population size
+    T: Time in the past at which instantaneous change happened and growth began
+       (in units of 2*Na generations) 
+    n1: Number of samples in resulting Spectrum
+    pts: Number of grid points to use in integration.
+    """
+    nuB,nuF,T, F = params
+
+    xx = Numerics.default_grid(pts)
+    phi = PhiManip.phi_1D(xx)
+
+    nu_func = lambda t: nuB*numpy.exp(numpy.log(nuF/nuB) * t/T)
+    phi = Integration.one_pop(phi, xx, T, nu_func)
+
+    fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,), (F,), (2,))
+    return fs
+
 def snm_2d_inbred(params, ns, pts):
     """
     ns = (n1,n2)
 
     Standard neutral model, populations never diverge.
     """
-    F1, F2 = params[0]
+    F1 = params[0]
     xx = Numerics.default_grid(pts)
     phi = PhiManip.phi_1D(xx)
-    phi = PhiManip.phi_1D_to_2D(xx, phi)
-    fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,), (F1,F2), (2,2))
+    fs = Spectrum.from_phi_inbreeding(phi, ns, (xx,), (F1,), (2,))
     return fs
 snm_2d_inbred.__param_names__ = []
 snm = snm_2d_inbred
