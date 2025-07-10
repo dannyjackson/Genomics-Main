@@ -26,7 +26,7 @@ Making Demography models in dadi should follow the outline below. All scripts wi
 `dadi_3_demo_model.py` is the workhorse behind creating and optimizing any demography models you run. It can support both 1D and 2D models. It can also generate Demes Plots and will perform dadi's Godambe Uncertainty Analysis (GIM). This GIM analysis is useful for determining if your optimized model parameters are reasonable. However, comparing different models using Likelihood Ratio Tests is highly recommended. 
 If you are generating models in bulk, `submit_multi_demo_model.sh` can start multiple model optimization jobs on an HPC. When submitting model jobs in bulk, note the expected use of the model param JSON files (`dadi_1dmodel_params.json` and `dadi_2dmodel_params.json`). Such JSON files are where you can 1) state which models you want to run, and 2) edit their parameter boundaries and starting positions as needed. *NOTE: The model names in JSON must correspond exactly to the function names within either the dadi submodules or any custom modules you create. (For Example: "bottlegrowth_1d" corresponds to the dadi model function `dadi.Demographics1D.bottlegrowth_1d`)*
 
-But you can also edit a copy of the `submit_demo_model.sh` script (which is what the former uses to start each job) if you wish to test/rerun a single model at a time.
+You can also edit a copy of the `submit_demo_model.sh` script (which is what the former uses to start each job) if you wish to test/rerun a single model at a time.
 
 ## Likelihood Ratio Tests (WIP)
 `dadi_4_LRT.py` performs Likelihood Ratio Comparisons between two already generated models (usually comparing a more complex model to a less complex model). You can run this job on an HPC using `submit_LRT.sh` and editing relevent parameters in `params_dadi.sh`. 
@@ -34,8 +34,11 @@ But you can also edit a copy of the `submit_demo_model.sh` script (which is what
 ===========================================
 # Additional Notes
 For more info on each of these key points, review the dadi documentation, API, and Google Groups
+
 Docs: https://dadi.readthedocs.io/en/latest/
+
 API: https://dadi.readthedocs.io/en/latest/api/dadi/
+
 Google Groups: https://groups.google.com/g/dadi-user
 
 **LowPass Workflow**:
