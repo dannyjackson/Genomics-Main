@@ -23,4 +23,4 @@ echo 'Activating dadi Micromamba Environment'
 source ~/.bashrc
 micromamba activate dadi_env
 
-python3 scripts/Genomics-Main/C_SelectionAnalysis/dadi/dadi_3_LRT.py -j ${JOB_NAME} -s ${SFS_PATH} -o ${OUTDIR} -b ${BOOT_DIR}  -i "${NESTED_INDICES}" -n ${NULL_MODEL} -t ${TEST_MODEL} --null_popt "${NULL_POPT}" --test_popt "${TEST_POPT}"
+python3 dadi_3_LRT.py -j ${JOB_NAME} -s ${SFS_PATH} -o ${OUTDIR} -b ${BOOT_DIR}  -i "${NESTED_INDICES}" -n ${NULL_MODEL} -t ${TEST_MODEL} --null_popt "${NULL_POPT}" --test_popt "${TEST_POPT}"

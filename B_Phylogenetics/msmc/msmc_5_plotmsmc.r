@@ -4,7 +4,7 @@
 #OUTDIR = args[1]
 #IND = args[2]
 
-# Add some code here based on your needs to parse your directories for the msmc outputs you need. 
+# Add some code here based on your needs to both parse your directories for the msmc outputs you need and generate the types of plots you want
 #For example, the lazy way I've done it is shown below
 
 # This script only works currently on a local machine in RStudio. Not yet set up for submitting via sbatch on HPC. May implement this later if feel like it.
@@ -34,7 +34,7 @@ plot_title = '__________ Ne Over Time'
 pre_post_plot = FALSE
 plot_type = 'bootstrapped' # Options can include pre_post, spp, bootstrapped
                        # pre_post = color lines by whether individual is pre or post philornis
-                       # spp_classified = color lines by spp of individual
+                       # spp = color lines by spp of individual
                        # bootstrapped = format plot to show off bootstraps (requires stating bootstrapped_indv_fname variable)
 original_data_fname = 'msmc_output_some_indv.final.txt' # Filename of original individual (nonbootstrapped data)
 plot_fname = 'msmc_plot'

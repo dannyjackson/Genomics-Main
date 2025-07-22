@@ -21,8 +21,8 @@
 echo 'Moving to primary directory...'
 cd /xdisk/mcnew/finches/ljvossler/finches/dadi/
 
-source /xdisk/mcnew/finches/ljvossler/finches/dadi/param_files/params_dadi.sh
-source /xdisk/mcnew/finches/ljvossler/finches/dadi/param_files/params_base.sh
+source param_files/params_dadi.sh
+source param_files/params_base.sh
 
 echo 'Activating dadi Micromamba Environment'
 source ~/.bashrc

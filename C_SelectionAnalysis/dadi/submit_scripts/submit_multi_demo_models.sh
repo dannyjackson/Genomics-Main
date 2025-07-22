@@ -42,6 +42,6 @@ for i in `seq 0 $(python3 -c "import json; print(len(json.load(open('${MODEL_JSO
     --nodes=1 \
     --ntasks=1 \
     --time=04:00:00 \
-    /xdisk/mcnew/finches/ljvossler/finches/dadi/scripts/submit_demo_model.sh ${JOB_NAME} ${NUM_OPT} ${LOWPASS} ${PLOT_DEMES} ${OUTDIR} ${CURRENT_MODEL} ${SFS_PATH} ${MODEL_JSON} ${OUT_FOLDER}
+    submit_scripts/submit_demo_model.sh ${JOB_NAME} ${NUM_OPT} ${LOWPASS} ${PLOT_DEMES} ${OUTDIR} ${CURRENT_MODEL} ${SFS_PATH} ${MODEL_JSON} ${OUT_FOLDER} ${ALIGNMENT_LEN} ${TOTAL_SNPS} ${MU} ${GENERATION_TIME}
     echo '============================'
 done

@@ -38,5 +38,5 @@ echo "Lowpass: ${LOWPASS}"
 echo "Polarized: ${POLARIZE}"
 echo "Bootstrap Parameters: ${BOOTSTRAP_PARAMS}"
 
-python3 /xdisk/mcnew/finches/ljvossler/finches/dadi/scripts/Genomics-Main/C_SelectionAnalysis/dadi/dadi_2_sfs.py -f ${OUT_FOLDER} -p "${POP_IDS}" -n "${NUM_CHROMS}" -l ${LOWPASS} -o ${OUTDIR} -v ${VCF_PATH} -i ${POP_PATH} -b "${BOOTSTRAP_PARAMS}"
+python3 dadi_2_sfs.py -f ${OUT_FOLDER} -p "${POP_IDS}" -n "${NUM_CHROMS}" -l ${LOWPASS} -o ${OUTDIR} -v ${VCF_PATH} -i ${POP_PATH} -b "${BOOTSTRAP_PARAMS}"
 

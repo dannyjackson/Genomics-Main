@@ -22,7 +22,10 @@ NUM_OPT=100
 PLOT_DEMES=TRUE
 GIM_STEPS="0.1 0.01 0.001 0.0001 0.00001" # Space Separated list of step sizes
 MODEL_JSON='/xdisk/mcnew/finches/ljvossler/finches/dadi/param_files/dadi_1dmodel_params.json'
-
+ALIGNMENT_LEN=1051609828
+TOTAL_SNPS=6536601 # This should be the number of SNPs coming from your VCF file.
+MU=2.04e-09
+GENERATION_TIME=5 # In Years
 
 # LRT Analysis Params
 NESTED_INDICES="4 5" #Should be a space separated list of indices 

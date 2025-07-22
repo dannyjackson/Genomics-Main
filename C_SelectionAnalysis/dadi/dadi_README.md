@@ -28,8 +28,11 @@ If you are generating models in bulk, `submit_multi_demo_model.sh` can start mul
 
 You can also edit a copy of the `submit_demo_model.sh` script (which is what the former uses to start each job) if you wish to test/rerun a single model at a time.
 
-## Likelihood Ratio Tests (WIP)
-`dadi_4_LRT.py` performs Likelihood Ratio Comparisons between two already generated models (usually comparing a more complex model to a less complex model). You can run this job on an HPC using `submit_LRT.sh` and editing relevent parameters in `params_dadi.sh`. 
+## Likelihood Ratio Tests
+`dadi_4_LRT.py` performs Likelihood Ratio Comparisons between previously generated nested models (comparing a more complex model to a less complex model). You can run this job on an HPC using `submit_LRT.sh` and editing relevent parameters in `params_dadi.sh`. 
+
+NOTE: You cannot just compare any model to another. Rather, they must be "nested", meaning that they are very similar and the complex model represents a special case of the simple model.
+For example: You could run an LRT between a bottlegrowth model (simple) and another bottlegrowth model that factors in inbreeding (complex). But you cannot run an LRT between, say, a bottlegrowth model and a split-migration model. Be sure to review the dadi Documenation and Google Group Forum to review how to perform LRTs properly.
 
 ===========================================
 # Additional Notes
