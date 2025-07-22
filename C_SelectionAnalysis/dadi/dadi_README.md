@@ -28,6 +28,9 @@ If you are generating models in bulk, `submit_multi_demo_model.sh` can start mul
 
 You can also edit a copy of the `submit_demo_model.sh` script (which is what the former uses to start each job) if you wish to test/rerun a single model at a time.
 
+## Demes Plotting
+Plotting demes from optimized model results is simple in dadi and is done automatically (unless otherwise specified by user) in `dadi_3_demo_model.py`. However, you may wish to add/edit unique plot labels specific to your project to make them more interpretable. You can do this by coding up your own small script that takes the Model SFS file (generated from `dadi_3_demo_model.py`) and following the Demes Instructions described in dadi documentation here: https://dadi.readthedocs.io/en/latest/user-guide/demes/. Keep in mind that to generate demes plots with "Generations" as the Y-axis scale, you'll need to provide an estimated ancestral population size (`Na`). You'll also need an estimated generation time for plotting the Y-axis in "Years". NOTE: `Na` is calculated automatically in `dadi_3_demo_model.py` and is printed in your job output. See **Additional Notes** for more info on how `Na` is calculated.
+
 ## Likelihood Ratio Tests
 `dadi_4_LRT.py` performs Likelihood Ratio Comparisons between previously generated nested models (comparing a more complex model to a less complex model). You can run this job on an HPC using `submit_LRT.sh` and editing relevent parameters in `params_dadi.sh`. 
 
@@ -57,6 +60,19 @@ If you end up writing some custom model functions, then keep in mind you'll need
 **GPU Parallelization**:
 If you are running on an HPC that has CUDA Enabled Nvidia GPUs, you may wish to speed up model-making in dadi substantially by enabling dadi's CUDA submodule.
 Currently these dadi scripts do not implement that feature since we have had trouble getting it working on our HPC and we find that standard CPU model runs with 100 optimizations run in a satisfactory amount of time (ie: A standard 1D dadi model with 100 optimizations can finish within 1 hour).
+
+**Calculating Ancestral Effective Population Size**
+Calculating `Na` requires the following equation:
+```
+Na = theta / (4 * mu * L)
+```
+Where `theta` should be your optimized mutation paramter (from your models) and `mu` is your organism's estimated mutation rate. `L` is calculated from a ratio of SNPs inputted into dadi over the total SNPs in your alignment, mulitplied by your total alignment length:
+```
+L = alignment_len * (SNPs_in_dadi / total_SNPs)
+```
+`total_SNPs` should be found by parsing your VCF or other variant data. `SNPs_in_dadi` refers to the amount of SNPs that make it into the `SFS` data after multiple dadi filtering steps. It can be obtained by running `SFS.S()`.
+
+NOTE: Think of `mu * L` as the "effective mu". In other words, we are determining the fraction of total mutations that make it into our SFS and dadi analyses. More in depth discussion of `Na` calculations can be found in the dadi Google Group Forum.
 
 ===========================================
 

@@ -218,9 +218,9 @@ for i in range(args.num_opt):
 
     # Write results to output file
     print('---> Saving Perturbed Model Parameters...')
-    fits_lst.append(res)
     output = open(fit_fname,'a')
     res = [ll_model] + list(popt) + [theta0]
+    fits_lst.append(res)
     output.write('\t'.join([str(ele) for ele in res])+'\n')
     output.close()
 
@@ -233,16 +233,17 @@ for lst in fits_lst:
         ll_opt = lst[0]
         fits_opt = lst
 
+print('---> Calculating Na...')
+theta_opt = fits_opt[-1]
+L = args.align_len * (fs.S() / args.num_snps)
+Na = theta_opt / (4 * args.mu * L)
+print(f"Na Calculation: Na = {theta_opt} / (4 * {args.mu} * ({args.align_len} * ({fs.S()} / {args.num_snps})))")
+print('Na: ' + str(Na))
+
 # If want to plot demes, do so here after model params are optimized
 if args.demes:
     import demesdraw
     print('---> Saving Demes Plot...')
-    # Calculate Na
-    theta_opt = fits_opt[-1]
-    L = args.align_len * (fs.S() / args.num_snps)
-    Na = theta_opt / (4 * args.mu * L)
-    f"Na Calculation: Na = {theta_opt} / (4 * {args.mu} * ({args.align_len} * ({fs.S()} / {args.num_snps})))"
-    print('Na: ' + str(Na))
     # Rerun model with optimal params to properly store info for deme plotting
     model_opt = model_ex(fits_opt[1:-1], n, pts)
     deme_model_yrs = [dadi.Demes.output(Nref=Na, generation_time=args.generation_time), 'yrs']
