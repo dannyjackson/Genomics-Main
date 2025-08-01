@@ -21,10 +21,10 @@ par_lst = c('lamich_PARV1','lamich_PARV2','RHC097_all','RHC507_all','SM031_all',
 # Plot Parameters ==============================================================
 mu = 2.04e-09
 gen = 5
-out_path = '~/Desktop/msmc/multi_indv/output/revised/for/'
-plot_title = 'Ne Over Time'
+out_path = 'path/to/output/files/'
+plot_title = '____________ Ne Over Time'
 plot_fname = 'msmc_plot'
-plot_type = 'bootstrapped'  # Options can include pre_post, spp, bootstrapped
+plot_type = 'pre_post'  # Options can include pre_post, spp, bootstrapped
                             # pre_post = color lines by whether individual is from pre or post your population level event
                             # spp = color lines by spp of individual
                             # bootstrapped = color lines by whether they are from bootstraps or data
