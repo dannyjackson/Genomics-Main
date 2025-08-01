@@ -1,21 +1,13 @@
 #!/usr/bin/env Rscript
 
-#args = commandArgs(trailingOnly=TRUE)
-#OUTDIR = args[1]
-#IND = args[2]
+# This script is designed to be run on a local machine in RStudio since MSMC outputs 
+# are not expensive to read and the RStudio environment is nice for tweaking plot parameters. 
 
-# Add some code here based on your needs to both parse your directories for the msmc outputs you need and generate the types of plots you want
-#For example, the lazy way I've done it is shown below
-
-# This script only works currently on a local machine in RStudio. Not yet set up for submitting via sbatch on HPC. May implement this later if feel like it.
-# Generating the plots is simple and not resource-intensive, and you'll likely want to adjust your plots frequently (which is easier in live environment like RStudio)
+# Add some code here based on your needs to parse your directories for the msmc outputs you need. 
+#For example, the rough way I've done it is shown below
 
 
-# All post-philornis samples
-post_lst = c('JP4481_all','JP5410_all','JP9655_all','SM1067_all', 'SM1157_all',
-             'SM1200_all','SM1231','SM1240_all','SM1266_all','SM1083','SM1156','SM1204_all','SM1237',
-             'SM1270','SM1271','SM1272','SM1273','RHC097_all','RHC507_all',
-             'SM031_all','SM032_all','SM040_all','SM059_all','SM079_all')
+# Specifying Species Groups ====================================================
 # All CRA Individuals
 cra_lst = c('JP4481_all','JP5410_all','JP9655_all','lamich_PL15','lamich_PL16','lamich_PL4','lamich_PL7','lamich_PL9','SM1067_all','SM1157_all',
             'SM1200_all','SM1231','SM1240_all','SM1266_all')
@@ -29,15 +21,13 @@ par_lst = c('lamich_PARV1','lamich_PARV2','RHC097_all','RHC507_all','SM031_all',
 # Plot Parameters ==============================================================
 mu = 2.04e-09
 gen = 5
-out_path = 'path/to/msmc/outputs/'
-plot_title = '__________ Ne Over Time'
-pre_post_plot = FALSE
-plot_type = 'bootstrapped' # Options can include pre_post, spp, bootstrapped
-                       # pre_post = color lines by whether individual is pre or post philornis
-                       # spp = color lines by spp of individual
-                       # bootstrapped = format plot to show off bootstraps (requires stating bootstrapped_indv_fname variable)
-original_data_fname = 'msmc_output_some_indv.final.txt' # Filename of original individual (nonbootstrapped data)
+out_path = '~/Desktop/msmc/multi_indv/output/revised/for/'
+plot_title = 'Ne Over Time'
 plot_fname = 'msmc_plot'
+plot_type = 'bootstrapped'  # Options can include pre_post, spp, bootstrapped
+                            # pre_post = color lines by whether individual is from pre or post your population level event
+                            # spp = color lines by spp of individual
+                            # bootstrapped = color lines by whether they are from bootstraps or data
 
 # CODE =========================================================================
 plot_exists = FALSE
@@ -45,43 +35,41 @@ for (output in list.files(path = out_path)) {
   
   print(output)
   
+  # First determine plot and line attributes (line color, axis labels, etc) based on plot type
   if (plot_type == 'pre_post') {
     label_names = c('Pre Philornis', 'Post Philornis')
     label_colors=c('purple', 'orange')
     line_width = 1.5
-    # Coloring by pre/post
-    if (grepl(paste(post_lst,collapse = '|'), output)) {
-      color = 'orange'
-    } else {
-      color = 'purple'
-    }
+    # Coloring by pre/post based on the presence of "post" substring in fname
+    line_color = ifelse(grepl('post', output), 'orange', 'purple')
   }
+  
+  
+  else if (plot_type == 'bootstrapped') {
+    label_names = c('Boostraps', 'Data')
+    label_colors=c('darkgoldenrod1', 'deepskyblue3')
+    # Coloring and setting width by whether data is bootstrapped based on presence of "bootstrap" substring in fname
+    line_color = ifelse(grepl('bootstrap', output), 'darkgoldenrod1', 'deepskyblue')
+    line_width = ifelse(grepl('bootstrap', output), 1.5, 4)
+  }
+  
+  
   else if (plot_type == 'spp') {
     label_names = c('CRA', 'FOR', 'PAR')
     label_colors=c('darkgoldenrod1', 'deepskyblue3', 'deeppink3')
     line_width = 1.5
-    # Coloring by species
+    # Coloring by species based on presence of individual name in a given species list
     if (grepl(paste(cra_lst,collapse = '|'), output)) {
-      color = 'darkgoldenrod1'
+      line_color = 'darkgoldenrod1'
     } else if (grepl(paste(for_lst,collapse = '|'), output)) {
-      color = 'deepskyblue3'
+      line_color = 'deepskyblue3'
     } else if (grepl(paste(par_lst,collapse = '|'), output)) {
-      color = 'deeppink3'
-    }
-  }
-  else if (plot_type == 'bootstrapped') {
-    label_names = c('Boostraps', 'Data')
-    label_colors=c('darkgoldenrod1', 'deepskyblue3')
-    # Coloring by whether data is bootstrapped
-    if (output == original_data_fname) {
-      color = 'deepskyblue3'
-      line_width = 3
-    } else {
-      color = 'darkgoldenrod1'
-      line_width = 1
+      line_color = 'deeppink3'
     }
   }
   
+  
+  # Now that plot attributes are set, generate figure if necessary and add data to plot
   data <- read.csv(paste(out_path, output, sep = ''), sep ='\t')
   
   time <- (data$left_time_boundary/mu*gen)
@@ -89,14 +77,16 @@ for (output in list.files(path = out_path)) {
   
   if (plot_exists == FALSE) {
     plot(time, pop.size, type='s', 
-         xlab="Years before present (log scale)", 
-         ylab="Effective Population Size", log='x', ylim = c(0,500000), col=color, lwd=line_width)
+         xlab="Years Before Present (log scale)", 
+         ylab="Effective Population Size", log='x', ylim = c(0,400000), col=line_color, lwd=line_width, xlim = c(10000, 5000000))
     plot_exists = TRUE
   } else {
-    lines(time, pop.size, type = 's', col=color, lwd=line_width)
+    lines(time, pop.size, type = 's', col=line_color, lwd=line_width)
   }
-  }
+}
 
+
+# After reading all data, set Plot Title and Legend and save to file
 legend(x='topleft',legend=label_names, fill=label_colors)
 title(main=plot_title)
 
