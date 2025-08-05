@@ -30,8 +30,6 @@ echo $PARAMS
 echo $MSMCPARAMS
 echo $POP_OR_IND
 
-echo MSMCDIR: ${MSMCDIR}
-
 # Ensure parameter file is provided and exists
 if [ -z "${PARAMS}" ]; then
     echo "Error: No parameter file provided." >&2
@@ -48,6 +46,7 @@ module list
 
 # Source MSMC params file
 source "${SCRIPTDIR}/${MSMCPARAMS}"
+echo MSMCDIR: ${MSMCDIR}
 
 
 # Verify that output location for msmc_outputs exists
@@ -60,7 +59,7 @@ else
 fi
 
 #input for the bootstrapping
-BS_INPUT=`for s in $(cat ${OUTDIR}/SCAFFOLDS.txt); do find ${MSMCDIR}/single_indv_data/input_single/ -maxdepth 1 -name "msmc_input.*${POP_OR_IND}.${s}*.txt"; done`
+BS_INPUT=`for s in $(cat ${OUTDIR}/SCAFFOLDS.txt); do find ${MSMCDIR}/input/ -maxdepth 1 -name "msmc_input.*${POP_OR_IND}.${s}*.txt"; done`
 
 echo 'BS_INPUT'
 echo '======================='
