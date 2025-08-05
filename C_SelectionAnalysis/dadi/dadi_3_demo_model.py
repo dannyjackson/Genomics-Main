@@ -136,7 +136,7 @@ def godambe(popt, model_ex, pts, fs, model_dir, eps, boot_dir):
 # Check if dadi-specific results directories exists in specified outdir. If not, create them.
 print('Verifying Directories...')
 # If using lowpass, set result dir to lowpass dir
-result_dir = args.outdir + args.out_folder + '/lowpass/' if args.lowpass else args.outdir + args.out_folder + '/'
+result_dir = args.outdir + 'dadi/' + args.out_folder + '/lowpass/' if args.lowpass else args.outdir + 'dadi/' + args.out_folder + '/'
 # The bootstrap files default to a nonlowpass directory, so we'll just store it in another variable to be used for GIM
 boot_dir = args.outdir + args.out_folder + '/'
 if not os.path.exists(result_dir):

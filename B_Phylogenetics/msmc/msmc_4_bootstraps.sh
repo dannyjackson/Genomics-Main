@@ -15,7 +15,7 @@ if [ $# -lt 1 ]; then
 fi
 
 # Parse command-line arguments
-while getopts "p:" option; do
+while getopts "pmi" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         m) MSMCPARAMS=${OPTARG} ;;
@@ -70,41 +70,3 @@ cd ${OUTDIR}/bootstrap
 ls -d *${IND}.bootstrap_* > ${OUTDIR}/bs_file_lists/${IND}.bs_file_list.txt
 
 echo "Finished generating bootstraps for ${IND}"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-##### run msmc ####
-#MSMC_BS=$(for x in `cat ${OUTDIR}/bs_file_lists/${IND}.bs_file_list.txt`; do find ${OUTDIR}/bootstrap/$x -maxdepth 2 -name "bootstrap_multihetsep*.txt"; done)
-
-for x in `cat ${OUTDIR}/bs_file_lists/${IND}.bs_file_list.txt`; do
-    BS_INPUT_DIR=${OUTDIR}/bootstrap/$x
-    MSMC_BS=$(find ${OUTDIR}/bootstrap/$x -maxdepth 2 -name "bootstrap_multihetsep*.txt")
-    echo $MSMC_BS
-    
-    MSMC_OUTPUT=${OUTDIR}/bootstrap/outputs/${IND}/msmc_output.$x
-    echo $MSMC_OUTPUT
-    
-    echo "running msmc2 on bootstraps for $x"
-
-    runMSMC.sh -i $x -d $BS_INPUT_DIR
-
-
-    msmc2_Linux -o $MSMC_OUTPUT -I 0,1 $MSMC_BS
-    
-    mv $MSMC_OUTPUT*loop.txt ${OUTDIR}/bootstrap/outputs/${IND}/log_and_loop/
-    mv $MSMC_OUTPUT*log ${OUTDIR}/bootstrap/outputs/${IND}/log_and_loop/
-    
-    echo "done with msmc bootstraps for $x"
-    
-done

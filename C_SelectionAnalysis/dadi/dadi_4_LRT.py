@@ -59,7 +59,7 @@ test_popt = [float(param) for param in args.test_popt[0].split()]
 #========================================
 # Check if dadi-specific results directories exists in specified outdir. If not, create them.
 print('Verifying Directories...')
-result_dir = args.outdir + 'LRT_outputs/'
+result_dir = args.outdir + 'dadi/LRT_outputs/'
 if not os.path.exists(result_dir):
     os.makedirs(result_dir)
 

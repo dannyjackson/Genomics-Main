@@ -3,7 +3,7 @@
 # Universal Params
 # Parameters used generally across all or multiple analyses
 JOB_NAME=par_post_1d_model_generation
-OUT_FOLDER=dadi_results_par # The name of the folder (under your general OUTDIR) you want to generate containing your results NOTE: Don't forgot to update this when switching the populations being analyzed (otherwise the scripts will not output your results in desired location or find needed intermediate param files)
+OUT_FOLDER=dadi_results_par # The name of the folder (under your general dadi directory) you want to generate containing your results NOTE: Don't forgot to update this when switching the populations being analyzed (otherwise the scripts will not output your results in desired location or find needed intermediate param files)
 LOWPASS=TRUE # Must be set to True during SFS creation so that the lowpass coverage distribution is generated (Though this is awkward, we generate the cov-dist during SFS creation so that way our model scripts don't need to waste resources reloading data dictionaries)
 SFS_PATH='/xdisk/mcnew/finches/ljvossler/finches/dadi/dadi_results_par/PAR_post_fs' # Used in model generations and running LRT analysis
 

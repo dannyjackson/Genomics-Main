@@ -15,19 +15,19 @@ if [ $# -lt 1 ]; then
     echo "  -p   Path to parameter file (example in GitHub repository as params.sh)"
     echo "  -m   File Name of your unique project msmc params file"
     echo "  -i   Individual or Population Name"
-    echo "  -t   Either "data" or "bootstraps". Doesn't change out MSMC is run, just determines where to look for input files and such. 
+    echo "  -t   Either "data" or "bootstraps". Doesn't change how MSMC is run, just determines where to look for input files and such. 
                         (Wanted single script to run MSMC from. If developing this workflow from the start, it would be implemented cleaner, but this works for now during testing)"
     exit 1
 fi
 
 # Parse command-line arguments
-while getopts "p:" option; do
+while getopts "pmit" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         m) MSMCPARAMS=${OPTARG} ;;
         i) POP_OR_IND=${OPTARG} ;;
         t) RUN_TYPE=${OPTARG} ;;
-        *) echo "Invalid option: -$OPTARG" >&5; exit 1 ;;
+        *) echo "Invalid option: -$OPTARG" >&4; exit 1 ;;
     esac
 done
 

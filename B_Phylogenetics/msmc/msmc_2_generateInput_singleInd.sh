@@ -11,7 +11,7 @@ if [ $# -lt 1 ]; then
 fi
 
 # Parse command-line arguments
-while getopts "p:" option; do
+while getopts "pm" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         m) MSMCPARAMS=${OPTARG} ;;

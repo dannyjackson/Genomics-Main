@@ -130,7 +130,7 @@ num_chroms = [int(num) for num in args.num_chroms[0].split()]
 # Check if dadi-specific results directory exists in specified outdir. If not, create it.
 print('Verifying Directories...')
 # We will store our SFS data in a general results folder for each population combo...
-result_dir = args.outdir + args.folder_name + '/'
+result_dir = args.outdir + 'dadi/' + args.folder_name + '/'
 if not os.path.exists(result_dir):
     os.makedirs(result_dir)
 
