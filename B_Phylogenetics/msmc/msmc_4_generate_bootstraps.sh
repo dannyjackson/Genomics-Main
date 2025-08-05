@@ -24,6 +24,10 @@ while getopts "pmi" option; do
     esac
 done
 
+echo $PARAMS
+echo $MSMCPARAMS
+echo $POP_OR_IND
+
 # Ensure parameter file is provided and exists
 if [ -z "${PARAMS}" ]; then
     echo "Error: No parameter file provided." >&2
