@@ -12,12 +12,13 @@ module load samtools/1.19.2
 
 # Define variables
 # all
-OUTDIR=/path/to/project/directory/    # main directory for output files
+OUTDIR=/xdisk/mcnew/finches/ljvossler/finches    # main directory for output files
 PROGDIR=~/programs  # path to directory for all installed programs
 BAMDIR=/path/to/bam/files
-PROJHUB=github_project_name
-SCRIPTDIR=${PROGDIR}/${PROJHUB}
+PROJHUB=darwin_finches/Genomics-Main
+SCRIPTDIR=${OUTDIR}/${PROJHUB}
 PATH=$PATH:$SCRIPTDIR # this adds the workshop script directory to our path, so that executable scripts in it can be called without using the full path
+PATH=$PATH:$PROGDIR # Also adding program directory to path
 ID=name_of_project
 FILENAME_LIST="/path/to/list.txt" # list with sample codes associated with each file in dataset, one per line
 
