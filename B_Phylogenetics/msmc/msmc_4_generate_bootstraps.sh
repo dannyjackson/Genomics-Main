@@ -72,7 +72,7 @@ BS_OUTPUT=${MSMCDIR}/bootstrap/${POP_OR_IND}.bootstrap
 echo $BS_OUTPUT
 
 #echo "generating bootstraps for ${IND}"
-${MSMCTOOLS}/multihetsep_bootstrap.py --out_dir_prefix $BS_OUTPUT --files $BS_INPUT
+#${MSMCTOOLS}/multihetsep_bootstrap.py --out_dir_prefix $BS_OUTPUT --files $BS_INPUT
 
 cd ${MSMCDIR}/bootstrap
 ls -d *${POP_OR_IND}.bootstrap_* > ${MSMCDIR}/bs_file_lists/${POP_OR_IND}.bs_file_list.txt
@@ -92,5 +92,5 @@ for boot in `cat ${MSMCDIR}/bs_file_lists/${POP_OR_IND}.bs_file_list.txt`; do
 	--nodes=1 \
 	--ntasks=28 \
 	--time=90:00:00 \
-	${SCRIPTDIR}/B_Phylogenetics/msmc/msmc_4_run_bootstraps.sh -p ${PARAMS} -m ${MSMCPARAMS} -b ${boot} -p ${POP_OR_IND}
+	${SCRIPTDIR}/B_Phylogenetics/msmc/msmc_4_run_bootstraps.sh -p ${PARAMS} -m ${MSMCPARAMS} -b ${boot} -i ${POP_OR_IND}
 done
