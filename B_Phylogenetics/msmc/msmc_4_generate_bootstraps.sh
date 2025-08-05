@@ -30,6 +30,8 @@ echo $PARAMS
 echo $MSMCPARAMS
 echo $POP_OR_IND
 
+echo MSMCDIR: ${MSMCDIR}
+
 # Ensure parameter file is provided and exists
 if [ -z "${PARAMS}" ]; then
     echo "Error: No parameter file provided." >&2
@@ -45,7 +47,7 @@ source "${PARAMS}"
 module list
 
 # Source MSMC params file
-echo "${SCRIPTDIR}/${MSMCPARAMS}"
+source "${SCRIPTDIR}/${MSMCPARAMS}"
 
 
 # Verify that output location for msmc_outputs exists
