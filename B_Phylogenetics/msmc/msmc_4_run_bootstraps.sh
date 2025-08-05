@@ -13,20 +13,28 @@ if [ $# -lt 1 ]; then
     echo "Required Argument:"
     echo "  -p   Path to parameter file (example in GitHub repository as params.sh)"
     echo "  -m   File Name of your unique project msmc params file"
+    echo "  -b   Bootstrap being run"
     echo "  -i   Individual or Population Name"
     exit 1
 fi
 
 # Parse command-line arguments
-while getopts "pmbi" option; do
-    case "${option}" in
+while getopts ":p:m:b:i:" opt; do
+    case "${opt}" in
         p) PARAMS=${OPTARG} ;;
         m) MSMCPARAMS=${OPTARG} ;;
         b) BOOT=${OPTARG} ;;
         i) POP_OR_IND=${OPTARG} ;;
-        *) echo "Invalid option: -$OPTARG" >&4; exit 1 ;;
+        *) echo "Invalid option: -${OPTARG}"
+           exit 1 
+           ;;
     esac
 done
+
+echo $PARAMS
+echo $MSMCPARAMS
+echo $POP_OR_IND
+echo $BOOT
 
 # Ensure parameter file is provided and exists
 if [ -z "${PARAMS}" ]; then
@@ -48,15 +56,15 @@ source "${SCRIPTDIR}/${MSMCPARAMS}"
 
 
 # Run MSMC on ONE of your bootstrapped MSMC Inputs for a given pop/individual
-MSMC_BS=$(find ${MSMCDIR}/bootstrap/${BOOT} -maxdepth 2 -name "bootstrap_multihetsep*.txt")
+MSMC_BS=$(find ${MSMCDIR}/bootstrap/$boot -maxdepth 2 -name "bootstrap_multihetsep*.txt")
 echo $MSMC_BS
 
-MSMC_OUTPUT=${MSMCDIR}/bootstrap/outputs/${POP_OR_IND}/msmc_output.${BOOT}
+MSMC_OUTPUT=${OUTDIR}/bootstrap/outputs/${POP_OR_IND}/msmc_output.$boot
 echo $MSMC_OUTPUT
 
-n=$(expr ${NR_IND} - 2)
-INDEX=$(for num in `seq 0 ${n}`; do echo -n "${num},"; done; echo ${NR_IND})
-echo $INDEX
+NR_HAPS=$(expr ${NR_IND} \* 2)
+INDEX=$(for num in `seq 0 $(expr ${NR_HAPS} - 1)`; do echo -n "${num},"; done)
+echo ${INDEX::-1}
 
 echo "running msmc2 on bootstraps for ${BOOT}"
 

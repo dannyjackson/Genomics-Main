@@ -82,23 +82,15 @@ echo "Finished generating bootstraps for ${POP_OR_IND}"
 # Run MSMC on all Bootstrapped datasets for your given pop/individual by iteratively sending batch jobs with msmc_4_bootstraps.sh
 echo "Running MSMC on newly generated Bootstraps for ${POP_OR_IND}"
 for boot in `cat ${MSMCDIR}/bs_file_lists/${POP_OR_IND}.bs_file_list.txt`; do
-    MSMC_BS=$(find ${MSMCDIR}/bootstrap/$boot -maxdepth 2 -name "bootstrap_multihetsep*.txt")
-    echo $MSMC_BS
-    
-    MSMC_OUTPUT=${OUTDIR}/bootstrap/outputs/${POP_OR_IND}/msmc_output.$boot
-    echo $MSMC_OUTPUT
-    
-    n=$(expr ${NR_IND} - 2)
-    INDEX=$(for num in `seq 0 ${n}`; do echo -n "${num},"; done; echo ${NR_IND})
-    
     echo "running msmc2 on bootstraps for $boot"
     
 	sbatch --account=mcnew \
 	--job-name=bootstrap_${boot} \
     --partition=standard \
-	--output=boot_outs/stdout_bootstrap_${boot} \
+	--output=/xdisk/mcnew/finches/ljvossler/finches/msmc/boot_outs/stdout_bootstrap_${boot} \
     --error=boot_outs/stderr_bootstrap_${boot} \
 	--nodes=1 \
 	--ntasks=28 \
 	--time=90:00:00 \
 	${SCRIPTDIR}/B_Phylogenetics/msmc/msmc_4_run_bootstraps.sh -p ${PARAMS} -m ${MSMCPARAMS} -b ${boot} -p ${POP_OR_IND}
+done
