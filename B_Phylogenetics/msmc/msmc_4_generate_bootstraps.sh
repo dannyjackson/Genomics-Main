@@ -15,12 +15,14 @@ if [ $# -lt 1 ]; then
 fi
 
 # Parse command-line arguments
-while getopts "pmi" option; do
-    case "${option}" in
+while getopts ":p:m:i:" opt; do
+    case "${opt}" in
         p) PARAMS=${OPTARG} ;;
         m) MSMCPARAMS=${OPTARG} ;;
         i) POP_OR_IND=${OPTARG} ;;
-        *) echo "Invalid option: -$OPTARG" >&3; exit 1 ;;
+        *) echo "Invalid option: -${OPTARG}"
+           exit 1 
+           ;;
     esac
 done
 
