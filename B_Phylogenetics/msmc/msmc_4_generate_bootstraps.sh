@@ -45,7 +45,7 @@ source "${PARAMS}"
 module list
 
 # Source MSMC params file
-source "${SCRIPTDIR}/${MSMCPARAMS}"
+echo "${SCRIPTDIR}/${MSMCPARAMS}"
 
 
 # Verify that output location for msmc_outputs exists
