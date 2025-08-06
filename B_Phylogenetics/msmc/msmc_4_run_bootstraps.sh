@@ -68,6 +68,6 @@ INDEX=${INDEX::-1}
 
 echo "running msmc2 on bootstraps for ${BOOT}"
 
-#msmc2_Linux -t $THREADS -p $P_PAR -i $NUM_OPT -o ${MSMC_OUTPUT} -I `echo $INDEX` $MSMC_BS
+msmc2_Linux -t $THREADS -p $P_PAR -i $NUM_OPT -o ${MSMC_OUTPUT} -I `echo $INDEX` $MSMC_BS
     
 echo "done with msmc bootstraps for ${BOOT}"
