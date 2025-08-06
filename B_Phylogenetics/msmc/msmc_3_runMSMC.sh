@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 # all parameters come from the msmc_param control file
 # make edits there before using this script!
 
@@ -19,12 +18,14 @@ if [ $# -lt 1 ]; then
 fi
 
 # Parse command-line arguments
-while getopts "pmi" option; do
-    case "${option}" in
+while getopts ":p:m:i:" opt; do
+    case "${opt}" in
         p) PARAMS=${OPTARG} ;;
         m) MSMCPARAMS=${OPTARG} ;;
         i) POP_OR_IND=${OPTARG} ;;
-        *) echo "Invalid option: -$OPTARG" >&4; exit 1 ;;
+        *) echo "Invalid option: -${OPTARG}"
+           exit 1 
+           ;;
     esac
 done
 

@@ -66,6 +66,8 @@ NR_HAPS=$(expr ${NR_IND} \* 2)
 INDEX=$(for num in `seq 0 $(expr ${NR_HAPS} - 1)`; do echo -n "${num},"; done)
 INDEX=${INDEX::-1}
 
+echo $INDEX
+
 echo "running msmc2 on bootstraps for ${BOOT}"
 
 msmc2_Linux -t $THREADS -p $P_PAR -i $NUM_OPT -o ${MSMC_OUTPUT} -I `echo $INDEX` $MSMC_BS
