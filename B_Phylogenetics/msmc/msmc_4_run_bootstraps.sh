@@ -59,7 +59,7 @@ source "${SCRIPTDIR}/${MSMCPARAMS}"
 MSMC_BS=$(find ${MSMCDIR}/bootstrap/$BOOT -maxdepth 2 -name "bootstrap_multihetsep*.txt")
 echo $MSMC_BS
 
-MSMC_OUTPUT=${OUTDIR}/bootstrap/outputs/${POP_OR_IND}/msmc_output.$BOOT
+MSMC_OUTPUT=${MSMCDIR}/bootstrap/outputs/${POP_OR_IND}/msmc_output.$BOOT
 echo $MSMC_OUTPUT
 
 NR_HAPS=$(expr ${NR_IND} \* 2)
