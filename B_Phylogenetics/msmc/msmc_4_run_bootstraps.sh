@@ -56,10 +56,10 @@ source "${SCRIPTDIR}/${MSMCPARAMS}"
 
 
 # Run MSMC on ONE of your bootstrapped MSMC Inputs for a given pop/individual
-MSMC_BS=$(find ${MSMCDIR}/bootstrap/$boot -maxdepth 2 -name "bootstrap_multihetsep*.txt")
+MSMC_BS=$(find ${MSMCDIR}/bootstrap/$BOOT -maxdepth 2 -name "bootstrap_multihetsep*.txt")
 echo $MSMC_BS
 
-MSMC_OUTPUT=${OUTDIR}/bootstrap/outputs/${POP_OR_IND}/msmc_output.$boot
+MSMC_OUTPUT=${OUTDIR}/bootstrap/outputs/${POP_OR_IND}/msmc_output.$BOOT
 echo $MSMC_OUTPUT
 
 NR_HAPS=$(expr ${NR_IND} \* 2)
@@ -68,6 +68,6 @@ INDEX=${INDEX::-1}
 
 echo "running msmc2 on bootstraps for ${BOOT}"
 
-msmc2_Linux -t $THREADS -p $P_PAR -i $NUM_OPT -o ${MSMC_OUTPUT} -I `echo $INDEX` $MSMC_BS
+#msmc2_Linux -t $THREADS -p $P_PAR -i $NUM_OPT -o ${MSMC_OUTPUT} -I `echo $INDEX` $MSMC_BS
     
 echo "done with msmc bootstraps for ${BOOT}"
