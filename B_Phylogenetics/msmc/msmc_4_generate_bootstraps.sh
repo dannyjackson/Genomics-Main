@@ -90,7 +90,7 @@ for boot in `cat ${MSMCDIR}/bs_file_lists/${POP_OR_IND}.bs_file_list.txt`; do
 	--output=/xdisk/mcnew/finches/ljvossler/finches/msmc/boot_outs/stdout_${boot} \
     --error=/xdisk/mcnew/finches/ljvossler/finches/msmc/boot_outs/stderr_${boot} \
     --constraint=hi_mem \
-    --mem-per-cpu=32gb
+    --mem-per-cpu=32gb \
 	--nodes=1 \
 	--ntasks=${THREADS} \
 	--time=48:00:00 \
