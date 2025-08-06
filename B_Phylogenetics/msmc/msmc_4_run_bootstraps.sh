@@ -3,7 +3,7 @@
 # all parameters come from the msmc_param control file
 # make edits there before using this script!
 
-source /.bashrc
+source ~/.bashrc
 micromamba activiate msmc_env
 
 # Check for at least one argument (parameter file path)
@@ -64,7 +64,7 @@ echo $MSMC_OUTPUT
 
 NR_HAPS=$(expr ${NR_IND} \* 2)
 INDEX=$(for num in `seq 0 $(expr ${NR_HAPS} - 1)`; do echo -n "${num},"; done)
-echo ${INDEX::-1}
+INDEX=${INDEX::-1}
 
 echo "running msmc2 on bootstraps for ${BOOT}"
 

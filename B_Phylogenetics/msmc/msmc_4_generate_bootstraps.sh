@@ -88,9 +88,9 @@ for boot in `cat ${MSMCDIR}/bs_file_lists/${POP_OR_IND}.bs_file_list.txt`; do
 	--job-name=bootstrap_${boot} \
     --partition=standard \
 	--output=/xdisk/mcnew/finches/ljvossler/finches/msmc/boot_outs/stdout_bootstrap_${boot} \
-    --error=boot_outs/stderr_bootstrap_${boot} \
+    --error=/xdisk/mcnew/finches/ljvossler/finches/msmc/boot_outs/stderr_bootstrap_${boot} \
 	--nodes=1 \
-	--ntasks=28 \
-	--time=90:00:00 \
+	--ntasks=30 \
+	--time=01:00:00 \
 	${SCRIPTDIR}/Genomics-Main/B_Phylogenetics/msmc/msmc_4_run_bootstraps.sh -p ${PARAMS} -m ${MSMCPARAMS} -b ${boot} -i ${POP_OR_IND}
 done
