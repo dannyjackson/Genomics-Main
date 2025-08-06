@@ -85,12 +85,12 @@ for boot in `cat ${MSMCDIR}/bs_file_lists/${POP_OR_IND}.bs_file_list.txt`; do
     echo "running msmc2 on bootstraps for $boot"
     
 	sbatch --account=mcnew \
-	--job-name=bootstrap_${boot} \
+	--job-name=msmc_run.${boot} \
     --partition=standard \
 	--output=/xdisk/mcnew/finches/ljvossler/finches/msmc/boot_outs/stdout_${boot} \
     --error=/xdisk/mcnew/finches/ljvossler/finches/msmc/boot_outs/stderr_${boot} \
 	--nodes=1 \
-	--ntasks=30 \
+	--ntasks=1 \
 	--time=01:00:00 \
 	${SCRIPTDIR}/Genomics-Main/B_Phylogenetics/msmc/msmc_4_run_bootstraps.sh -p ${PARAMS} -m ${MSMCPARAMS} -b ${boot} -i ${POP_OR_IND}
 done
