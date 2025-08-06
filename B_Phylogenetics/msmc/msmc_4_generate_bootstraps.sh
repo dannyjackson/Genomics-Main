@@ -72,7 +72,7 @@ BS_OUTPUT=${MSMCDIR}/bootstrap/${POP_OR_IND}.bootstrap
 echo $BS_OUTPUT
 
 #echo "generating bootstraps for ${IND}"
-#${MSMCTOOLS}/multihetsep_bootstrap.py --out_dir_prefix $BS_OUTPUT --files $BS_INPUT
+${MSMCTOOLS}/multihetsep_bootstrap.py --out_dir_prefix $BS_OUTPUT --files $BS_INPUT
 
 cd ${MSMCDIR}/bootstrap
 ls -d *${POP_OR_IND}.bootstrap_* > ${MSMCDIR}/bs_file_lists/${POP_OR_IND}.bs_file_list.txt
@@ -90,9 +90,9 @@ for boot in `cat ${MSMCDIR}/bs_file_lists/${POP_OR_IND}.bs_file_list.txt`; do
 	--output=/xdisk/mcnew/finches/ljvossler/finches/msmc/boot_outs/stdout_${boot} \
     --error=/xdisk/mcnew/finches/ljvossler/finches/msmc/boot_outs/stderr_${boot} \
     --constraint=hi_mem \
-    --mem-per-cpu=32gb \
+    --mem-per-cpu=${MEM}gb \
 	--nodes=1 \
 	--ntasks=${THREADS} \
-	--time=48:00:00 \
+	--time=90:00:00 \
 	${SCRIPTDIR}/Genomics-Main/B_Phylogenetics/msmc/msmc_4_run_bootstraps.sh -p ${PARAMS} -m ${MSMCPARAMS} -b ${boot} -i ${POP_OR_IND}
 done
