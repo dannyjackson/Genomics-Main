@@ -100,7 +100,7 @@ if [ $NR_IND == 1 ]
 else
         echo "Running MSMC for $NR_IND individuals"
         MSMC_INPUT=`cat ${MSMCDIR}/input/SCAFS_INPUT_${POP_OR_IND}`
-        MSMC_OUTPUT=${MSMCDIR}/output_2/msmc_output.${POP_OR_IND}.${RUN_NAME}
+        MSMC_OUTPUT=${MSMCDIR}/output_all_idx/msmc_output.${POP_OR_IND}.${RUN_NAME}
         
        	NR_HAPS=`expr $NR_IND \* 2`
        	INDEX=$(for num in `seq 0 $(expr ${NR_HAPS} - 1)`; do echo -n "${num},"; done)
@@ -117,8 +117,8 @@ echo $INDEX
 # Run MSMC now that all necessary params are set
 msmc2_Linux -t $THREADS -p $P_PAR -i $NUM_OPT -o ${MSMC_OUTPUT} -I `echo $INDEX` $MSMC_INPUT 
 
-mv $MSMC_OUTPUT*loop.txt ${MSMCDIR}/output/log_and_loop/
-mv $MSMC_OUTPUT*log ${MSMCDIR}/output/log_and_loop/
+mv $MSMC_OUTPUT*loop.txt ${MSMCDIR}/output_all_idx/log_and_loop/
+mv $MSMC_OUTPUT*log ${MSMCDIR}/output_all_idx/log_and_loop/
 
 
 echo "done running msmc2 for ${POP_OR_IND}"
