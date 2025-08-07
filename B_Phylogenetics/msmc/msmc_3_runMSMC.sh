@@ -109,7 +109,7 @@ else
 fi
 
 #Test indices with PAR_pre
-INDEX=${0,1,2,3,6,7,15,16,20,21,23,24}
+INDEX="0,1,2,3,6,7,15,16,20,21,23,24"
 
 echo $INDEX
 
