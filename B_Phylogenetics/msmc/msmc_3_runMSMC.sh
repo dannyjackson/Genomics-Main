@@ -61,7 +61,7 @@ else
 
        for s in `cat /xdisk/mcnew/finches/ljvossler/finches/SCAFFOLDS.txt`
                do echo $s
-               ls ${MSMCDIR}/input/msmc_input.${IND}.${s}.txt >> ${MSMCDIR}/input/SCAFS_INPUT_${POP_OR_IND}
+               ls ${MSMCDIR}/input/msmc_input.${POP_OR_IND}.${s}.txt >> ${MSMCDIR}/input/SCAFS_INPUT_${POP_OR_IND}
       done
   done
 fi
@@ -107,6 +107,9 @@ else
        	INDEX=${INDEX::-1}
 
 fi
+
+#Test indices with PAR_pre
+INDEX=0,1,2,3,6,7,15,16,20,21,23,24
 
 
 # Run MSMC now that all necessary params are set
