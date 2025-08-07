@@ -102,14 +102,16 @@ else
         MSMC_INPUT=`cat ${MSMCDIR}/input/SCAFS_INPUT_${POP_OR_IND}`
         MSMC_OUTPUT=${MSMCDIR}/output_2/msmc_output.${POP_OR_IND}.${RUN_NAME}
         
-       	NR_HAPS=`expr $NR_IND \* 2`
-       	INDEX=$(for num in `seq 0 $(expr ${NR_HAPS} - 1)`; do echo -n "${num},"; done)
-       	INDEX=${INDEX::-1}
+       	#NR_HAPS=`expr $NR_IND \* 2`
+       	#INDEX=$(for num in `seq 0 $(expr ${NR_HAPS} - 1)`; do echo -n "${num},"; done)
+       	#INDEX=${INDEX::-1}
 
 fi
 
 #Test indices with PAR_pre
-INDEX=0,1,2,3,6,7,15,16,20,21,23,24
+INDEX=${0,1,2,3,6,7,15,16,20,21,23,24}
+
+echo $INDEX
 
 
 # Run MSMC now that all necessary params are set
