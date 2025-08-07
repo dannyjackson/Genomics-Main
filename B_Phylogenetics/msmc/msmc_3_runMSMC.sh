@@ -63,7 +63,7 @@ else
                do echo $s
                ls ${MSMCDIR}/input/msmc_input.${POP_OR_IND}.${s}.txt >> ${MSMCDIR}/input/SCAFS_INPUT_${POP_OR_IND}
       done
-  done
+  #done
 fi
 
 
