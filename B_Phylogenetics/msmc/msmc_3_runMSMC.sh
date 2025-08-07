@@ -55,9 +55,9 @@ if [ $NR_IND == 1 ]; then
 	find ${MSMCDIR}/input/msmc_input.${POP_OR_IND}.*.txt -size 0 -delete
 	ls ${MSMCDIR}/input/msmc_input.${POP_OR_IND}.*.txt | grep -v $sex_chr > ${OUTDIR}/input/SCAFS_INPUT_${POP_OR_IND}
 else
-	for i in `cat /xdisk/mcnew/finches/ljvossler/finches/${POP_OR_IND}_IND.txt`
-       do echo $i
-       IND=$i
+	#for i in `cat /xdisk/mcnew/finches/ljvossler/finches/${POP_OR_IND}_IND.txt`
+    #   do echo $i
+    #   IND=$i
 
        for s in `cat /xdisk/mcnew/finches/ljvossler/finches/SCAFFOLDS.txt`
                do echo $s
@@ -117,8 +117,8 @@ echo $INDEX
 # Run MSMC now that all necessary params are set
 msmc2_Linux -t $THREADS -p $P_PAR -i $NUM_OPT -o ${MSMC_OUTPUT} -I `echo $INDEX` $MSMC_INPUT 
 
-mv $MSMC_OUTPUT*loop.txt ${MSMCDIR}/output_all_idx/log_and_loop/
-mv $MSMC_OUTPUT*log ${MSMCDIR}/output_all_idx/log_and_loop/
+mv $MSMC_OUTPUT*loop.txt ${MSMCDIR}/output_2/log_and_loop/
+mv $MSMC_OUTPUT*log ${MSMCDIR}/output_2/log_and_loop/
 
 
 echo "done running msmc2 for ${POP_OR_IND}"
