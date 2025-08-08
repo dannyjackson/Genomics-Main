@@ -60,7 +60,7 @@ else
 fi
 
 #input for the bootstrapping
-BS_INPUT=`for s in $(cat ${OUTDIR}/SCAFFOLDS.txt); do find ${MSMCDIR}/input/ -maxdepth 1 -name "msmc_input.*${POP_OR_IND}.${s}*.txt"; done`
+BS_INPUT=`for s in $(cat ${OUTDIR}/SCAFFOLDS.txt); do find ${MSMCDIR}/multi_indv_data/input/ -maxdepth 1 -name "msmc_input.*${POP_OR_IND}.${s}*.txt"; done`
 
 echo 'BS_INPUT'
 echo '======================='
@@ -71,7 +71,7 @@ echo '======================='
 BS_OUTPUT=${MSMCDIR}/bootstrap/${POP_OR_IND}.bootstrap
 echo $BS_OUTPUT
 
-#echo "generating bootstraps for ${IND}"
+echo "generating bootstraps for ${IND}"
 ${MSMCTOOLS}/multihetsep_bootstrap.py --out_dir_prefix $BS_OUTPUT --files $BS_INPUT
 
 cd ${MSMCDIR}/bootstrap
