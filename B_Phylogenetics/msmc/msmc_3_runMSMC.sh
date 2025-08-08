@@ -61,7 +61,7 @@ else
 
        for s in `cat /xdisk/mcnew/finches/ljvossler/finches/SCAFFOLDS.txt`
                do echo $s
-               ls ${MSMCDIR}/input/msmc_input.${POP_OR_IND}.${s}.txt >> ${MSMCDIR}/input/SCAFS_INPUT_${POP_OR_IND}
+               ls ${MSMCDIR}/input/msmc_input.${POP_OR_IND}.${s}.txt >> ${MSMCDIR}/input/SCAFS_INPUT_all_idx_${POP_OR_IND}
       done
   #done
 fi
@@ -99,8 +99,8 @@ if [ $NR_IND == 1 ]
 
 else
         echo "Running MSMC for $NR_IND individuals"
-        MSMC_INPUT=`cat ${MSMCDIR}/input/SCAFS_INPUT_${POP_OR_IND}`
-        MSMC_OUTPUT=${MSMCDIR}/output_all_idx/msmc_output.${POP_OR_IND}.${RUN_NAME}
+        MSMC_INPUT=`cat ${MSMCDIR}/input/SCAFS_INPUT_all_idx_${POP_OR_IND}`
+        MSMC_OUTPUT=${MSMCDIR}/output_all_idx_2/msmc_output.${POP_OR_IND}.${RUN_NAME}
         
        	NR_HAPS=`expr $NR_IND \* 2`
        	INDEX=$(for num in `seq 0 $(expr ${NR_HAPS} - 1)`; do echo -n "${num},"; done)
@@ -109,7 +109,7 @@ else
 fi
 
 #Test indices with PAR_pre
-INDEX="0,1,2,3,4,5,6,7,8,9,10,11"
+INDEX="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23"
 
 echo $INDEX
 
@@ -117,8 +117,8 @@ echo $INDEX
 # Run MSMC now that all necessary params are set
 msmc2_Linux -t $THREADS -p $P_PAR -i $NUM_OPT -o ${MSMC_OUTPUT} -I `echo $INDEX` $MSMC_INPUT 
 
-mv $MSMC_OUTPUT*loop.txt ${MSMCDIR}/output_2/log_and_loop/
-mv $MSMC_OUTPUT*log ${MSMCDIR}/output_2/log_and_loop/
+mv $MSMC_OUTPUT*loop.txt ${MSMCDIR}/output_all_idx_2/log_and_loop/
+mv $MSMC_OUTPUT*log ${MSMCDIR}/output_all_idx_2/log_and_loop/
 
 
 echo "done running msmc2 for ${POP_OR_IND}"
