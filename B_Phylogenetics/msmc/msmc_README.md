@@ -21,25 +21,32 @@ Finally you can choose to generate your input files using either `msmc_2_generat
 
 
 **Running MSMC**
-Once you've generated your input files, you can run MSMC using `msmc_3_runMSMC.sh`. This script supports both single and multi-individual runs. When doing so, keep in mind that MSMC can run across multiple CPUs. Be sure to edit the `$THREADS` parameter as needed. Note that the amount of CPUs needed for an optimally efficient run usually matches the amount of chromosomes your organism has.
-**NOTE:** Lines 104-106 of `msmc_3_runMSMC.sh` are using to define the haplotype indices being analyzed. It is hard-coded to input all possible haplotype pairs into MSMC. Edit a copy of the the script if you wish to change this.
+
+Once you've generated your input files, you can run MSMC using `msmc_3_runMSMC.sh`. This script supports both single and multi-individual runs. When doing so, keep in mind that MSMC can run across multiple CPUs. Be sure to edit the `$THREADS` parameter as needed. The amount of CPUs needed for an optimally efficient run usually matches the amount of chromosomes your organism has.
+
+*NOTE on Haplotype Indices:* For single individual runs (on diploid organisms), you should only use two indices (usually 0,1). For multi-individual runs, MSMC is designed for up to 12 haplotypes (6 diploid individuals) and cannot handle more than this. Therefore, if you have more than 6 individuals in your population, you will need to select a subset of 12 haplotypes to run.
 
 **Generating Bootstrap Outputs**
+
 `msmc_4_generate_bootstraps.sh` will create 20 bootstrapped sets of input files for a given individual or population. It will then call `msmc_4_run_bootstraps.sh` to start running MSMC on each bootstrapped input in separate batch jobs. Note that ``msmc_4_run_bootstraps.sh` can be easily edited to run on its own (useful if you already have generated bootstrapped sets and don't wish to waste resources regenerating them).
 
 **Plotting Outputs**
+
 Use `msmc_5_plotmsmc.r` to plot your outputs locally in RStudio. (The MSMC output files are small and it can useful to tweak plot parameters on the fly in RStudio; however, a version of the plotting script that generates some predefined plots may be created in the future)
 
 
 ===========================================
 # Additional Notes
 
-**NOTE:** This workflow is a modified form of Jessi Rick's pipeline (found here: https://github.com/jessicarick/msmc2_scripts/). Her documentation is very well done and can be an additional resource.
+- This workflow is a modified form of Jessi Rick's pipeline (found here: https://github.com/jessicarick/msmc2_scripts/). Her documentation is very well done and can be an additional resource.
 
 ===========================================
 
 
 # TO-DO:
 
--Integrate input generation scripts better into GenMain workflow
+-Integrate input generation scripts into GenMain workflow
+
 -R Plotting should allow for running on HPC
+
+- Perform general final tests on all scripts 
