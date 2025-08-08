@@ -62,11 +62,7 @@ echo $MSMC_BS
 MSMC_OUTPUT=${MSMCDIR}/bootstrap/outputs/${POP_OR_IND}/msmc_output.$BOOT
 echo $MSMC_OUTPUT
 
-NR_HAPS=$(expr ${NR_IND} \* 2)
-INDEX=$(for num in `seq 0 $(expr ${NR_HAPS} - 1)`; do echo -n "${num},"; done)
-INDEX=${INDEX::-1}
-
-echo $INDEX
+echo "INDEX: ${INDEX}"
 
 echo "running msmc2 on bootstraps for ${BOOT}"
 
