@@ -1,20 +1,20 @@
 #!/bin/bash
 
-# This script generates a mask for a reference genome to determine which regions are "snpable".
-
 # Check for at least one argument (parameter file path)
 if [ $# -lt 1 ]; then
     echo "Usage: $0 -p <path_to_parameter_file>"
     echo "This script generates a mask for a reference genome to determine which regions are 'snpable'."
     echo "Required Argument:"
     echo "  -p   Path to parameter file (example in GitHub repository as params.sh)"
+    echo "  -m   File Name of your unique project msmc params file"
     exit 1
 fi
 
 # Parse command-line arguments
-while getopts "p:" option; do
+while getopts "pm" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
+        m) MSMCPARAMS=${OPTARG} ;;
         *) echo "Invalid option: -$OPTARG" >&2; exit 1 ;;
     esac
 done
@@ -32,6 +32,9 @@ fi
 source "${PARAMS}"
 # Check available modules (useful for debugging environment)
 module list
+
+# Source MSMC params file
+source "${SCRIPTDIR}/${MSMCPARAMS}"
 
 # Check if filenames list exists
 if [ ! -f "${FILENAME_LIST}" ]; then
@@ -53,9 +56,9 @@ while read -r IND; do
     while read -r SCAFFOLD; do
         echo "Working on scaffold: $SCAFFOLD"
 
-        VCF="${OUTDIR}/vcf/${IND}.${SCAFFOLD}.${METHOD}.vcf.gz"
+        VCF="${INDIR}/datafiles/vcf2/${IND}.${SCAFFOLD}.phased.vcf.gz"
 
-        MSMC_INPUT="${OUTDIR}/input/msmc_input.${IND}.${SCAFFOLD}.txt"
+        MSMC_INPUT="${MSMCDIR}/input/msmc_input.${IND}.${SCAFFOLD}.txt"
 
         echo "-----------------------------------------"
         echo "Processing MSMC input generation"
@@ -72,8 +75,8 @@ while read -r IND; do
             echo "VCF exists, generating MSMC2 input!"
 
             # Define mask files
-            MASK_INDIV="${OUTDIR}/mask/ind_mask.${IND}.${SCAFFOLD}.${METHOD}.bed.gz"
-            MASK_GENOME="${OUTDIR}/mask/prefix_${SCAFFOLD}.mask.${k}.50.bed.gz"
+            MASK_INDIV="${MSMCDIR}/mask/ind/ind_mask.${IND}.${SCAFFOLD}.bed.gz"
+            MASK_GENOME="${MSMCDIR}/mask/genom/${prefix}_revised_${SCAFFOLD}_mask.${k}.50.bed.gz"
 
             echo "Individual Mask: ${MASK_INDIV}"
             echo "Genome-wide Mappability Mask: ${MASK_GENOME}"
@@ -81,7 +84,7 @@ while read -r IND; do
             if [ "$METHOD" == "samtools" ]; then
                 echo "Creating MSMC input file using individual mask (samtools method)."
 
-                generate_multihetsep.py --mask="${MASK_INDIV}" --mask="${MASK_GENOME}" "${VCF}" > "${MSMC_INPUT}"
+                ${MSMCTOOLS}/generate_multihetsep.py --mask="${MASK_INDIV}" --mask="${MASK_GENOME}" "${VCF}" > "${MSMC_INPUT}"
 
             else
                 # NOTE: This method was modified on 10 FEB 2024 and may need verification.
@@ -90,11 +93,11 @@ while read -r IND; do
                 VCF_OUT="${VCF}.parsed.vcf"
 
                 # Parse VCF file
-                vcfAllSiteParser.py "$SCAFFOLD" "$MASK_INDIV" "$VCF_OUT"
+                ${MSMCTOOLS}/vcfAllSiteParser.py "$SCAFFOLD" "$MASK_INDIV" "$VCF_OUT"
 
                 echo "Creating MSMC input file with new individual mask."
 
-                generate_multihetsep.py --mask="${MASK_INDIV}" --mask="${MASK_GENOME}" "${VCF}" > "${MSMC_INPUT}"
+                ${MSMCTOOLS}/generate_multihetsep.py --mask="${MASK_INDIV}" --mask="${MASK_GENOME}" "${VCF}" > "${MSMC_INPUT}"
             fi
 
         else
