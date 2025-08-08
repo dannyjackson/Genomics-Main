@@ -53,7 +53,7 @@ else
 
     for s in `cat /xdisk/mcnew/finches/ljvossler/finches/SCAFFOLDS.txt`
         do echo $s
-        ls ${MSMCDIR}/input/msmc_input.${POP_OR_IND}.${s}.txt >> ${MSMCDIR}/input/SCAFS_INPUT_${POP_OR_IND}
+        ls ${MSMCDIR}/multi_indv_data/input/msmc_input.${POP_OR_IND}.${s}.txt >> ${MSMCDIR}/multi_indv_data/input/SCAFS_INPUT_${POP_OR_IND}
     done
 fi
 
@@ -88,8 +88,8 @@ if [ $NR_IND == 1 ]
 
 else
         echo "Running MSMC for $NR_IND individuals"
-        MSMC_INPUT=`cat ${MSMCDIR}/input/SCAFS_INPUT_${POP_OR_IND}`
-        MSMC_OUTPUT=${MSMCDIR}/output_2/msmc_output.${RUN_NAME}
+        MSMC_INPUT=`cat ${MSMCDIR}/multi_indv_data/input/SCAFS_INPUT_${POP_OR_IND}`
+        MSMC_OUTPUT=${MSMCDIR}/multi_indv_data/output_2/msmc_output.${RUN_NAME}
 
 fi
 
@@ -99,8 +99,8 @@ echo "Output File Location: ${MSMC_OUTPUT}"
 # Run MSMC now that all necessary params are set
 msmc2_Linux -t $THREADS -p $P_PAR -i $NUM_OPT -o ${MSMC_OUTPUT} -I `echo $INDEX` $MSMC_INPUT 
 
-mv $MSMC_OUTPUT*loop.txt ${MSMCDIR}/output_2/log_and_loop/
-mv $MSMC_OUTPUT*log ${MSMCDIR}/output_2/log_and_loop/
+mv $MSMC_OUTPUT*loop.txt ${MSMCDIR}/multi_indv_data/output_2/log_and_loop/
+mv $MSMC_OUTPUT*log ${MSMCDIR}/multi_indv_data/output_2/log_and_loop/
 
 
 echo "done running msmc2 for ${POP_OR_IND}"
