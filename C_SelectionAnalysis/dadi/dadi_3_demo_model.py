@@ -1,6 +1,4 @@
 '''
-Author: <Logan Vossler>
-
 ==========================================================
 Optimize Demography Model
 ==========================================================
@@ -133,12 +131,11 @@ def godambe(popt, model_ex, pts, fs, model_dir, eps, boot_dir):
 6) Save uncertainty analysis on model to file
 '''
 #========================================
-# Check if dadi-specific results directories exists in specified outdir. If not, create them.
+# Check if dadi-specific results directories exists in specified outdir. If not, create them. If using lowpass, set result dir to lowpass dir
 print('Verifying Directories...')
-# If using lowpass, set result dir to lowpass dir
 result_dir = args.outdir + 'dadi/' + args.out_folder + '/lowpass/' if args.lowpass else args.outdir + 'dadi/' + args.out_folder + '/'
 # The bootstrap files default to a nonlowpass directory, so we'll just store it in another variable to be used for GIM
-boot_dir = args.outdir + args.out_folder + '/'
+boot_dir = args.outdir + 'dadi/' + args.out_folder + '/'
 if not os.path.exists(result_dir):
     raise FileNotFoundError("Couldn't find specified result directory. Check that specified Result Directory matches the previously generated directory in data SFS creation.")
 
@@ -243,7 +240,7 @@ print('Na: ' + str(Na))
 # If want to plot demes, do so here after model params are optimized
 if args.demes:
     import demesdraw
-    print('---> Saving Demes Plot...')
+    print('---> Saving Demes Plots...')
     # Rerun model with optimal params to properly store info for deme plotting
     model_opt = model_ex(fits_opt[1:-1], n, pts)
     deme_model_yrs = [dadi.Demes.output(Nref=Na, generation_time=args.generation_time), 'yrs']
