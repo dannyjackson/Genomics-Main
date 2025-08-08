@@ -51,6 +51,7 @@ if [ $NR_IND == 1 ]; then
 	find ${MSMCDIR}/input/msmc_input.${POP_OR_IND}.*.txt -size 0 -delete
 	ls ${MSMCDIR}/input/msmc_input.${POP_OR_IND}.*.txt | grep -v $sex_chr > ${OUTDIR}/input/SCAFS_INPUT_${POP_OR_IND}
 else
+    # Overwrites any existing text (we do this to in case the file has been appended to before and prevent endlessly appending upon reruns)
     echo "" > ${MSMCDIR}/multi_indv_data/input/SCAFS_INPUT_${POP_OR_IND}
 
     for s in `cat /xdisk/mcnew/finches/ljvossler/finches/SCAFFOLDS.txt`
