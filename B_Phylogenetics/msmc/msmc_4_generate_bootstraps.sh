@@ -72,7 +72,7 @@ BS_OUTPUT=${MSMCDIR}/bootstrap/${POP_OR_IND}.bootstrap
 echo $BS_OUTPUT
 
 echo "generating bootstraps for ${IND}"
-${MSMCTOOLS}/multihetsep_bootstrap.py --out_dir_prefix $BS_OUTPUT --files $BS_INPUT
+${MSMCTOOLS}/multihetsep_bootstrap.py -s 3000000 --out_dir_prefix $BS_OUTPUT --files $BS_INPUT
 
 cd ${MSMCDIR}/bootstrap
 ls -d *${POP_OR_IND}.bootstrap_* > ${MSMCDIR}/bs_file_lists/${POP_OR_IND}.bs_file_list.txt
