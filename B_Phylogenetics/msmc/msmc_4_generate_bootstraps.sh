@@ -62,10 +62,7 @@ fi
 #input for the bootstrapping
 BS_INPUT=`for s in $(cat ${OUTDIR}/SCAFFOLDS.txt); do find ${MSMCDIR}/multi_indv_data/input/ -maxdepth 1 -name "msmc_input.*${POP_OR_IND}.${s}*.txt"; done`
 
-echo 'BS_INPUT'
-echo '======================='
-echo $BS_INPUT
-echo '======================='
+echo "BS_INPUT: ${BS_INPUT}"
 
 #output from the bootstrapping 
 BS_OUTPUT=${MSMCDIR}/bootstrap/${POP_OR_IND}.bootstrap
