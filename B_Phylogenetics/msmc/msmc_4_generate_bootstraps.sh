@@ -83,7 +83,7 @@ for boot in `cat ${MSMCDIR}/bs_file_lists/${POP_OR_IND}.bs_file_list.txt`; do
     
 	sbatch --account=mcnew \
 	--job-name=msmc_run.${boot} \
-    --partition=standard \
+    --partition=windfall \
 	--output=boot_outs/stdout_${boot} \
     --error=boot_outs/stderr_${boot} \
 	--nodes=1 \
