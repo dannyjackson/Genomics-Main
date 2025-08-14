@@ -88,6 +88,6 @@ for boot in `cat ${MSMCDIR}/bs_file_lists/${POP_OR_IND}.bs_file_list.txt`; do
     --error=boot_outs/stderr_${boot} \
 	--nodes=1 \
 	--ntasks=${THREADS} \
-	--time=48:00:00 \
+	--time=40:00:00 \
 	${SCRIPTDIR}/Genomics-Main/B_Phylogenetics/msmc/msmc_4_run_bootstraps.sh -p ${PARAMS} -m ${MSMCPARAMS} -b ${boot} -i ${POP_OR_IND}
 done
