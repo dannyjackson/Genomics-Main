@@ -28,7 +28,7 @@ Once you've generated your input files, you can run MSMC using `msmc_3_runMSMC.s
 
 **Generating Bootstrap Outputs**
 
-`msmc_4_generate_bootstraps.sh` will create 20 bootstrapped sets of input files for a given individual or population. It will then call `msmc_4_run_bootstraps.sh` to start running MSMC on each bootstrapped input in separate batch jobs. Note that `msmc_4_run_bootstraps.sh` can be edited to run on its own (useful if you already have generated bootstrapped sets and don't wish to waste resources regenerating them).
+`msmc_4_generate_bootstraps.sh` will create bootstrapped sets of input files for a given individual or population. It will then call `msmc_4_run_bootstraps.sh` to start running MSMC on each bootstrapped input in separate batch jobs. Note that `msmc_4_run_bootstraps.sh` can be edited to run on its own (useful if you already have generated bootstrapped sets and don't wish to waste resources regenerating them).
 
 **Plotting Outputs**
 
