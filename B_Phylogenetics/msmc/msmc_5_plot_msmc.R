@@ -10,7 +10,7 @@ library(patchwork)
 # SCRIPT PARAMETERS ===========================================
 mu = 1.0e-8
 gen = 4.5
-out_path = '~/Desktop/new_msmc_outputs/lines/'
+out_path = '/home/logan/Desktop/darwin_finches/new_msmc_outputs/lines/'
 
 # =============================================================
 
@@ -29,13 +29,13 @@ for (spp_folder in list.files(out_path)) {
     post_color = "#4EAFAF"
     min_x_lim = 1200
     plot_label = 'A'
-  } else if (spp_folder == 'par') {
-    post_color = "#A6C965"
-    min_x_lim = 1200
-    plot_label = 'B'
   } else if (spp_folder == 'for') {
     post_color = "#FF817E"
     min_x_lim = 4000
+    plot_label = 'B'
+  } else if (spp_folder == 'par') {
+    post_color = "#A6C965"
+    min_x_lim = 1200
     plot_label = 'C'
   }
   
@@ -85,4 +85,4 @@ for (spp_folder in list.files(out_path)) {
 
 all_msmc_plots <- cra_plot / for_plot / par_plot
 
-ggsave('~/Desktop/new_msmc_outputs/msmc_plots.png', plot=all_msmc_plots, , width=10, height=20, units='in')
+ggsave('/home/logan/Desktop/darwin_finches/new_msmc_outputs/msmc_plots.png', plot=all_msmc_plots, , width=10, height=20, units='in')
