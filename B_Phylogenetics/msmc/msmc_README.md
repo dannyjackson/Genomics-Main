@@ -28,11 +28,11 @@ Once you've generated your input files, you can run MSMC using `msmc_3_runMSMC.s
 
 **Generating Bootstrap Outputs**
 
-`msmc_4_generate_bootstraps.sh` will create 20 bootstrapped sets of input files for a given individual or population. It will then call `msmc_4_run_bootstraps.sh` to start running MSMC on each bootstrapped input in separate batch jobs. Note that ``msmc_4_run_bootstraps.sh` can be easily edited to run on its own (useful if you already have generated bootstrapped sets and don't wish to waste resources regenerating them).
+`msmc_4_generate_bootstraps.sh` will create 20 bootstrapped sets of input files for a given individual or population. It will then call `msmc_4_run_bootstraps.sh` to start running MSMC on each bootstrapped input in separate batch jobs. Note that `msmc_4_run_bootstraps.sh` can be edited to run on its own (useful if you already have generated bootstrapped sets and don't wish to waste resources regenerating them).
 
 **Plotting Outputs**
 
-Use `msmc_5_plotmsmc.r` to plot your outputs locally in RStudio. (The MSMC output files are small and it can useful to tweak plot parameters on the fly in RStudio; however, a version of the plotting script that generates some predefined plots may be created in the future)
+Use `msmc_5_plot_msmc.R` to plot your outputs locally in RStudio. This script will generate a plot for each species you've analyzed that show your main MSMC output line for both your pre/post timepoints along with associated bootstrap estimates (in lower alpha values)
 
 
 ===========================================
@@ -44,8 +44,6 @@ Use `msmc_5_plotmsmc.r` to plot your outputs locally in RStudio. (The MSMC outpu
 
 
 # TO-DO:
-
--Integrate input generation scripts into GenMain workflow
 
 -R Plotting should allow for running on HPC
 
