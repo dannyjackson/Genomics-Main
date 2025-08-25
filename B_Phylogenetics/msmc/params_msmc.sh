@@ -26,3 +26,4 @@ nchr=`wc -l /xdisk/mcnew/finches/dannyjackson/finches/referencelists/SCAFFOLDS.t
 THREADS=28 # Number of CPUs to use in MSMC run. Should roughly match with the number of chromosomes you have
 NUM_OPT=20 # Number of optimizations in MSMC run (20 is usually always enough)
 INDEX="0,1,2,3,4,5,6,7,8,9,10,11" # This defaults to just the first 12 haplotype indices read per scaffold input.
+TIME=40 # Number of Hours
