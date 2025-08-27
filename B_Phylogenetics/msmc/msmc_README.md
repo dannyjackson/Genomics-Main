@@ -26,6 +26,14 @@ Once you've generated your input files, you can run MSMC using `msmc_3_runMSMC.s
 
 *NOTE on Haplotype Indices:* For single individual runs (on diploid organisms), you should only use two indices (usually 0,1). For multi-individual runs, MSMC is designed for up to 12 haplotypes (6 diploid individuals) and cannot handle more than this. Therefore, if you have more than 6 individuals in your population, you will need to select a subset of 12 haplotypes to run.
 
+**Defining Time Segmentation Parameters**
+
+You can adjust the time segmentation pattern of MSMC2 using the `-p` flag. Since the default time segmentation pattern (`1*2+25*1+1*2+1*3`) is fitted for larger human genomes, if your project uses significantly different genome data, you'll likely need to fiddle around with this parameter to avoid overfitting of your data.
+
+You can interpret the string defining the default time segmentation pattern as follows:
+
+WIP
+
 **Generating Bootstrap Outputs**
 
 `msmc_4_generate_bootstraps.sh` will create bootstrapped sets of input files for a given individual or population. It will then call `msmc_4_run_bootstraps.sh` to start running MSMC on each bootstrapped input in separate batch jobs. Note that `msmc_4_run_bootstraps.sh` can be edited to run on its own (useful if you already have generated bootstrapped sets and don't wish to waste resources regenerating them).
