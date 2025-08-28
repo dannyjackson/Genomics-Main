@@ -28,11 +28,9 @@ Once you've generated your input files, you can run MSMC using `msmc_3_runMSMC.s
 
 **Defining Time Segmentation Parameters**
 
-You can adjust the time segmentation pattern of MSMC2 using the `-p` flag. Since the default time segmentation pattern (`1*2+25*1+1*2+1*3`) is fitted for larger human genomes, if your project uses significantly different genome data, you'll likely need to fiddle around with this parameter to avoid overfitting of your data.
+You can adjust the time segmentation pattern of MSMC2 using the `-p` flag. Since the default time segmentation pattern (`1*2+25*1+1*2+1*3`) is fitted for larger human genomes, if your project uses significantly different genome data, you'll likely need to fiddle around with this parameter to avoid overfitting of your data. In short, for non-human, relatively smaller genomes, you'll need less time segments and join the coalescence rates at the most recent and ancient timepoints of your data.
 
-You can interpret the string defining the default time segmentation pattern as follows:
-
-WIP
+Review recommended resources for support on how to properly edit this parameter.
 
 **Generating Bootstrap Outputs**
 
@@ -44,7 +42,11 @@ Use `msmc_5_plot_msmc.R` to plot your outputs locally in RStudio. This script wi
 
 
 ===========================================
-# Additional Notes
+# Additional Notes / Key Resources
+
+- Schiffels, Stephan, and Ke Wang. 2020. “MSMC and MSMC2: The Multiple Sequentially Markovian Coalescent.” In Statistical Population Genomics, edited by Julien Y. Dutheil, 2090:147–66. Methods in Molecular Biology. New York, NY: Springer US.
+
+- MSMC2 Popgen Workshop: https://comppopgenworkshop2019.readthedocs.io/en/latest/contents/08_msmc/msmc.html
 
 - This workflow is a modified form of Jessi Rick's pipeline (found here: https://github.com/jessicarick/msmc2_scripts/). Her documentation is very well done and can be an additional resource.
 
@@ -52,7 +54,5 @@ Use `msmc_5_plot_msmc.R` to plot your outputs locally in RStudio. This script wi
 
 
 # TO-DO:
-
--R Plotting should allow for running on HPC
 
 - Perform general final tests on all scripts 
