@@ -92,7 +92,7 @@ if [ $NR_IND == 1 ]
 else
         echo "Running MSMC for $NR_IND individuals"
         MSMC_INPUT=`cat ${MSMCDIR}/multi_indv_data/input/SCAFS_INPUT_${POP_OR_IND}`
-        MSMC_OUTPUT=${MSMCDIR}/multi_indv_data/output_2/msmc_output.${RUN_NAME}
+        MSMC_OUTPUT=${MSMCDIR}/multi_indv_data/output_2/msmc_output.${RUN_NAME}_16seg
 
 fi
 

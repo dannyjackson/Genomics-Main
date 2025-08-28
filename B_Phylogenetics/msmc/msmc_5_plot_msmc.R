@@ -10,7 +10,7 @@ library(patchwork)
 # SCRIPT PARAMETERS ===========================================
 mu = 1.0e-8
 gen = 4.5
-out_path = '/home/logan/Desktop/darwin_finches/new_msmc_outputs/lines/'
+out_path = '/home/logan/Desktop/darwin_finches/new_msmc_outputs/more_iter_test/'
 
 # =============================================================
 
@@ -68,7 +68,7 @@ for (spp_folder in list.files(out_path)) {
     scale_alpha_manual(values = c('data'=1, 'bootstrap'=0.4)) +
     scale_linewidth_manual(values = c('data'=2, 'bootstrap'=0.6)) +
     # Set scale limits/parameters
-    coord_cartesian(ylim = c(0,150), xlim = c(min_x_lim, 1000000)) + 
+    coord_cartesian(ylim = c(0,150), xlim = c(1, 1000000)) + 
     scale_x_log10() + 
     labs(x="Years Before Present (log scale)", y=bquote("Effective Population Size" ~(x10^3)), color='', title = plot_label) +
     # Do this to remove extra unneeded legends
@@ -83,6 +83,6 @@ for (spp_folder in list.files(out_path)) {
   
 }
 
-all_msmc_plots <- cra_plot / for_plot / par_plot
+all_msmc_plots <- cra_plot / for_plot
 
-ggsave('/home/logan/Desktop/darwin_finches/new_msmc_outputs/msmc_plots.png', plot=all_msmc_plots, , width=10, height=20, units='in')
+ggsave('/home/logan/Desktop/darwin_finches/new_msmc_outputs/test_msmc_plots.png', plot=all_msmc_plots, , width=20, height=20, units='in')
