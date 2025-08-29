@@ -10,7 +10,7 @@ library(patchwork)
 # SCRIPT PARAMETERS ===========================================
 mu = 1.0e-8
 gen = 4.5
-out_path = '/home/logan/Desktop/darwin_finches/new_msmc_outputs/more_iter_test/'
+out_path = '/home/logan/Desktop/darwin_finches/new_msmc_outputs/time_segment_tests/16/'
 
 # =============================================================
 
