@@ -69,7 +69,7 @@ BS_OUTPUT=${MSMCDIR}/bootstrap/${POP_OR_IND}.bootstrap
 echo $BS_OUTPUT
 
 echo "generating bootstraps for ${IND}"
-${MSMCTOOLS}/multihetsep_bootstrap.py -s 3000000 --out_dir_prefix $BS_OUTPUT --files $BS_INPUT
+${MSMCTOOLS}/multihetsep_bootstrap.py -n ${NR_BOOTS} -s ${CHUNK_SIZE} --chunks_per_chromosome ${CHUNKS_PER_CHROM} --nr_chromosomes ${NR_CHROM} --out_dir_prefix $BS_OUTPUT --files $BS_INPUT
 
 cd ${MSMCDIR}/bootstrap
 ls -d *${POP_OR_IND}.bootstrap_* > ${MSMCDIR}/bs_file_lists/${POP_OR_IND}.bs_file_list.txt
@@ -88,6 +88,6 @@ for boot in `cat ${MSMCDIR}/bs_file_lists/${POP_OR_IND}.bs_file_list.txt`; do
     --error=boot_outs/stderr_${boot} \
 	--nodes=1 \
 	--ntasks=${THREADS} \
-	--time=40:00:00 \
+	--time=${TIME}:00:00 \
 	${SCRIPTDIR}/Genomics-Main/B_Phylogenetics/msmc/msmc_4_run_bootstraps.sh -p ${PARAMS} -m ${MSMCPARAMS} -b ${boot} -i ${POP_OR_IND}
 done
