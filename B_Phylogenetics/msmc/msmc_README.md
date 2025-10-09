@@ -26,27 +26,17 @@ Once you've generated your input files, you can run MSMC using `msmc_3_runMSMC.s
 
 *NOTE on Haplotype Indices:* For single individual runs (on diploid organisms), you should only use two indices (usually 0,1). For multi-individual runs, MSMC is designed for up to 12 haplotypes (6 diploid individuals) and cannot handle more than this. Therefore, if you have more than 6 individuals in your population, you will need to select a subset of 12 haplotypes to run.
 
-**Defining Time Segmentation Parameters**
-
-You can adjust the time segmentation pattern of MSMC2 using the `-p` flag. Since the default time segmentation pattern (`1*2+25*1+1*2+1*3`) is fitted for larger human genomes, if your project uses significantly different genome data, you'll likely need to fiddle around with this parameter to avoid overfitting of your data. In short, for non-human, relatively smaller genomes, you'll need less time segments and join the coalescence rates at the most recent and ancient timepoints of your data.
-
-Review recommended resources for support on how to properly edit this parameter.
-
 **Generating Bootstrap Outputs**
 
-`msmc_4_generate_bootstraps.sh` will create bootstrapped sets of input files for a given individual or population. It will then call `msmc_4_run_bootstraps.sh` to start running MSMC on each bootstrapped input in separate batch jobs. Note that `msmc_4_run_bootstraps.sh` can be edited to run on its own (useful if you already have generated bootstrapped sets and don't wish to waste resources regenerating them).
+`msmc_4_generate_bootstraps.sh` will create 20 bootstrapped sets of input files for a given individual or population. It will then call `msmc_4_run_bootstraps.sh` to start running MSMC on each bootstrapped input in separate batch jobs. Note that ``msmc_4_run_bootstraps.sh` can be easily edited to run on its own (useful if you already have generated bootstrapped sets and don't wish to waste resources regenerating them).
 
 **Plotting Outputs**
 
-Use `msmc_5_plot_msmc.R` to plot your outputs locally in RStudio. This script will generate a plot for each species you've analyzed that show your main MSMC output line for both your pre/post timepoints along with associated bootstrap estimates (in lower alpha values)
+Use `msmc_5_plotmsmc.r` to plot your outputs locally in RStudio. (The MSMC output files are small and it can useful to tweak plot parameters on the fly in RStudio; however, a version of the plotting script that generates some predefined plots may be created in the future)
 
 
 ===========================================
-# Additional Notes / Key Resources
-
-- Schiffels, Stephan, and Ke Wang. 2020. “MSMC and MSMC2: The Multiple Sequentially Markovian Coalescent.” In Statistical Population Genomics, edited by Julien Y. Dutheil, 2090:147–66. Methods in Molecular Biology. New York, NY: Springer US.
-
-- MSMC2 Popgen Workshop: https://comppopgenworkshop2019.readthedocs.io/en/latest/contents/08_msmc/msmc.html
+# Additional Notes
 
 - This workflow is a modified form of Jessi Rick's pipeline (found here: https://github.com/jessicarick/msmc2_scripts/). Her documentation is very well done and can be an additional resource.
 
@@ -54,5 +44,9 @@ Use `msmc_5_plot_msmc.R` to plot your outputs locally in RStudio. This script wi
 
 
 # TO-DO:
+
+-Integrate input generation scripts into GenMain workflow
+
+-R Plotting should allow for running on HPC
 
 - Perform general final tests on all scripts 

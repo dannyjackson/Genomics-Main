@@ -43,7 +43,7 @@ fi
 source "${PARAMS}"
 source "${SCRIPTDIR}/${MSMCPARAMS}"
 module list
-RUN_NAME=${POP_OR_IND}_${DATE}
+RUN_NAME=msmc_${POP_OR_IND}_${DATE}
 
 
 if [ $NR_IND == 1 ]; then
