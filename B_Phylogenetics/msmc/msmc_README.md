@@ -17,6 +17,8 @@ Generating the MSMC haplotype input files requires some preprocessing of your da
 
 3) Lastly, these VCF files must be phased (generated using `A2.5_phasing.sh`).
 
+*NOTE*: All below scripts have associated `submit` scripts designed to work in HPC slurm setting.
+
 Finally you can choose to generate your input files using either `msmc_2_generateinput_multiInd.sh` or `msmc_2_generateInput_singleInd.sh` depending on if you wish to estimate `Ne` based on single or multi individual haplotype data. (It is recommended when testing your pipeline to run on single individual first.)
 
 
@@ -26,9 +28,13 @@ Once you've generated your input files, you can run MSMC using `msmc_3_runMSMC.s
 
 *NOTE on Haplotype Indices:* For single individual runs (on diploid organisms), you should only use two indices (usually 0,1). For multi-individual runs, MSMC is designed for up to 12 haplotypes (6 diploid individuals) and cannot handle more than this. Therefore, if you have more than 6 individuals in your population, you will need to select a subset of 12 haplotypes to run.
 
+Submit Script: `submit_run_msmc.sh`
+
 **Generating Bootstrap Outputs**
 
 `msmc_4_generate_bootstraps.sh` will create 20 bootstrapped sets of input files for a given individual or population. It will then call `msmc_4_run_bootstraps.sh` to start running MSMC on each bootstrapped input in separate batch jobs. Note that ``msmc_4_run_bootstraps.sh` can be easily edited to run on its own (useful if you already have generated bootstrapped sets and don't wish to waste resources regenerating them).
+
+Submit Script: `submit_generate_bootstrap.sh`
 
 **Plotting Outputs**
 
