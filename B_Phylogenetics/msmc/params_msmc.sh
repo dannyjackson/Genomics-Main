@@ -6,10 +6,10 @@ MSMCTOOLS=${PROGDIR}/msmc-tools # directory with msmc-tools binaries
 MSMCDIR=${OUTDIR}/msmc # directory for msmc outputs
 PATH=$PATH:$MSMCTOOLS # add directory with msmc-tools binaries to path
 METHOD=samtools  # or another variant calling method
+POP_IND_PATH=/path/to/POP_IND.txt
 
 # msmc run params
 NR_IND=5 # number of individuals in analysis
-#POP_OR_IND=SRR2917338 # name of individual or population being analyzed for script 3
 DATE=`date +%m%d%y`
 RUN_NAME=msmc_${DATE}
 P_PAR=1*2+25*1+1*2+1*3 

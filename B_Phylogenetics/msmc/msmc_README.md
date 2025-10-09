@@ -15,11 +15,15 @@ Generating the MSMC haplotype input files requires some preprocessing of your da
 
 2) A set of mask and VCF files per chromosome for each individual (generated using `A2.4_individual_mask_vcf.sh`). 
 
-3) Lastly, these VCF files must be phased (generated using `A2.5_phasing.sh`).
+3) These VCF files must be phased (generated using `A2.5_phasing.sh`).
+
+4) Create `POP_IND.txt` for each population you are analyzing. These files should contain newline-separated sample codes for each individual in your population (as seen in `sample_POP_IND.txt`). 
 
 *NOTE*: All below scripts have associated `submit` scripts designed to work in HPC slurm setting.
 
 Finally you can choose to generate your input files using either `msmc_2_generateinput_multiInd.sh` or `msmc_2_generateInput_singleInd.sh` depending on if you wish to estimate `Ne` based on single or multi individual haplotype data. (It is recommended when testing your pipeline to run on single individual first.)
+
+Submit Script: `submit_input_multi.sh` or `submit_input_single.sh`
 
 
 **Running MSMC**

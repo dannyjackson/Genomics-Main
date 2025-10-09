@@ -14,12 +14,16 @@
 ##SBATCH --constraint=hi_mem
 ##SBATCH --mem-per-cpu=41gb
 
-for POP in `cat popcodes.txt`;
+PARAMS=/path/to/params_base.sh
+
+source ${PARAMS}
+
+for POP in `cat popnames.txt`;
 	do echo $POP
 	sbatch --account=mcnew \
 	--job-name=msmc_run.${POP} \
     --partition=standard \
-	--output=slurm_output/msmc_input.${POP}.%j \
+	--output=msmc_input.${POP}.%j \
 	--nodes=1 \
 	--ntasks=1 \
 	--time=10:00:00 \

@@ -14,9 +14,8 @@
 ##SBATCH --constraint=hi_mem
 ##SBATCH --mem-per-cpu=41gb
 
-source ~/.bashrc
-micromamba activate msmc_env
+PARAMS=/path/to/params_base.sh
 
-source params_msmc.sh
+source ${PARAMS}
 
-source msmc2_scripts/msmc_3_generateinput_singleindv.sh -p params_base.sh
+source ${SCRIPTDIR}/B_Phylogenetics/msmc/msmc_2_generateInput_singleInd.sh -p "${PARAMS}" -m params_msmc.sh

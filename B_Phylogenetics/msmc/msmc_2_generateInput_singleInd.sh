@@ -1,5 +1,8 @@
 #!/bin/bash
 
+source ~/.bashrc
+micromamba activiate msmc_env
+
 # Check for at least one argument (parameter file path)
 if [ $# -lt 1 ]; then
     echo "Usage: $0 -p <path_to_parameter_file>"
