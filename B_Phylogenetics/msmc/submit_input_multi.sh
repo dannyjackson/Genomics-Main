@@ -21,7 +21,7 @@ source ${PARAMS}
 for POP in `cat popnames.txt`;
 	do echo $POP
 	sbatch --account=mcnew \
-	--job-name=msmc_run.${POP} \
+	--job-name=msmc_input.${POP} \
     --partition=standard \
 	--output=msmc_input.${POP}.%j \
 	--nodes=1 \
