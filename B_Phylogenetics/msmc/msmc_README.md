@@ -1,7 +1,12 @@
 # MSMC2 Pipeline - Estimating Effective Population Size
 ===========================================
 ## Script Requirements
-Each script requires the base_params.sh file and params_msmc.sh file.
+Each script requires:
+    - base_params.sh
+    - params_msmc.sh
+    - path to msmc-tools repo (https://github.com/stschiff/msmc-tools.git)
+
+These scripts use the pre-compiled version of MSMC2 for Linux, downloadable from MSMC2 repo (https://github.com/stschiff/msmc2.git)
 
 Estimating Effective Population Size (Ne) over time in MSMC2 should follow the outline below. All scripts will require edits to a copy of the params_msmc.sh file to function
 
@@ -34,11 +39,13 @@ Once you've generated your input files, you can run MSMC using `msmc_3_runMSMC.s
 
 Submit Script: `submit_run_msmc.sh`
 
+
 **Generating Bootstrap Outputs**
 
 `msmc_4_generate_bootstraps.sh` will create 20 bootstrapped sets of input files for a given individual or population. It will then call `msmc_4_run_bootstraps.sh` to start running MSMC on each bootstrapped input in separate batch jobs. Note that ``msmc_4_run_bootstraps.sh` can be easily edited to run on its own (useful if you already have generated bootstrapped sets and don't wish to waste resources regenerating them).
 
 Submit Script: `submit_generate_bootstrap.sh`
+
 
 **Plotting Outputs**
 
@@ -51,12 +58,3 @@ Use `msmc_5_plotmsmc.r` to plot your outputs locally in RStudio. (The MSMC outpu
 - This workflow is a modified form of Jessi Rick's pipeline (found here: https://github.com/jessicarick/msmc2_scripts/). Her documentation is very well done and can be an additional resource.
 
 ===========================================
-
-
-# TO-DO:
-
--Integrate input generation scripts into GenMain workflow
-
--R Plotting should allow for running on HPC
-
-- Perform general final tests on all scripts 
