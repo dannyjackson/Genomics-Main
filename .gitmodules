@@ -1,0 +1,3 @@
+[submodule "B_Phylogenetics/GONE"]
+	path = B_Phylogenetics/GONE
+	url = git@github.com:ljvossler/GONE.git
