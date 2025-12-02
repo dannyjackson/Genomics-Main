@@ -28,7 +28,7 @@ Be sure to revise your script parameters in `params_gone.sh` prior to running.
 
 GONE Ne outputs can be found in `Output_Ne_popname` file. This file contains tab separated columns denoting the geometric mean estimates of population size for each generation.
 
-You can use `gone_plot.r` to plot your outputs locally in RStudio.
+You can use `plot_gone.r` to plot and compare your time-series outputs
 
 
 ===========================================
