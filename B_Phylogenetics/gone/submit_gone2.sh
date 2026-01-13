@@ -2,7 +2,7 @@
 # --------------------
 ### Directives Section
 # --------------------
-#SBATCH --job-name=run_gone2_cra_pre
+#SBATCH --job-name=run_gone2
 #SBATCH --account=mcnew
 #SBATCH --partition=standard
 #SBATCH --nodes=1
@@ -10,16 +10,19 @@
 #SBATCH --time=01:00:00
 #SBATCH --ntasks-per-node=4
 ##SBATCH --gres=gpu:1
-#SBATCH --output run_gone2_cra_pre.out
+#SBATCH --output run_gone2.out
 ##SBATCH --constraint=hi_mem
 ##SBATCH --mem-per-cpu=41gb
 
-POPNAME=cra_pre
+#=PARAMS===========================
+POPNAME=pop1
+NUMIND=5
 POP_PATH=../$POPNAME
+#==================================
 
-echo "Running GONE for $POPNAME..."
+echo "Running GONE for $POPNAME with $NUMIND individuals..."
 cd GONE2/
-./gone2 $POP_PATH/gone_input/$POPNAME.ped -g 2 -r 1 -t 4 -o $POPNAME
+./gone2 $POP_PATH/gone_input/$POPNAME.ped -g 0 -r 1.1 -i $NUMIND -t 4 -o $POPNAME
 
 
 echo "Organizing Output Files..."

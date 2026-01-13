@@ -1,8 +1,8 @@
 library(dplyr)
 library(ggplot2)
 
-out_path_pre = 'outputs/pipetest.ped_GONE2_Ne'
-out_path_post = 'outputs/par_pre_thinned.ped_GONE2_Ne'
+out_path_pre = 'pre_pop_ne_output_path'
+out_path_post = 'post_pop_ne_ouput_path'
 
 df_pre <- read.csv(out_path_pre, sep = '\t')
 df_post <- read.csv(out_path_post, sep = '\t')
@@ -16,7 +16,8 @@ df_full <- df_full %>%
 
 color_codes <- c(pre='black', post='red')
 
-df_pre %>%
+df_full %>%
   ggplot(aes(x=Generation, y=Ne_diploids, color = time)) +
   geom_point() +
   scale_color_manual(values = color_codes, name='Time') #+coord_cartesian(ylim = c(0,20))
+

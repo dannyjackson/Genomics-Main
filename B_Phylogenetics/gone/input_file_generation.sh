@@ -1,10 +1,34 @@
+#!/bin/bash
+# --------------------
+### Directives Section
+# --------------------
+#SBATCH --job-name=gone2_input_generation
+#SBATCH --account=mcnew
+#SBATCH --partition=standard
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --time=00:15:00
+#SBATCH --ntasks-per-node=1
+##SBATCH --gres=gpu:1
+#SBATCH --output gone2_input_generation.out
+##SBATCH --constraint=hi_mem
+##SBATCH --mem-per-cpu=41gb
+
+
+#=PARAMS===========================
+VCFFILE=/path/to/vcf
+SCAFFOLD_LIST=SCAFFOLDS_subset.txt
+OUTPREFIX=pop1
+#=================================
+
 module load vcftools
 module load plink
 module load python/3.11.4
+module load bcftools
 
-VCFFILE=$1
-SCAFFOLD_LIST=$2
-OUTPREFIX=$3
+echo VCF FILE PATH: $VCFFILE
+echo SCAFFOLD SUBSET: $SCAFFOLD_LIST
+echo OUTPREFIX: $OUTPREFIX
 
 if [ ! -d "$OUTPREFIX/gone_input" ]; then
   echo "Directory for gone_input does not exist. Creating it now..."
@@ -16,13 +40,13 @@ fi
 CHR_SUBSET_FLAGS=$(for name in $(cat $SCAFFOLD_LIST); do echo --chr $name; done)
 
 # Create a filtered VCF to only include a specific subset of chromosomes
-vcftools $CHR_SUBSET_FLAGS --gzvcf $VCFFILE --recode --recode-INFO-all --out $OUTPREFIX
-#vcftools --chr NC_044571.1 --chr NC_044572.1 --chr NC_044573.1 --chr NC_044574.1 --chr NC_044575.1 --chr NC_044576.1 --chr NC_044577.1 --chr NC_044578.1 --chr NC_044579.1 --chr NC_044580.1 --chr NC_044581.1 --chr NC_044582.1 --gzvcf par_pre.phased.sorted.vcf.gz --recode --recode-INFO-all --out par_pre_subset
+# --max-missing to set proportion of missing data you'll permit.
+vcftools $CHR_SUBSET_FLAGS --gzvcf $OUTPREFIX.vcf --recode --recode-INFO-all --max-missing 1 --out $OUTPREFIX
 
 # Convert VCF to plink formats
 # --allow-extra-chr to deal with non-standard chromosome names
 # --thin-count to randomly sample a subset of SNPs from the VCF (needed since GONE2 can't handle too many SNPs by default)
-plink --vcf $OUTPREFIX.recode.vcf --thin-count 2000000 --allow-extra-chr --recode --out $OUTPREFIX
+plink --vcf $OUTPREFIX.recode.vcf --allow-extra-chr --recode --out $OUTPREFIX
 # Note that if you don't have info on SNP position in a genetic map (cM), you'll probably need to set a fixed recombination rate when running GONE2 or do some extra analyses to find this info yourself. (In this case the .map file is not useful)
 
 # Due to not having standard chromosome names and that outputted files aren't always consistent with what GONE2 wants, we use these python scripts to reformat the data.
