@@ -19,6 +19,7 @@
 VCFFILE=/path/to/vcf
 SCAFFOLD_LIST=SCAFFOLDS_subset.txt
 OUTPREFIX=pop1
+OUTDIR=$OUTPREFIX/gone_input
 #=================================
 
 module load vcftools
@@ -30,9 +31,9 @@ echo VCF FILE PATH: $VCFFILE
 echo SCAFFOLD SUBSET: $SCAFFOLD_LIST
 echo OUTPREFIX: $OUTPREFIX
 
-if [ ! -d "$OUTPREFIX/gone_input" ]; then
+if [ ! -d "$OUTDIR" ]; then
   echo "Directory for gone_input does not exist. Creating it now..."
-  mkdir -p "$OUTPREFIX/gone_input" # -p creates parent directories if they don't exist
+  mkdir -p "$OUTDIR" # -p creates parent directories if they don't exist
 else
   echo "Directory for gone_input already exists."
 fi
@@ -41,7 +42,7 @@ CHR_SUBSET_FLAGS=$(for name in $(cat $SCAFFOLD_LIST); do echo --chr $name; done)
 
 # Create a filtered VCF to only include a specific subset of chromosomes
 # --max-missing to set proportion of missing data you'll permit.
-vcftools $CHR_SUBSET_FLAGS --gzvcf $OUTPREFIX.vcf --recode --recode-INFO-all --max-missing 1 --out $OUTPREFIX
+vcftools $CHR_SUBSET_FLAGS --gzvcf $OUTPREFIX.vcf --recode --recode-INFO-all --max-missing 0.8 --out $OUTPREFIX
 
 # Convert VCF to plink formats
 # --allow-extra-chr to deal with non-standard chromosome names
@@ -54,8 +55,8 @@ python map_clean.py --map $OUTPREFIX.map
 python ped_clean.py --ped $OUTPREFIX.ped
 
 # Organize output files
-mv $OUTPREFIX.map $OUTPREFIX/gone_input
-mv $OUTPREFIX.ped $OUTPREFIX/gone_input
-mv $OUTPREFIX.log $OUTPREFIX/gone_input
-mv $OUTPREFIX.nosex $OUTPREFIX/gone_input
-mv $OUTPREFIX.recode.vcf $OUTPREFIX/gone_input
+mv $OUTPREFIX.map $OUTDIR
+mv $OUTPREFIX.ped $OUTDIR
+mv $OUTPREFIX.log $OUTDIR
+mv $OUTPREFIX.nosex $OUTDIR
+mv $OUTPREFIX.recode.vcf $OUTDIR

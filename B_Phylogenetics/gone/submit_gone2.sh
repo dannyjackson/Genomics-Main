@@ -18,24 +18,26 @@
 POPNAME=pop1
 NUMIND=5
 POP_PATH=../$POPNAME
+RECOMB_RATE=3.1
+OUTDIR=$POP_PATH/gone_output
 #==================================
 
-echo "Running GONE for $POPNAME with $NUMIND individuals..."
+echo "Running GONE for $POPNAME with $NUMIND individuals with recombination rate of $RECOMB_RATE..."
 cd GONE2/
-./gone2 $POP_PATH/gone_input/$POPNAME.ped -g 0 -r 1.1 -i $NUMIND -t 4 -o $POPNAME
+./gone2 $POP_PATH/gone_input/$POPNAME.ped -g 0 -r $RECOMB_RATE -i $NUMIND -t 4 -o $POPNAME
 
 
 echo "Organizing Output Files..."
 
-if [ ! -d $POP_PATH/gone_output ]; then
+if [ ! -d $OUTDIR ]; then
   echo "Output directory for $POPNAME does not exist. Creating it now..."
-  mkdir -p $POP_PATH/gone_output
+  mkdir -p $OUTDIR
 else
   echo "Output directory for $POPNAME already exists. Moving on..."
 fi
-mv ${POPNAME}_GONE2_d2 $POP_PATH/gone_output/
-mv ${POPNAME}_GONE2_Ne $POP_PATH/gone_output/
-mv ${POPNAME}_GONE2_STATS $POP_PATH/gone_output/
+mv ${POPNAME}_GONE2_d2 $OUTDIR/
+mv ${POPNAME}_GONE2_Ne $OUTDIR/
+mv ${POPNAME}_GONE2_STATS $OUTDIR/
 
 
 echo "Completed GONE Analysis for $POPNAME"
