@@ -43,7 +43,7 @@ CHR_SUBSET_FLAGS=$(for name in $(cat $SCAFFOLD_LIST); do echo --chr $name; done)
 
 # Create a filtered VCF to only include a specific subset of chromosomes
 # --max-missing to set proportion of missing data you'll permit.
-vcftools $CHR_SUBSET_FLAGS --gzvcf $OUTPREFIX.vcf --recode --recode-INFO-all --max-missing $MAX_MISSING --out $OUTPREFIX
+vcftools $CHR_SUBSET_FLAGS --gzvcf $VCFFILE --recode --recode-INFO-all --max-missing $MAX_MISSING --out $OUTPREFIX
 
 # Convert VCF to plink formats
 # --allow-extra-chr to deal with non-standard chromosome names
