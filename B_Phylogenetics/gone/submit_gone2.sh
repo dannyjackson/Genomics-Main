@@ -19,12 +19,14 @@ POPNAME=pop1
 NUMIND=5
 POP_PATH=../$POPNAME
 RECOMB_RATE=3.1
+GENO_DTYPE=0
+INDIR=$POP_PATH/gone_input
 OUTDIR=$POP_PATH/gone_output
 #==================================
 
 echo "Running GONE for $POPNAME with $NUMIND individuals with recombination rate of $RECOMB_RATE..."
 cd GONE2/
-./gone2 $POP_PATH/gone_input/$POPNAME.ped -g 0 -r $RECOMB_RATE -i $NUMIND -t 4 -o $POPNAME
+./gone2 $INDIR/$POPNAME.ped -g $GENO_DTYPE -r $RECOMB_RATE -i $NUMIND -t 4 -o $POPNAME
 
 
 echo "Organizing Output Files..."

@@ -20,7 +20,7 @@ VCFFILE=/path/to/vcf
 SCAFFOLD_LIST=SCAFFOLDS_subset.txt
 OUTPREFIX=pop1
 OUTDIR=$OUTPREFIX/gone_input
-MAX_MISSING=0.8 # The max proportion of missing data allowed by GONE2
+MAX_MISSING=0.8 # The max proportion of missing data allowed by GONE2 is 20%
 #=================================
 
 module load vcftools
