@@ -13,7 +13,7 @@
 #SBATCH --output submit_input_array.out
 ##SBATCH --constraint=hi_mem
 ##SBATCH --mem-per-cpu=41gb
-#SBATCH --array=1-2
+#SBATCH --array=1-6
 
 ARRAY_NAME=run1
 
