@@ -15,7 +15,7 @@
 ##SBATCH --mem-per-cpu=41gb
 #SBATCH --array=1-6
 
-ARRAY_NAME=run1
+ARRAY_NAME=input_run1
 
 INPUTPARAMS="$( sed "${SLURM_ARRAY_TASK_ID}q;d" INPUTPOPS )"
 OUTFILE="$( echo inputs_${INPUTPARAMS}.out)"
