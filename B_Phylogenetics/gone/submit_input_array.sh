@@ -18,15 +18,17 @@
 ARRAY_NAME=run1
 
 INPUTPARAMS="$( sed "${SLURM_ARRAY_TASK_ID}q;d" INPUTPOPS )"
-OUTFILE="$( echo input_generation_${INPUTPARAMS}.out)"
-
-if [ ! -d "$ARRAY_NAME" ]; then
-  echo "Directory for $ARRAY_NAME does not exist. Creating it now..."
-  mkdir -p "$ARRAY_NAME" # -p creates parent directories if they don't exist
-else
-  echo "Directory for $ARRAY_NAME already exists."
-fi
+OUTFILE="$( echo inputs_${INPUTPARAMS}.out)"
 
 source $INPUTPARAMS
 
-source input_generation.sh > $ARRAY_NAME/$OUTPREFIX/${OUTFILE}
+# Create output directory if it doesn't exist
+OUTDIR=$ARRAY_NAME/$OUTPREFIX/gone_input
+if [ ! -d "$OUTDIR" ]; then
+  echo "Directory for gone_input does not exist. Creating it now..."
+  mkdir -p "$OUTDIR" # -p creates parent directories if they don't exist
+else
+  echo "Directory for gone_input already exists."
+fi
+
+source input_generation.sh > $OUTDIR/$OUTFILE

@@ -10,15 +10,6 @@ echo SCAFFOLD SUBSET: $SCAFFOLD_LIST
 echo POPULATION: $OUTPREFIX
 echo MAX MISSING DATA: $MAX_MISSING
 
-OUTDIR=$ARRAY_NAME/$OUTPREFIX/gone_input
-
-if [ ! -d "$OUTDIR" ]; then
-  echo "Directory for gone_input does not exist. Creating it now..."
-  mkdir -p "$OUTDIR" # -p creates parent directories if they don't exist
-else
-  echo "Directory for gone_input already exists."
-fi
-
 CHR_SUBSET_FLAGS=$(for name in $(cat $SCAFFOLD_LIST); do echo --chr $name; done)
 
 # Create a filtered VCF to only include a specific subset of chromosomes
