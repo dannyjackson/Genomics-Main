@@ -1,4 +1,4 @@
-VCFFILE=/xdisk/mcnew/finches/dannyjackson/finches/datafiles/cra_post.phased.sorted.vcf.gz
+VCFFILE=/xdisk/mcnew/finches/dannyjackson/finches/datafiles/vcf3/cra_post.phased.sorted.vcf.gz
 SCAFFOLD_LIST=SCAFFOLDS_subset.txt
 OUTPREFIX=cra_post
 MAX_MISSING=1
