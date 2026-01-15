@@ -1,7 +1,7 @@
 VCFFILE=/xdisk/mcnew/finches/dannyjackson/finches/datafiles/vcf3/par_pre.phased.sorted.vcf.gz
 SCAFFOLD_LIST=SCAFFOLDS_subset.txt
 OUTPREFIX=par_pre
-MAX_MISSING=1
+MAX_MISSING=0.8
 
 INDIR=../input_run1/par_pre/gone_input #When selecting your input directory using relative paths, ensure you go up a directory since the script will be run from within the gone2 folder
 NUMIND=7
