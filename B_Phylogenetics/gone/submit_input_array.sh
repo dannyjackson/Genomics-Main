@@ -15,7 +15,7 @@
 ##SBATCH --mem-per-cpu=41gb
 #SBATCH --array=1-6
 
-ARRAY_NAME=input_run2 # Be sure to rename this parameter if you wish to keep mulitple input runs. Otherwise, all files in an existing array folder will be overwritten.
+ARRAY_NAME=input_run1 # Be sure to rename this parameter if you wish to keep mulitple input runs. Otherwise, all files in an existing array folder will be overwritten.
 
 INPUTPARAMS="$( sed "${SLURM_ARRAY_TASK_ID}q;d" INPUTPOPS )"
 OUTFILE="$( echo inputs_${INPUTPARAMS}.out)"
