@@ -18,7 +18,7 @@
 ARRAY_NAME=run1
 
 INPUTPARAMS="$( sed "${SLURM_ARRAY_TASK_ID}q;d" INPUTPOPS )"
-OUTFILE="$( echo ${INPUTPARAMS}.out)"
+OUTFILE="$( echo input_generation_${INPUTPARAMS}.out)"
 
 if [ ! -d "$ARRAY_NAME" ]; then
   echo "Directory for $ARRAY_NAME does not exist. Creating it now..."
@@ -29,4 +29,4 @@ fi
 
 source $INPUTPARAMS
 
-source input_generation.sh > $ARRAY_NAME/$OUTPREFIX/input_generation_${OUTFILE}.out
+source input_generation.sh > $ARRAY_NAME/$OUTPREFIX/${OUTFILE}
