@@ -15,7 +15,7 @@
 ##SBATCH --mem-per-cpu=41gb
 #SBATCH --array=1-6
 
-ARRAY_NAME=gone_run2 # Be sure to rename this parameter if you wish to keep mulitple gone2 runs. Otherwise, all files in an existing array folder will be overwritten.
+ARRAY_NAME=gone_run3 # Be sure to rename this parameter if you wish to keep mulitple gone2 runs. Otherwise, all files in an existing array folder will be overwritten.
 
 INPUTPARAMS="$( sed "${SLURM_ARRAY_TASK_ID}q;d" INPUTPOPS )"
 OUTFILE="$( echo gone2_${INPUTPARAMS}.out)"
