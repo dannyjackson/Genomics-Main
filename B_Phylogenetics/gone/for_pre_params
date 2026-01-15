@@ -1,0 +1,4 @@
+VCFFILE=/xdisk/mcnew/finches/dannyjackson/finches/datafiles/vcf3/for_pre.phased.sorted.vcf.gz
+SCAFFOLD_LIST=SCAFFOLDS_subset.txt
+OUTPREFIX=for_pre
+MAX_MISSING=1
