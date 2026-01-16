@@ -13,7 +13,7 @@
 #SBATCH --output submit_gone2_array.out
 ##SBATCH --constraint=hi_mem
 ##SBATCH --mem-per-cpu=41gb
-#SBATCH --array=1-2
+#SBATCH --array=1-6
 
 ARRAY_NAME=gone_run6 # Be sure to rename this parameter if you wish to keep mulitple gone2 runs. Otherwise, all files in an existing array folder will be overwritten.
 
