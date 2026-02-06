@@ -3,7 +3,7 @@
 if [ $# -lt 1 ]; then
     echo "Usage: $0 -p <parameter_file>
 
-This script aligns FASTQ files to a reference genome using BWA MEM.
+This script trims FASTQ files using trimmomatic..
 
 I recommend running it as a slurm array to pass individuals to sbatch jobs for maximum efficiency (see github.com/dannyjackson/BioinformaticTutorials/SubmittingJobs.txt for an explanation of running slurm arrays).
 
@@ -32,7 +32,7 @@ source "${PARAMS}"
 
 printf "\n\n\n\n"
 date
-echo "Current script: A2_alignandsort.sh"
+echo "Current script: A0.1_trimming.sh"
 
 # Ensure required variables are set
 if [ -z "$OUTDIR" ] || [ -z "$THREADS" ] || [ -z "$REF" ] || [ -z "$FASTAS" ]; then
@@ -41,7 +41,7 @@ if [ -z "$OUTDIR" ] || [ -z "$THREADS" ] || [ -z "$REF" ] || [ -z "$FASTAS" ]; t
 fi
 
 # Index reference genome
-bwa index ${REF}
+#bwa index ${REF}
 
 # create list of samples, assumes fastas are all formated with sample names as first term in an underscore separated string
 ls ${FASTAS} | awk -F "_" '{print $1}' | sort -u > "${OUTDIR}/referencelists/sampleids.txt"
@@ -49,7 +49,7 @@ ls ${FASTAS} | awk -F "_" '{print $1}' | sort -u > "${OUTDIR}/referencelists/sam
 
 while read -r ID;
 do
-  echo "Beginning trimming for "$ID>>${OUTDIR}/trimming/trim_log.txt
+  echo "Beginning trimming for "$ID>>${OUTDIR}/datafiles/trimming/trim_log.txt
   java -jar ${TRIMJAR} PE -threads 12 \
   ${OUTDIR}/condensed_fastas/"$ID"_1.fq.gz  ${OUTDIR}/condensed_fastas/"$ID"_2.fq.gz  \
   -baseout ${OUTDIR}/datafiles/trimmed_fastas/"$ID"_trimmed.fq.gz \
