@@ -51,7 +51,7 @@ while read -r ID;
 do
   echo "Beginning trimming for "$ID>>${OUTDIR}/datafiles/trimming/trim_log.txt
   java -jar ${TRIMJAR} PE -threads 12 \
-  ${OUTDIR}/datafiles/condensed_fastas/"$ID"_1.fq.gz  ${OUTDIR}/datafiles/condensed_fastas/"$ID"_2.fq.gz  \
+  ${FASTAS}/"$ID"_R1.fastq.gz  ${FASTAS}/"$ID"_R2.fastq.gz  \
   -baseout ${OUTDIR}/datafiles/trimmed_fastas/"$ID"_trimmed.fq.gz \
   LEADING:${LEAD} TRAILING:${TRAIL} SLIDINGWINDOW:${SLIDE} MINLEN:${MINREADLEN}>>${OUTDIR}/datafiles/trimming/trim_log.txt
 
