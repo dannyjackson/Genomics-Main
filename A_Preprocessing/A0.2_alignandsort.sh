@@ -43,8 +43,8 @@ fi
 
 # Align reads using BWA MEM
 bwa mem -t "${THREADS}" "${REF}" \
-    "${FASTAS}/${IND}_trimmed_1P.fq.gz" \
-    "${FASTAS}/${IND}_trimmed_2P.fq.gz" | \
+    "${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_1P.fq.gz" \
+    "${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_2P.fq.gz" | \
     samtools view -b -o "${OUTDIR}/datafiles/bamfiles/${IND}.bam" -S
 
 # Sort BAM file
