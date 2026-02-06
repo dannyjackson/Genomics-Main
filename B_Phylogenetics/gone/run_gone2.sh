@@ -11,3 +11,4 @@ mv ${OUTPREFIX}_GONE2_STATS ../$OUTDIR/
 
 echo "Completed GONE Analysis for $OUTPREFIX"
  
+#test
