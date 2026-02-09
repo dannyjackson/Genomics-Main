@@ -44,6 +44,6 @@ fi
 # Clip overlapping read pairs using bamutils
 echo "clipping" "${IND}" >> ${OUTDIR}/datafiles/clipoverlap/clippingstats.txt 
 
-source ${BAMUTILBAM} clipOverlap --in ${OUTDIR}/datafiles/sortedbamfiles/${IND}/${IND}_sorted_RGadded_dupmarked.bam --out ${OUTDIR}/datafiles/clipoverlap/${IND}.all.sorted.marked.clipped.bam --stats --params
+${BAMUTILBAM} clipOverlap --in ${OUTDIR}/datafiles/sortedbamfiles/${IND}/${IND}_sorted_RGadded_dupmarked.bam --out ${OUTDIR}/datafiles/clipoverlap/${IND}.all.sorted.marked.clipped.bam --stats --params
 
 echo "done " ${IND} >>${OUTDIR}/datafiles/clipoverlap/clippingstats.txt 
