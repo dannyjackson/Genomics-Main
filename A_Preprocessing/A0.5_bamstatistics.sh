@@ -32,7 +32,7 @@ source "${PARAMS}"
 
 printf "\n\n\n\n"
 date
-echo "Current script: A2_ClipOverlap.sh"
+echo "Current script: A0.5_bamstatistics.sh"
 
 # Ensure required variables are set
 if [ -z "$OUTDIR" ] ; then
