@@ -43,13 +43,21 @@ if [ -z "$OUTDIR" ] || [ -z "$THREADS" ] || [ -z "$REF" ] || [ -z "$FASTAS" ] ||
 fi
 
 
+# Check for ref-genome index
+if [ -f "${REF}.fai" ];
+        then
+            echo ".fai file already exists, moving on!"
+        else
+        samtools faidx ${REF}
+fi
+
 
 # Index bams
 samtools index ${OUTDIR}/datafiles/clipoverlap/$IND.all.sorted.marked.clipped.bam 
 echo "done " ${IND} >>${OUTDIR}/datafiles/clipoverlap/index_clippedstats.txt 
 
 # Create indel maps
-apptainer exec /xdisk/mcnew/finches/dannyjackson/programs/gatk3_3.7-0.sif java -jar /usr/GenomeAnalysisTK.jar \
+apptainer exec ${PROGDIR}/gatk3_3.7-0.sif java -jar ${PROGDIR}/GenomeAnalysisTK.jar \
 -T RealignerTargetCreator \
 -R ${REF} \
 -I ${OUTDIR}/datafiles/clipoverlap/${IND}.all.sorted.marked.clipped.bam \
