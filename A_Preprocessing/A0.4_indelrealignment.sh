@@ -57,14 +57,14 @@ samtools index ${OUTDIR}/datafiles/clipoverlap/$IND.all.sorted.marked.clipped.ba
 echo "done " ${IND} >>${OUTDIR}/datafiles/clipoverlap/index_clippedstats.txt 
 
 # Create indel maps
-apptainer exec ${PROGDIR}/gatk3_3.7-0.sif java -jar ${PROGDIR}/GenomeAnalysisTK.jar \
+apptainer exec ${PROGDIR}/gatk3-3.7-0.sif java -jar /usr/GenomeAnalysisTK.jar \
 -T RealignerTargetCreator \
 -R ${REF} \
 -I ${OUTDIR}/datafiles/clipoverlap/${IND}.all.sorted.marked.clipped.bam \
 -o ${OUTDIR}/datafiles/indelmaps/${IND}.intervals
 
 # Realign around indels
-apptainer exec ${PROGDIR}/gatk3_3.7-0.sif java -jar ${PROGDIR}/GenomeAnalysisTK.jar -T IndelRealigner \
+apptainer exec ${PROGDIR}/gatk3-3.7-0.sif java -jar /usr/GenomeAnalysisTK.jar -T IndelRealigner \
 -R ${REF} \
 --consensusDeterminationModel USE_READS \
 -I ${OUTDIR}/datafiles/clipoverlap/${IND}.all.sorted.marked.clipped.bam \
