@@ -51,6 +51,14 @@ if [ -f "${REF}.fai" ];
         samtools faidx ${REF}
 fi
 
+# Check for ref-genome .dict file
+if [ -f "${REF}.dict" ];
+        then
+            echo ".dict file already exists, moving on!"
+        else
+        picard CreateSequenceDictionary REFERENCE=${REF} OUTPUT=${REF}.dict
+fi
+
 
 # Index bams
 samtools index ${OUTDIR}/datafiles/clipoverlap/$IND.all.sorted.marked.clipped.bam 
