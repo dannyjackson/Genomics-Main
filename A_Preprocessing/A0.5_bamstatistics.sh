@@ -60,7 +60,7 @@ echo "Sample,Average,Stdev" > ${OUTDIR}/datafiles/bamstats/${RUNNAME}.depthstats
 
 while read -r bird; do 
   # Compute average and standard deviation
-  stats=$(awk '{sum+=$3; sumsq+=$3*$3} END { print sum/NR, sqrt(sumsq/NR - (sum/NR)**2) }' ${OUTDIR}/datafiles/bamstats/${RUNNAME}."$bird"_depthstats.txt)
+  stats=$(awk '{sum+=$3; sumsq+=$3*$3} END { print sum/NR, sqrt(sumsq/NR - (sum/NR)**2) }' ${OUTDIR}/datafiles/bamstats/"$bird"_depthstats.txt)
   
   # Append results in CSV format
   echo "$bird,$stats" >> ${OUTDIR}/datafiles/bamstats/${RUNNAME}.depthstats.txt
