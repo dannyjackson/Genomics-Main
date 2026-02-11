@@ -42,7 +42,7 @@ fi
 
 
 ## Create a list of sample ids for this run assumes bams are all formated with sample names as first term in an underscore separated string
-ls ${BAMDIR} | awk -F "_" '{print $1}' | sort -u > "${OUTDIR}/referencelists/${RUNNAME}.sampleids.txt"
+ls ${BAMDIR} | awk -F "." '{print $1}' | sort -u > "${OUTDIR}/referencelists/${RUNNAME}.sampleids.txt"
 
 
 ## Compute statistics on bam files 
