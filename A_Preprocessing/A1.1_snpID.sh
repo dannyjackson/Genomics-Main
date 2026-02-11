@@ -42,7 +42,7 @@ fi
 
 
 
-ls ${BAMDIR}/*bam > ${OUTDIR}/referencelists/${PROJNAME}.bamlist.txt
+ls ${BAMDIR}/*bam > ${OUTDIR}/referencelists/${RUNNAME}.bamlist.txt
 
 
 ${ANGSD}/angsd -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 1 -doCounts 1 -doDepth 1 -dumpCounts 1 -doIBS 1 -makematrix 1 -doCov 1 \
