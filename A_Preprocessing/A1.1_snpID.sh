@@ -32,7 +32,7 @@ source "${PARAMS}"
 
 printf "\n\n\n\n"
 date
-echo "Current script: A2_ClipOverlap.sh"
+echo "Current script: A1.1_snpID.sh"
 
 # Ensure required variables are set
 if [ -z "$BAMDIR" ] || [ -z "$ANGSD" ] || [ -z "$SNPPVAL" ] || [ -z "$MINDEPTHIND" ] || [ -z "$MININD" ] || [ -z "$MINQ" ] || [ -z "$MINMAF" ] || [ -z "$MINMAPQ" ]; then
@@ -53,6 +53,6 @@ ${ANGSD}/angsd -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 1 -doCounts 1 -doDepth 1 -d
 
 zcat ${OUTDIR}/referencelists/${RUNNAME}.mafs.gz | awk '{print $1, $2, $3, $4}' > ${OUTDIR}/referencelists/${RUNNAME}.sites.mafs
 
-grep ${CHRLEAD} ${OUTDIR}/referencelists/${RUNNAME}.sites.mafs | grep -v ${SEXCHR} | tail -n +2 > ${OUTDIR}/referencelists/${RUNNAME}.sites_headless.mafs
+grep ${CHRLEAD} ${OUTDIR}/referencelists/${RUNNAME}.sites.mafs | grep -v ${MTCODE} | tail -n +2 > ${OUTDIR}/referencelists/${RUNNAME}.sites_headless.mafs
 
 ${ANGSD}/angsd sites index ${OUTDIR}/referencelists/${RUNNAME}.sites_headless.mafs
