@@ -4,7 +4,7 @@
 usage() {
     echo "Usage: $0 -p <parameter_file> -r <run_name> [-t]
 
-This script computes average depth statistics of each sample from the output of A4_indelrealignment.sh.
+This script generates genotype likelihoods using ANGSD.
 
 Required arguments:
   -p  Path to the parameter file (e.g., params_preprocessing.sh).
@@ -49,7 +49,7 @@ fi
 source "$PARAMS"
 
 # Ensure required variables are set from the parameter file
-REQUIRED_VARS=("OUTDIR" "THREADS" "REF" "FASTAS" "BAMUTILBAM" "SNPPVAL" "ANGSD" "PROJNAME")
+REQUIRED_VARS=("OUTDIR" "THREADS" "REF" "FASTAS" "BAMUTILBAM" "SNPPVAL" "ANGSD")
 for var in "${REQUIRED_VARS[@]}"; do
     if [ -z "${!var}" ]; then
         echo "Error: Missing required parameter '$var' in the parameter file." >&2
@@ -59,11 +59,11 @@ for var in "${REQUIRED_VARS[@]}"; do
 
 # Print script start information
 echo -e "\n$(date)"
-echo "Current script: A7_likelihoods.sh"
+echo "Current script: A1.2_likelihoods.sh"
 
 
 # Generate genotype likelihoods
-"${ANGSD}/angsd" -b "${OUTDIR}/referencelists/${PROJNAME}.bamlist.txt" \
+"${ANGSD}/angsd" -b "${OUTDIR}/referencelists/${RUNNAME}.bamlist.txt" \
   -gl 1 -dopost 1 -domajorminor 1 -domaf 1 -snp_pval "${SNPPVAL}" \
   -sites "${OUTDIR}/referencelists/${RUNNAME}.sites_headless.mafs" \
   -doBcf 1 -doGlf 2 -nThreads "${THREADS}" -out "${RUNNAME}.genolike" ${TRANS_FLAG}

@@ -3,7 +3,7 @@
 if [ $# -lt 1 ]; then
     echo "Usage: $0 -p <parameter_file>
 
-This script computes average depth statistics of each sample from the output of A4_indelrealignment.sh
+This uses ANGSD to identify SNPs from the bam files
 
 Required argument:
   -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
