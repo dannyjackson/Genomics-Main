@@ -64,6 +64,6 @@ echo "Current script: A1.2_likelihoods.sh"
 
 # Generate genotype likelihoods
 ${ANGSD}/angsd -b ${OUTDIR}/referencelists/${RUNNAME}.bamlist.txt \
-  -gl 1 -dopost 1 -domajorminor 1 -domaf 1 -snp_pval "${SNPPVAL}" \
+  -gl 1 -dopost 1 -domajorminor 1 -domaf 1 -snp_pval ${SNPPVAL} \
   -sites ${OUTDIR}/referencelists/${RUNNAME}.sites_headless.mafs \
   -doBcf 1 -doGlf 2 -nThreads ${THREADS} -out ${RUNNAME}.genolike ${TRANS_FLAG}
