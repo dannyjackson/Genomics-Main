@@ -8,6 +8,7 @@ mkdir -p "${OUTDIR}/datafiles/trimmed_fastas" "${OUTDIR}/datafiles/bamfiles/${IN
 mkdir -p "${OUTDIR}/datafiles/clipoverlap"
 mkdir -p "${OUTDIR}/datafiles/indelmaps"
 mkdir -p "${OUTDIR}/datafiles/bamstats"
+mkdir -p "${OUTDIR}/datafiles/indelrealignment"
 
 # A1
 # Create necessary directories
@@ -32,7 +33,7 @@ fi
 # Add Snpable scripts to PATH
 export PATH="$PATH:$SNPABLE_SCRIPT_PATH"
 
-echo "Starting MSMC pipeline..."
+echo "Adding tools for MSMC pipeline..."
 date
 
 # Clone required repositories if not already present
