@@ -16,5 +16,12 @@ if [ ! -d GONE2 ]; then
     git clone https://github.com/esrud/GONE2.git || { echo "Error: Failed to clone GONE2."; exit 1; }
 fi
 
+if [ -d "GONE2" ]; then
+    echo "GONE2 directory exists."
+    cd GONE2
+    make gone # Edit this as needed based on your system and project memory requirements. See GONE2 documentation for details.
+else
+    echo "Error: Failed to build GONE2."
+fi
 
 echo "GONE2 Environment setup completed."
