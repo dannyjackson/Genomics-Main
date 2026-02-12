@@ -1,7 +1,7 @@
 # gone2_setup.sh
 # Create necessary directories
 
-source /path/to/params_base.sh
+source ../../../params_base.sh
 
 mkdir -p "${OUTDIR}/datafiles/gone2_inputs"
 mkdir -p "${OUTDIR}/analyses/gone2_outputs"
