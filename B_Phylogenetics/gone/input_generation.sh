@@ -9,6 +9,7 @@ echo VCF FILE PATH: $VCFFILE
 echo SCAFFOLD SUBSET: $SCAFFOLD_LIST
 echo POPULATION: $OUTPREFIX
 echo MAX MISSING DATA: $MAX_MISSING
+echo MINOR ALLELE FREQ: $MAF
 
 CHR_SUBSET_FLAGS=$(for name in $(cat $SCAFFOLD_LIST); do echo --chr $name; done)
 
@@ -19,12 +20,12 @@ vcftools $CHR_SUBSET_FLAGS --gzvcf $VCFFILE --recode --recode-INFO-all --max-mis
 # Convert VCF to plink formats
 # --allow-extra-chr to deal with non-standard chromosome names
 # --thin-count to randomly sample a subset of SNPs from the VCF (needed since GONE2 can't handle too many SNPs by default)
-plink --vcf $OUTPREFIX.recode.vcf --allow-extra-chr --recode --out $OUTPREFIX
+plink --vcf $OUTPREFIX.recode.vcf --maf $MAF --allow-extra-chr --recode --out $OUTPREFIX
 # Note that if you don't have info on SNP position in a genetic map (cM), you'll probably need to set a fixed recombination rate when running GONE2 or do some extra analyses to find this info yourself. (In this case the .map file is not useful)
 
 # Due to not having standard chromosome names and that outputted files aren't always consistent with what GONE2 wants, we use these python scripts to reformat the data. (No filtering or analyses done here, just moving the numbers around)
-#python map_clean.py --map $OUTPREFIX.map
-#python ped_clean.py --ped $OUTPREFIX.ped
+python map_clean.py --map $OUTPREFIX.map
+python ped_clean.py --ped $OUTPREFIX.ped
 
 # Organize output files
 mv $OUTPREFIX.map $OUTDIR
