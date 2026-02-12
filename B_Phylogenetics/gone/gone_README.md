@@ -37,6 +37,7 @@ Some useful information about the analysis is stored in `popname_GONE2_STATS`.
 - Original GONE Publication: https://doi.org/10.1093/molbev/msaa169
 - GONE1 Repo: https://github.com/esrud/GONE
 - GONE2 Repo: https://github.com/esrud/GONE2.git
+- For help with building SLURM arrays on UA HPC: https://hpcdocs.hpc.arizona.edu/running_jobs/batch_jobs/array_jobs/
 
 - If you do not have much genotype and recombination data in cM present in your .map file you'll probably need to set a constant recombination rate in GONE2.
 - It is recommended to run these scripts in a batch array, especially when performing analyses across many populations. Use `template_pop_params` for example on how to pass and update parameters for each population in the array.
