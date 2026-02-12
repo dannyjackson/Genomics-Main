@@ -4,7 +4,7 @@
 Estimating Recent Effective Population Size (Ne) over time in GONE2 should follow the outline below.
 
 ## Script Requirements
-- Run `gone2_setup.sh` prior to performing any input generation or analyses. NOTE: Some GONE2 scripts may require executable permissions to run. To do this you may need to run `chmod r+x file_name`
+- Run `gone2_setup.sh` prior to performing any input generation or analyses. NOTE: Some GONE2 scripts may require executable permissions to run. To do this you may need to run `chmod +x file_name`
 - Properly formatted .ped and .map input files (GONE2 also permits VCFs as inputs if this better fits your workflow)
 
 ===========================================

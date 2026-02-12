@@ -37,8 +37,8 @@ date
 echo "Current script: run_gone2.sh"
 
 
-echo "Running GONE for $POPNAME with $NUMIND individuals with recombination rate of $RECOMB_RATE..."
-echo "NOTE: We are using Input files from: $INDIR"
+echo "Running GONE for ${POPNAME} with ${NUMIND} individuals with recombination rate of ${RECOMB_RATE}..."
+echo "NOTE: We are using Input files from: ${INDIR}"
 
 RESULT_DIR=${OUTDIR}/analyses/gone2_outputs/${RUNNAME}/${POPNAME}
 
