@@ -1,4 +1,7 @@
 # msmc specific
+
+#source /path/to/params_base.sh
+
 # msmc input generation
 k=150 # For snpability.sh
 prefix=GCF_901933205 # Prefix of Reference Genome

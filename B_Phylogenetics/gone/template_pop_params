@@ -1,0 +1,13 @@
+# Input Generation Parameters
+VCFFILE=/path/to/vcf/file
+SCAFFOLD_LIST=/path/to/line/separated/list/of/scaffolds
+POPNAME=pop1
+MAX_MISSING=1 # For VCFtools. Set to 1 to allow no missing data, or a value like 0.9 to only allow sites with data in at least 90% of individuals
+MAF=0.05 # Minor Allele Frequency Cutoff for PLINK.
+
+# GONE2 Analysis Parameters
+INDIR=/path/to/desired/gone2/inputs/
+NUMIND=10
+RECOMB_RATE=3.1
+GENO_DTYPE=1
+EXTRA_FLAGS= #Leave empty if none needed
