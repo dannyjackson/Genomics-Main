@@ -40,6 +40,8 @@ if [ -z "$OUTDIR" ] || [ -z "$THREADS" ] || [ -z "$REF" ] || [ -z "$FASTAS" ]; t
     exit 1
 fi
 
+# Index reference genome
+bwa index ${REF}
 
 # Align reads using BWA MEM
 bwa mem -t "${THREADS}" "${REF}" \
