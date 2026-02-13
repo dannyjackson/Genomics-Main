@@ -40,6 +40,8 @@ if [ -z "$OUTDIR" ] || [ -z "$THREADS" ] || [ -z "$REF" ] || [ -z "$FASTAS" ]; t
     exit 1
 fi
 
+# NOTE that we require the ref-genome index (from bwa). If following full pipeline, this is already generated in base_setup.sh
+
 # Align reads using BWA MEM
 bwa mem -t "${THREADS}" "${REF}" \
     "${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_1P.fq.gz" \

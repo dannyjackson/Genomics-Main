@@ -42,23 +42,7 @@ if [ -z "$OUTDIR" ] || [ -z "$THREADS" ] || [ -z "$REF" ] || [ -z "$FASTAS" ] ||
     exit 1
 fi
 
-
-# Check for ref-genome index .dict file
-if [ -f "${REF}.fai.dict" ];
-        then
-            echo ".fai file already exists, moving on!"
-        else
-        samtools faidx ${REF}
-fi
-
-# Check for ref-genome .dict file
-if [ -f "${REF}.dict" ];
-        then
-            echo ".dict file already exists, moving on!"
-        else
-        picard CreateSequenceDictionary REFERENCE=${REF} OUTPUT=${REF}.dict
-fi
-
+# NOTE that we require the ref-genome index (from bwa) and .dict files (from picard) here. If following full pipeline, these are already generated in base_setup.sh
 
 # Index bams
 samtools index ${OUTDIR}/datafiles/clipoverlap/$IND.all.sorted.marked.clipped.bam 
