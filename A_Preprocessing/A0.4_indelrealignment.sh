@@ -43,8 +43,8 @@ if [ -z "$OUTDIR" ] || [ -z "$THREADS" ] || [ -z "$REF" ] || [ -z "$FASTAS" ] ||
 fi
 
 
-# Check for ref-genome index
-if [ -f "${REF}.fai" ];
+# Check for ref-genome index .dict file
+if [ -f "${REF}.fai.dict" ];
         then
             echo ".fai file already exists, moving on!"
         else
