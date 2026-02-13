@@ -7,7 +7,7 @@ This uses GONE2 to generate estimates of recent Ne from plink (.ped/.map)files.
 I recommend running it as a slurm array to pass individuals to sbatch jobs for maximum efficiency
 
 Required argument:
-  -p  Path to the GONE parameter file (e.g., params_gone2.sh in the GitHub repository).
+  -p  Path to the main parameter file (e.g., params_base.sh in the GitHub repository).
   -s  Population specific-parameter file.
   -r  Run name, required for providing a unique name to output files (especially when using in an array)."
     exit 1
