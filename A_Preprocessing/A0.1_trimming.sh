@@ -44,16 +44,22 @@ fi
 #bwa index ${REF}
 
 # create list of samples, assumes fastas are all formated with sample names as first term in an underscore separated string
-ls ${FASTAS} | awk -F "_" '{print $1}' | sort -u > "${OUTDIR}/referencelists/sampleids.txt"
+#ls ${FASTAS} | awk -F "_" '{print $1}' | sort -u > "${OUTDIR}/referencelists/sampleids.txt"
+
+echo "Beginning trimming for "$IND>>${OUTDIR}/datafiles/trimming/${IND}_trim_log.txt
+java -jar ${TRIMJAR} PE -threads 12 \
+${FASTAS}/"$IND"_R1.fastq.gz  ${FASTAS}/"$IND"_R2.fastq.gz  \
+-baseout ${OUTDIR}/datafiles/trimmed_fastas/"$IND"_trimmed.fq.gz \
+LEADING:${LEAD} TRAILING:${TRAIL} SLIDINGWINDOW:${SLIDE} MINLEN:${MINREADLEN}>>${OUTDIR}/datafiles/trimming/${IND}_trim_log.txt
 
 
-while read -r ID;
-do
-  echo "Beginning trimming for "$ID>>${OUTDIR}/datafiles/trimming/trim_log.txt
-  java -jar ${TRIMJAR} PE -threads 12 \
-  ${FASTAS}/"$ID"_R1.fastq.gz  ${FASTAS}/"$ID"_R2.fastq.gz  \
-  -baseout ${OUTDIR}/datafiles/trimmed_fastas/"$ID"_trimmed.fq.gz \
-  LEADING:${LEAD} TRAILING:${TRAIL} SLIDINGWINDOW:${SLIDE} MINLEN:${MINREADLEN}>>${OUTDIR}/datafiles/trimming/trim_log.txt
+#while read -r ID;
+#do
+#  echo "Beginning trimming for "$ID>>${OUTDIR}/datafiles/trimming/trim_log.txt
+#  java -jar ${TRIMJAR} PE -threads 12 \
+#  ${FASTAS}/"$ID"_R1.fastq.gz  ${FASTAS}/"$ID"_R2.fastq.gz  \
+#  -baseout ${OUTDIR}/datafiles/trimmed_fastas/"$ID"_trimmed.fq.gz \
+#  LEADING:${LEAD} TRAILING:${TRAIL} SLIDINGWINDOW:${SLIDE} MINLEN:${MINREADLEN}>>${OUTDIR}/datafiles/trimming/trim_log.txt
 
 
-done < "${OUTDIR}/referencelists/sampleids.txt"
+#done < "${OUTDIR}/referencelists/sampleids.txt"
