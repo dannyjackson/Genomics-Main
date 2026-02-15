@@ -27,7 +27,7 @@ awk 'BEGIN {OFS = "\t"} {print $1,$2}' ${REF}.fai | grep ${CHRLEAD} | grep -v ${
 
 while IFS=',' read -r first second; do
     sed -i "s/$second/$first/g" ${OUTDIR}/referencelists/autosomes_lengths.txt 
-done <<< "$CHROM"
+done <<< "$CHR_FILE"
 
 # Make a comma separated chromosome conversion file without a header where the first column is the name of the chromosome and the second is the name of the associated scaffold in the reference genome:
 
