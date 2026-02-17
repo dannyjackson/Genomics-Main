@@ -1,3 +1,7 @@
+#!/bin/bash 
+
+source ~/.bashrc
+
 # LDHelmet Parameters
 
 module load micromamba

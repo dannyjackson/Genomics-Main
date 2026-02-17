@@ -36,9 +36,9 @@ echo "Current script: ldhelmet_input_generation.sh"
 
 module load vcftools
 
-OUTPREFIX=$(basename "$VCF" .vcf.gz)
+OUTPREFIX=$(basename "$VCF" .vcf)
 
-if [ ! -d "${INPUT_DIR}/${OUTPREFIX}" ]; then
+if [ -d "${INPUT_DIR}/${OUTPREFIX}" ]; then
         echo "${OUTPREFIX} input directory already exists."
     else
         echo "${OUTPREFIX} input directory does not exist. Creating it now..."
