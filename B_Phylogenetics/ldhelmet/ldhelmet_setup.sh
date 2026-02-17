@@ -18,6 +18,7 @@ fi
 # Getting LDHelmet examples from github is useful for testing with the authors' examples. But on the UA HPC, it is easiest to just install it using micromamba.
 
 #LDHelmet is on Bioconda, and its required dependencies (Boost and GSL) are on conda-forge, so ensure your micromamba config includes these required channels.
+module load micromamba
 micromamba config append channels conda-forge
 micromamba config append channels bioconda
 

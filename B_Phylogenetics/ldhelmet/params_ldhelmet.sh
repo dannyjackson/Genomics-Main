@@ -1,5 +1,6 @@
 # LDHelmet Parameters
 
+module load micromamba
 micromamba activate ldhelmet_env # If set up using a conda/mamba environment
 source ../../../params_base.sh
 
