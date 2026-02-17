@@ -3,8 +3,7 @@
 
 source ../../../params_base.sh
 
-mkdir -p "${OUTDIR}/datafiles/ldhelmet_inputs"
-mkdir -p "${OUTDIR}/analyses/ldhelmet_outputs"
+mkdir -p "${OUTDIR}/datafiles/ldhelmet"
 
 echo "Getting LDHelmet source from Github..."
 date
@@ -21,7 +20,6 @@ fi
 #LDHelmet is on Bioconda, and its required dependencies (Boost and GSL) are on conda-forge, so ensure your micromamba config includes these required channels.
 micromamba config append channels conda-forge
 micromamba config append channels bioconda
-micromamba config set channel_priority strict
 
 micromamba config list
 
