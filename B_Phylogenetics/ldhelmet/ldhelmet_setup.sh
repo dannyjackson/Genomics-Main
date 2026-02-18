@@ -4,6 +4,7 @@
 source ../../../params_base.sh
 
 mkdir -p "${OUTDIR}/datafiles/ldhelmet"
+mkdir -p "${OUTDIR}/analyses/ldhelmet"
 
 echo "Getting LDHelmet source from Github..."
 date

@@ -70,6 +70,24 @@ fi
 ldhelmet rjmcmc --num_threads ${THREADS} -l ${INPUT_DIR}/${POP}/${CHR}.lk -p ${INPUT_DIR}/${POP}/${CHR}.pade -s ${INPUT_DIR}/${POP}/${CHR}/${INPUTFILE} \
                 -b ${BLOCK_PENALTY} --burn_in ${BURN_IN} -n ${ITERATIONS} -o ${INPUT_DIR}/${POP}/${CHR}.post ${OPT_FLAGS}
 
+
+printf "\n"
+echo "|---------------Post-Processing ${CHR}---------------|"
+printf "\n"
+
+if [ -d "${RESULT_DIR}/${POP}" ]; then
+        echo "${POP} result directory already exists."
+    else
+        echo "${POP} result directory does not exist. Creating it now..."
+        mkdir -p "${RESULT_DIR}/${POP}"
+    fi
+
+
+ldhelmet post_to_text -m -p 0.025 -p 0.50 -p 0.975 -o ${RESULT_DIR}/${POP}/${POP}_${CHR}_STATS.txt ${INPUT_DIR}/${POP}/${CHR}.post
+
+ldhelmet max_lk --num_threads ${THREADS} -l ${INPUT_DIR}/${POP}/${CHR}.lk -p ${INPUT_DIR}/${POP}/${CHR}.pade -s ${INPUT_DIR}/${POP}/${CHR}.ldhelmet.snps > ${RESULT_DIR}/${POP}/${POP}_${CHR}_maxlk.txt
+
+
 printf "\n"
 echo "|---------------Finished running MCMC for ${CHR}---------------|"
 printf "\n"
