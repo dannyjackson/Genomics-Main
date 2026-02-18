@@ -10,16 +10,18 @@ I recommend running it as a slurm array to pass individuals to sbatch jobs for m
 Required argument:
   -p  Path to the parameter file (e.g., params_ldhelmet.sh in the GitHub repository).
   -d  Name of population to analyze. Should match name of directory containing input files if following full pipeline
-  -c  Chromosome Name to process"
+  -c  Chromosome Name to process
+  -f  Input file type, either .snps or .fasta/.fastq"
     exit 1
 fi
 
 # Parse command-line arguments
-while getopts p:d:c: option; do
+while getopts p:d:c:f: option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
 		d) POP=${OPTARG};;
         c) CHR=${OPTARG};;
+        f) FTYPE=${OPTARG};;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done
@@ -39,7 +41,7 @@ echo "Current script: ldhelmet_run_mcmc.sh"
 printf "\n"
 echo "|---------------Generating Haplotype Config for ${CHR}---------------|"
 printf "\n"
-ldhelmet find_confs --num_threads ${THREADS} -w ${WINDOW_SIZE} -o ${INPUT_DIR}/${POP}/${CHR}.conf ${INPUT_DIR}/${POP}/${CHR}
+ldhelmet find_confs --num_threads ${THREADS} -w ${WINDOW_SIZE} -o ${INPUT_DIR}/${POP}/${CHR}.conf ${INPUT_DIR}/${POP}/${CHR}${FTYPE}
 
 
 printf "\n"
