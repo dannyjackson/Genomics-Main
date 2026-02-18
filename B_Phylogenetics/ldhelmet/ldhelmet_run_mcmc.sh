@@ -9,16 +9,16 @@ I recommend running it as a slurm array to pass individuals to sbatch jobs for m
 
 Required argument:
   -p  Path to the parameter file (e.g., params_ldhelmet.sh in the GitHub repository).
-  -s  Name of population to analyze. Should match name of directory containing input files if following full pipeline
+  -d  Name of population to analyze. Should match name of directory containing input files if following full pipeline
   -c  Chromosome Name to process"
     exit 1
 fi
 
 # Parse command-line arguments
-while getopts p:s:c: option; do
+while getopts p:d:c: option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
-		s) POP=${OPTARG};;
+		d) POP=${OPTARG};;
         c) CHR=${OPTARG};;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
