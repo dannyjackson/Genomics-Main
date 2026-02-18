@@ -67,7 +67,7 @@ if [ -n "${ANC_PRIOR}" ]; then
     OPT_FLAGS="${OPT_FLAGS} -a ${ANC_PRIOR}"
 fi
 
-ldhelmet rjmcmc --num_threads ${THREADS} -l ${INPUT_DIR}/${POP}/${CHR}.lk -p ${INPUT_DIR}/${POP}/${CHR}.pade -s ${INPUT_DIR}/${POP}/${CHR}/${INPUTFILE} \
+ldhelmet rjmcmc --num_threads ${THREADS} -l ${INPUT_DIR}/${POP}/${CHR}.lk -p ${INPUT_DIR}/${POP}/${CHR}.pade -s ${INPUT_DIR}/${POP}/${CHR}.ldhelmet.snps \
                 -b ${BLOCK_PENALTY} --burn_in ${BURN_IN} -n ${ITERATIONS} -o ${INPUT_DIR}/${POP}/${CHR}.post ${OPT_FLAGS}
 
 
