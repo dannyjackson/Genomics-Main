@@ -6,12 +6,12 @@ if [ $# -lt 1 ]; then
 This script estimates fine-scale recombination rates on a chromosome using LDhelmet.
 
 I recommend running it as a slurm array to pass individuals to sbatch jobs for maximum efficiency
+This script assumes that the input files are generated using the ldhelmet_input_generation.sh from vcftools
 
 Required argument:
   -p  Path to the parameter file (e.g., params_ldhelmet.sh in the GitHub repository).
   -d  Name of population to analyze. Should match name of directory containing input files if following full pipeline
-  -c  Chromosome Name to process
-  -f  Input file type, either .snps or .fasta/.fastq"
+  -c  Chromosome Name to process"
     exit 1
 fi
 
@@ -21,7 +21,6 @@ while getopts p:d:c:f: option; do
         p) PARAMS=${OPTARG};;
 		d) POP=${OPTARG};;
         c) CHR=${OPTARG};;
-        f) FTYPE=${OPTARG};;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done
@@ -41,7 +40,7 @@ echo "Current script: ldhelmet_run_mcmc.sh"
 printf "\n"
 echo "|---------------Generating Haplotype Config for ${CHR}---------------|"
 printf "\n"
-ldhelmet find_confs --num_threads ${THREADS} -w ${WINDOW_SIZE} -o ${INPUT_DIR}/${POP}/${CHR}.conf ${INPUT_DIR}/${POP}/${CHR}${FTYPE}
+ldhelmet find_confs --num_threads ${THREADS} -w ${WINDOW_SIZE} -o ${INPUT_DIR}/${POP}/${CHR}.conf ${INPUT_DIR}/${POP}/${CHR}.ldhelmet.snps
 
 
 printf "\n"
