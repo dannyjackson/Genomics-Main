@@ -64,6 +64,3 @@ echo "To remove the memory limit in LDHelmet, open 'src/common/site_map_log_lk.c
 #micromamba config append channels bioconda
 #micromamba config list
 #micromamba create -n ldhelmet_env ldhelmet
-
-
-echo "LDHelmet Environment setup completed."
