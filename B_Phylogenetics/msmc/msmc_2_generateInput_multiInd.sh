@@ -14,10 +14,11 @@ if [ $# -lt 1 ]; then
 fi
 
 # Parse command-line arguments
-while getopts "pm" option; do
+while getopts "p:i:s" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
-        m) MSMCPARAMS=${OPTARG} ;;
+        i) IND=${OPTARG} ;;
+        s) POP=${OPTARG} ;;
         *) echo "Invalid option: -$OPTARG" >&2; exit 1 ;;
     esac
 done
@@ -36,18 +37,10 @@ source "${PARAMS}"
 # Check available modules (useful for debugging environment)
 module list
 
-# Source MSMC params file
-source "${SCRIPTDIR}/${MSMCPARAMS}"
-
-
-### Variables:
-IND=`cat $1`
-POP=$2
-
-for s in `cat ${OUTDIR}/SCAFFOLDS.txt`
+for s in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
         do SCAFFOLD=$s
 
-        MSMC_INPUT=${MSMCDIR}/input/msmc_input.${POP}.${SCAFFOLD}.txt
+        MSMC_INPUT=${INPUTDIR}/msmc_input.${POP}.${SCAFFOLD}.txt
 
         printf "\n \n \n \n"
         date
@@ -59,21 +52,21 @@ for s in `cat ${OUTDIR}/SCAFFOLDS.txt`
         echo "MSMC input file: ${MSMC_INPUT}"
 
         for ind in $IND
-                do INDMASK=`ls ${MSMCDIR}/mask/ind/ind_mask.${ind}.${SCAFFOLD}.bed.gz`
-                echo "--mask=$INDMASK " >> ${MSMCDIR}/mask/ind/${POP}.mask_file.$SCAFFOLD
-                INDVCF=`ls ${MSMCDIR}/vcf2/${ind}.${SCAFFOLD}.phased.vcf.gz`
-                echo $INDVCF >> ${MSMCDIR}/vcf2/${POP}.vcf_file.${SCAFFOLD}
+                do INDMASK=`ls ${INPUTDIR}/mask/ind/ind_mask.${ind}.${SCAFFOLD}.bed.gz`
+                echo "--mask=$INDMASK " >> ${INPUTDIR}/mask/ind/${POP}.mask_file.$SCAFFOLD
+                INDVCF=`ls ${INPUTDIR}/vcf2/${ind}.${SCAFFOLD}.phased.vcf.gz`
+                echo $INDVCF >> ${INPUTDIR}/vcf2/${POP}.vcf_file.${SCAFFOLD}
         done
 
 ### Generate MSMC input files:
         if [ $METHOD == samtools ]
                 then
-                MASK_GENOME=${MSMCDIR}/mask/genom/${prefix}_revised_${SCAFFOLD}_mask.${k}.50.bed.gz
+                MASK_GENOME=${INPUTDIR}/mask/genom/${prefix}_revised_${SCAFFOLD}_mask.${k}.50.bed.gz
 
                 echo "MAPPABILITY MASK: ${MASK_GENOME}"
                 echo "Creating MSMC input file WITH individual mask (samtools)"
                 #${MSMCTOOLS}/generate_multihetsep.py --negative_mask=$MASK_REPEATS --mask=$MASK_INDIV $VCF > $MSMC_INPUT # with repeat mask
-                ${MSMCTOOLS}/generate_multihetsep.py `cat ${MSMCDIR}/mask/ind/${POP}.mask_file.${SCAFFOLD}` --mask=$MASK_GENOME `cat ${MSMCDIR}/vcf2/${POP}.vcf_file.${SCAFFOLD}` > ${MSMC_INPUT} # without repeat mask
+                ${MSMCTOOLS}/generate_multihetsep.py `cat ${INPUTDIR}/mask/ind/${POP}.mask_file.${SCAFFOLD}` --mask=$MASK_GENOME `cat ${INPUTDIR}/vcf2/${POP}.vcf_file.${SCAFFOLD}` > ${MSMC_INPUT} # without repeat mask
 
         elif [ $METHOD == gatk ]
                 then

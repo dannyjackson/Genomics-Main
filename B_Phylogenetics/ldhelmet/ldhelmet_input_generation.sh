@@ -3,7 +3,7 @@
 if [ $# -lt 1 ]; then
     echo "Usage: $0 -p <parameter_file>
 
-This uses VCFtools to generate input files for LDHelmet
+This uses VCFtools to generate input files for LDHelmet.
 
 Required argument:
   -p  Path to the parameter file (e.g., params_ldhelmet.sh in the GitHub repository).

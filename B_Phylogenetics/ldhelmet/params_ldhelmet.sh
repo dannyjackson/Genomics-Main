@@ -1,11 +1,9 @@
 #!/bin/bash 
 
-source ~/.bashrc
-
 # LDHelmet Parameters
 
-module load micromamba
-micromamba activate ldhelmet_env # If set up using a conda/mamba environment
+module load boost
+module load gsl
 source ../../../params_base.sh
 
 INPUT_DIR=${OUTDIR}/datafiles/ldhelmet
@@ -16,7 +14,7 @@ WINDOW_SIZE=50 # often 50
 MUT_RATE=<SET_VALUE> # Population scaled mutation rate in units of 1/bp
 
 # Likelihood Lookup Table
-REC_RATE_GRID=0.0 0.1 10.0 1.0 100.0
+REC_RATE_GRID="0.0 0.1 10.0 1.0 100.0"
 
 # Pade
 PADE_COEF=12

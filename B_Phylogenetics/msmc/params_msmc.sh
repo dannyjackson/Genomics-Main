@@ -1,15 +1,13 @@
 # msmc specific
 
-#source /path/to/params_base.sh
+source ../params_base.sh
 
 # msmc input generation
 k=150 # For snpability.sh
 prefix=GCF_901933205 # Prefix of Reference Genome
 MSMCTOOLS=${PROGDIR}/msmc-tools # directory with msmc-tools binaries
-MSMCDIR=${OUTDIR}/msmc # directory for msmc outputs
-PATH=$PATH:$MSMCTOOLS # add directory with msmc-tools binaries to path
+INPUTDIR=${OUTDIR}/datafiles/msmc/input # directory for msmc outputs
 METHOD=samtools  # or another variant calling method
-POP_IND_PATH=/path/to/POP_IND.txt
 
 # msmc run params
 NR_IND=5 # number of individuals in analysis
