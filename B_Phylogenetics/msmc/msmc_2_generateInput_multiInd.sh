@@ -41,7 +41,7 @@ module list
 for s in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
         do SCAFFOLD=$s
 
-        MSMC_INPUT=${OUTDIR}/datafiles/input/msmc_input.${POP}.${SCAFFOLD}.txt
+        MSMC_INPUT=${OUTDIR}/datafiles/msmc/input/msmc_input.${POP}.${SCAFFOLD}.txt
 
         printf "\n \n \n \n"
         date
