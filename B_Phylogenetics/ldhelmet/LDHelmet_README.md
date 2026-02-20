@@ -33,6 +33,6 @@ LDHelmet will output a binary file with the extension `.post`. You can textualiz
 - For help with building SLURM arrays on UA HPC: https://hpcdocs.hpc.arizona.edu/running_jobs/batch_jobs/array_jobs/
 
 
-- It is recommended to run these scripts in a batch array, especially when performing analyses across many populations.
+- It is recommended to run most of these scripts in a batch array, especially when performing analyses across many populations.
 
 ===========================================
