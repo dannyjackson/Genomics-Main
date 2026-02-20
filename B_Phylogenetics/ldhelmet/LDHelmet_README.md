@@ -12,16 +12,16 @@ Estimating fine-scale recombination rates in LDHelmet should follow the outline 
 
 **Generating Input Files**
 
-The primary inputs accepted by LDHelmet are fasta files, the creation and format of which is explained more by the developers. This pipeline instead uses `vcftools` to convert phased VCF files to the alternative `.snp` and `.loc` inputs. This can be done using `ldhelmet_input_generation.sh`
+The primary inputs accepted by LDHelmet are fasta files, the creation and format of which is explained more by the developers. This pipeline instead uses `vcftools` to convert phased VCF files to the alternative `.snp` and `.loc` inputs. This can be done using `ldhelmet_1_input_generation.sh`
 
 **Running LDHelmet**
 
-You can run LDHelmet using `ldhelmet_analysis.sh`. Be sure to revise your `params_ldhelmet.sh` script parameters prior to running. Refer to the LDHelmet repo docs to understand how to best adjust params based on your needs.
+You can run LDHelmet using `ldhelmet_2_analysis.sh`. Be sure to revise your `params_ldhelmet.sh` script parameters prior to running. Refer to the LDHelmet repo docs to understand how to best adjust params based on your needs.
 
 
 **Result Post-Processing**
 
-LDHelmet will output a binary file with the extension `.post`. You can textualize and assess these outputs using `ldhelmet_postprocess.sh`. Note that this step often requires a moderate-to-high amount of memory.
+LDHelmet will output a binary file with the extension `.post`. You can textualize and assess these outputs using `ldhelmet_3_postprocess.sh`. Note that this step often requires a moderate-to-high amount of memory.
 
 
 ===========================================

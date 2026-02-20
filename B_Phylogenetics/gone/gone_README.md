@@ -4,7 +4,7 @@
 Estimating Recent Effective Population Size (Ne) over time in GONE2 should follow the outline below.
 
 ## Script Requirements
-- Run `gone2_setup.sh` prior to performing any input generation or analyses. NOTE: Some GONE2 scripts may require executable permissions to run. To do this you may need to run `chmod +x file_name`
+- Run `gone_setup.sh` prior to performing any input generation or analyses. NOTE: Some GONE2 scripts may require executable permissions to run. To do this you may need to run `chmod +x file_name`
 - Properly formatted .ped and .map input files (GONE2 also permits VCFs as inputs if this better fits your workflow)
 
 ===========================================
@@ -12,21 +12,21 @@ Estimating Recent Effective Population Size (Ne) over time in GONE2 should follo
 
 **Generating Input Files**
 
-Although GONE2 can accept a number of input filetypes, this pipeline is built for PLINK .ped/.map files. This can be generated from VCFs using `input_generation.sh`. 
+Although GONE2 can accept a number of input filetypes, this pipeline is built for PLINK .ped/.map files. This can be generated from VCFs using `gone_1_input_generation.sh`. 
 
  Depending on your scaffold lengths, not all scaffolds may be long enough to use, so you'll likely need to trim a list down to scaffolds greater than 20 centimorgans (about 20 million bp)
 
-NOTE: This input generation script may not be "one-size-fits-all" depending on your data. Be sure to review the `PLINK` and `VCFtools` docs and adjust script parameters as needed to get GONE2 to work with your data.
+NOTE: This input generation script may not be "one-size-fits-all" depending on your data. Be sure to review the `PLINK` and `vcftools` docs and adjust script parameters as needed to get GONE2 to work with your data.
 
 **Running GONE2**
 
-Once you've generated your input files, you can run GONE using `run_gone2.sh`. When running on the UA HPC, the Puma cluster is usually required since other clusters do not have necessary libraries.
+Once you've generated your input files, you can run GONE using `gone_2_analysis.sh`. When running on the UA HPC, the Puma cluster is usually required since other clusters do not have necessary libraries.
 Be sure to revise your script parameters prior to running. Refer to GONE2 repo tutorial docs to understand how to best adjust params based on your needs.
 
 
 **Plotting Outputs**
 
-Ne estimates are stored under the filename `popname_GONE2_Ne` file. This file contains tab separated columns denoting the mean estimates of population size for each generation. If following the full pipeline, they will be located in your `analyses/gone2_outputs` directory. You can use `plot_gone2.r` for a basic example of how to plot this output.
+Ne estimates are stored under the filename `popname_GONE2_Ne` file. This file contains tab separated columns denoting the mean estimates of population size for each generation. If following the full pipeline, they will be located in your `analyses/gone2_outputs` directory. You can use `gone_3_plot.r` for a basic example of how to plot this output.
 
 Some useful information about the analysis is stored in `popname_GONE2_STATS`.
 
