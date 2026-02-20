@@ -10,6 +10,7 @@ if [ $# -lt 1 ]; then
     echo "Required Argument:"
     echo "  -p   Path to parameter file (example in GitHub repository as params.sh)"
     echo "  -m   File Name of your unique project msmc params file"
+    echo "  -s   POP Name"
     exit 1
 fi
 
