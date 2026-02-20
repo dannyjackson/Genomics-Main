@@ -42,15 +42,15 @@ RUN_NAME=msmc_${POP_OR_IND}_${DATE}
 
 if [ $NR_IND == 1 ]; then
 
-	find ${MSMCDIR}/input/msmc_input.${POP_OR_IND}.*.txt -size 0 -delete
-	ls ${MSMCDIR}/input/msmc_input.${POP_OR_IND}.*.txt | grep -v $sex_chr > ${OUTDIR}/input/SCAFS_INPUT_${POP_OR_IND}
+	find ${OUTDIR}/datafiles/msmc/input/msmc_input.${POP_OR_IND}.*.txt -size 0 -delete
+	ls ${OUTDIR}/datafiles/msmc/input/msmc_input.${POP_OR_IND}.*.txt | grep -v $sex_chr > ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}
 else
     # Overwrites any existing text (we do this to in case the file has been appended to before and prevent endlessly appending upon reruns)
-    echo "" > ${MSMCDIR}/multi_indv_data/input/SCAFS_INPUT_${POP_OR_IND}
+    echo "" > ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}
 
     for s in `cat /xdisk/mcnew/finches/ljvossler/finches/SCAFFOLDS.txt`
         do echo $s
-        ls ${MSMCDIR}/multi_indv_data/input/msmc_input.${POP_OR_IND}.${s}.txt >> ${MSMCDIR}/multi_indv_data/input/SCAFS_INPUT_${POP_OR_IND}
+        ls ${OUTDIR}/datafiles/msmc/input/msmc_input.${POP_OR_IND}.${s}.txt >> ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}
     done
 fi
 
@@ -64,17 +64,17 @@ echo "Period setting: $P_PAR"
 echo "Nr of individuals (1 or 2+): $NR_IND"
 echo "Haplotype Indices Used: ${INDEX}"
 echo "Population or Individuals ID: $POP_OR_IND"
-echo "MSMC Inputs Read from: SCAFS_INPUT_${POP_OR_IND}"
+echo "MSMC Inputs Read from: ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}"
 echo "Iterations: ${NUM_OPT}"
 
 
 if [ $NR_IND == 1 ]
         then
         echo "Running MSMC for one individual"
-        MSMC_INPUT=`cat ${MSMCDIR}/input/SCAFS_INPUT_${POP_OR_IND}`
-        MSMC_OUTPUT=${MSMCDIR}/output/msmc_output.${RUN_NAME}
+        MSMC_INPUT=`cat ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}`
+        MSMC_OUTPUT=${OUTDIR}/datafiles/msmc/output/msmc_output.${RUN_NAME}
 
-        if [ -f "${MSMCDIR}/input/SCAFS_INPUT_${POP_OR_IND}" ]
+        if [ -f "${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}" ]
                 then
                         echo "MSMC_INPUTS: SCAFS_INPUT_${POP_OR_IND}_noLG9"
                         echo "MSMC_OUTPUT: $MSMC_OUTPUT"
@@ -85,8 +85,8 @@ if [ $NR_IND == 1 ]
 
 else
         echo "Running MSMC for $NR_IND individuals"
-        MSMC_INPUT=`cat ${MSMCDIR}/multi_indv_data/input/SCAFS_INPUT_${POP_OR_IND}`
-        MSMC_OUTPUT=${MSMCDIR}/multi_indv_data/output_2/msmc_output.${RUN_NAME}
+        MSMC_INPUT=`cat ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}`
+        MSMC_OUTPUT=${OUTDIR}/datafiles/msmc/output/msmc_output.${RUN_NAME}
 
 fi
 
@@ -96,8 +96,17 @@ echo "Output File Location: ${MSMC_OUTPUT}"
 # Run MSMC now that all necessary params are set
 msmc2_Linux -t $THREADS -p $P_PAR -i $NUM_OPT -o ${MSMC_OUTPUT} -I `echo $INDEX` $MSMC_INPUT 
 
-mv $MSMC_OUTPUT*loop.txt ${MSMCDIR}/multi_indv_data/output_2/log_and_loop/
-mv $MSMC_OUTPUT*log ${MSMCDIR}/multi_indv_data/output_2/log_and_loop/
+
+
+if [ -d "${OUTDIR}/datafiles/msmc/output/log_and_loop/" ]; then
+        echo "log-loop output directory already exists."
+    else
+        echo "log-loop output does not exist. Creating it now..."
+        mkdir -p "${OUTDIR}/datafiles/msmc/output/log_and_loop/"
+    fi
+
+mv $MSMC_OUTPUT*loop.txt ${OUTDIR}/datafiles/msmc/output/log_and_loop/
+mv $MSMC_OUTPUT*log ${OUTDIR}/datafiles/msmc/output/log_and_loop/
 
 
 echo "done running msmc2 for ${POP_OR_IND}"

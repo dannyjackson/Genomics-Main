@@ -8,18 +8,16 @@ if [ $# -lt 1 ]; then
     echo "Usage: $0 -p <path_to_parameter_file>"
     echo "This script generates input files for MSMC."
     echo "Required Argument:"
-    echo "  -p   Path to parameter file (example in GitHub repository as params.sh)"
-    echo "  -m   File Name of your unique project msmc params file"
+    echo "  -p   Path to msmc parameter file"
     echo "  -b   Bootstrap being run"
     echo "  -i   Individual or Population Name"
     exit 1
 fi
 
 # Parse command-line arguments
-while getopts ":p:m:b:i:" opt; do
+while getopts ":p:b:i:" opt; do
     case "${opt}" in
         p) PARAMS=${OPTARG} ;;
-        m) MSMCPARAMS=${OPTARG} ;;
         b) BOOT=${OPTARG} ;;
         i) POP_OR_IND=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}"
@@ -27,11 +25,6 @@ while getopts ":p:m:b:i:" opt; do
            ;;
     esac
 done
-
-echo $PARAMS
-echo $MSMCPARAMS
-echo $POP_OR_IND
-echo $BOOT
 
 # Ensure parameter file is provided and exists
 if [ -z "${PARAMS}" ]; then
@@ -47,17 +40,22 @@ source "${PARAMS}"
 # Check available modules (useful for debugging environment)
 module list
 
-# Source MSMC params file
-source "${SCRIPTDIR}/${MSMCPARAMS}"
-
 
 
 # Run MSMC on ONE of your bootstrapped MSMC Inputs for a given pop/individual
-MSMC_BS=$(find ${MSMCDIR}/bootstrap/$BOOT -maxdepth 2 -name "bootstrap_multihetsep*.txt")
+MSMC_BS=$(find ${OUTDIR}/datafiles/bootstraps/${POP_OR_IND}/$BOOT -maxdepth 2 -name "bootstrap_multihetsep*.txt")
 echo $MSMC_BS
 
-MSMC_OUTPUT=${MSMCDIR}/bootstrap/outputs/${POP_OR_IND}/msmc_output.$BOOT
+MSMC_OUTPUT=${OUTDIR}/analyses/msmc/bootstraps/${POP_OR_IND}/msmc_output.$BOOT
 echo $MSMC_OUTPUT
+
+# Verify that output location for msmc_outputs exists
+if [ -d ${MSMC_OUTPUT} ]; then
+    echo ${POP_OR_IND} 'bootstrap output directory exists'
+else
+    mkdir -p ${MSMC_OUTPUT}/log_and_loop
+    echo ${POP_OR_IND} 'bootstrap output directory created'
+fi
 
 echo "INDEX: ${INDEX}"
 

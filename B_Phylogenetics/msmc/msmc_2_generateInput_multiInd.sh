@@ -15,7 +15,7 @@ if [ $# -lt 1 ]; then
 fi
 
 # Parse command-line arguments
-while getopts "p:i:s:" option; do
+while getopts ":p:i:s:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         i) IND=${OPTARG} ;;
@@ -69,6 +69,8 @@ for s in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
                 #${MSMCTOOLS}/generate_multihetsep.py --negative_mask=$MASK_REPEATS --mask=$MASK_INDIV $VCF > $MSMC_INPUT # with repeat mask
                 ${MSMCTOOLS}/generate_multihetsep.py `cat ${OUTDIR}/datafiles/msmc/mask/ind/${POP}.mask_file.${SCAFFOLD}` --mask=$MASK_GENOME `cat ${OUTDIR}/datafiles/split_vcfs/${POP}.vcf_file.${SCAFFOLD}` > ${MSMC_INPUT} # without repeat mask
 
+
+        # WARNING: THIS CODE HAS BEEN NEGLECTED AND NOT TESTED
         elif [ $METHOD == gatk ]
                 then
                 echo "Creating MSMC input file WITHOUT individual mask (gatk)"
