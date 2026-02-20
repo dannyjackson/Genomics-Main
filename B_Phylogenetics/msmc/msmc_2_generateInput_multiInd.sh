@@ -46,7 +46,7 @@ for s in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
         date
         echo "Script: msmc_2_generateInput_multiInd"
         echo "Individuals: ${IND}"
-        echo "Population: $POP"
+        echo "Population: ${POP}"
         echo "Scaffold: ${SCAFFOLD}"
         echo "Method: ${METHOD}"
         echo "MSMC input file: ${MSMC_INPUT}"
