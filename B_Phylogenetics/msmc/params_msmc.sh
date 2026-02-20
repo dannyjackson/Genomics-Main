@@ -9,13 +9,11 @@ source ../params_base.sh
 k=150 # For snpability.sh
 prefix=GCF_901933205 # Prefix of Reference Genome
 MSMCTOOLS=${PROGDIR}/msmc-tools # directory with msmc-tools binaries
-INPUTDIR=${OUTDIR}/datafiles/msmc/input # directory for msmc outputs
 METHOD=samtools  # or another variant calling method
 
 # msmc run params
 NR_IND=5 # number of individuals in analysis
 DATE=`date +%m%d%y`
-RUN_NAME=msmc_${DATE}
 P_PAR=1*2+25*1+1*2+1*3 
 sex_chr=LG9 # name of sex chromosome to omit in analyses
 nchr=`wc -l /xdisk/mcnew/finches/dannyjackson/finches/referencelists/SCAFFOLDS.txt | cut -f1 -d' '`
