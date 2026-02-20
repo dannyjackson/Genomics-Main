@@ -64,17 +64,16 @@ ls -d *${OUTDIR}/datafiles/bootstraps/${POP_OR_IND}/${POP_OR_IND}.bootstrap_* > 
 echo "Finished generating bootstraps for ${POP_OR_IND}"
 
 # Run MSMC on all Bootstrapped datasets for your given pop/individual by iteratively sending batch jobs with msmc_4_bootstraps.sh
-echo "Running MSMC on newly generated Bootstraps for ${POP_OR_IND}"
-for boot in `cat ${OUTDIR}/datafiles/bootstraps/boots_file_lsts/${POP_OR_IND}.bs_list.txt`; do
-    echo "running msmc2 on bootstraps for $boot"
-    
-	sbatch --account=mcnew \
-	--job-name=msmc_run.${boot} \
+echo "Submitting slurm array to run MSMC on newly generated Bootstraps for ${POP_OR_IND}"
+
+sbatch --account=mcnew \
+	--job-name=bootsrap_msmc_array.${POP_OR_IND} \
     --partition=windfall \
-	--output=boot_outs/stdout_${boot} \
-    --error=boot_outs/stderr_${boot} \
+	--output=bootstrap_msmc_${POP_OR_IND}.out \
 	--nodes=1 \
 	--ntasks=${THREADS} \
 	--time=40:00:00 \
-	${SCRIPTDIR}/Genomics-Main/B_Phylogenetics/msmc/msmc_4_run_bootstraps.sh -p ${PARAMS} -b ${boot} -i ${POP_OR_IND}
-done
+    --array=1-20 \
+
+    BOOT="$( sed "${SLURM_ARRAY_TASK_ID}q;d" ${OUTDIR}/datafiles/bootstraps/boots_file_lsts/${POP_OR_IND}.bs_list.txt )"
+    ${SCRIPTDIR}/Genomics-Main/B_Phylogenetics/msmc/msmc_4_run_bootstraps.sh -p ${PARAMS} -b ${BOOT} -i ${POP_OR_IND}

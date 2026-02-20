@@ -10,7 +10,7 @@ INPUT_DIR=${OUTDIR}/datafiles/ldhelmet
 RESULT_DIR=${OUTDIR}/analyses/ldhelmet
 
 # General Parameters
-THREADS=12
+THREADS=12 # 12 is more than enough for most parts of LDHelmet (input generation and analysis). But post-processing will likely require more. On Ocelote cluster, 20 threads is a good starting point.
 WINDOW_SIZE=50 # often 50
 MUT_RATE=<SET_VALUE> # Population scaled mutation rate in units of 1/bp
 

@@ -6,7 +6,7 @@ Estimating Effective Population Size (Ne) over time in MSMC2 should follow the o
 ## Script Requirements
 - Run `msmc_setup.sh` prior to performing any input generation or analyses to set up directories and create your msmc environment. 
 - `params_msmc.sh` is present and references the main `params_base.sh` file.
-- These scripts use the pre-compiled version of MSMC2 for Linux, downloadable from MSMC2 repo (https://github.com/stschiff/msmc2.git)
+- These scripts use the pre-compiled version of MSMC2 for Linux, downloadable using micromamba
 
 ===========================================
 # Step-By-Step Pipeline
@@ -32,7 +32,7 @@ Once you've generated your input files, you can run MSMC using `msmc_3_runMSMC.s
 
 **Generating Bootstrap Outputs**
 
-`msmc_4_generate_bootstraps.sh` will create 20 bootstrapped sets of input files for a given individual or population. It will then call `msmc_4_run_bootstraps.sh` to start running MSMC on each bootstrapped input in separate batch jobs. Note that ``msmc_4_run_bootstraps.sh` can be easily edited to run on its own (useful if you already have generated bootstrapped sets and don't wish to waste resources regenerating them).
+`msmc_4_generate_bootstraps.sh` will create 20 bootstrapped sets of input files for a given individual or population. It will then automatically submit a slurm job and call on `msmc_4_run_bootstraps.sh` to start running MSMC on each bootstrapped input in a batch array. Note that ``msmc_4_run_bootstraps.sh` can be easily run on its own (useful if you already have generated bootstrapped sets and don't wish to waste resources regenerating them).
 
 
 **Plotting Outputs**

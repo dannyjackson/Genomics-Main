@@ -23,7 +23,7 @@ if [ ! -d msmc-tools ]; then
     git clone https://github.com/stschiff/msmc-tools || { echo "Error: Failed to clone msmc-tools."; exit 1; }
 fi
 
-# The UA HPC does not support a D Compiler, which is required for building MSMC2 from source. So we will just use precompiled exectuable from bioconda
+# The UA HPC does not seem to support a D Compiler, which is required for building MSMC2 from source. So we will just use precompiled exectutable from bioconda (https://bioconda.github.io/recipes/msmc2/README.html)
 
 module load micromamba
 micromamba create -n msmc_env python=3.11 # Add python to environment for msmc-tools
