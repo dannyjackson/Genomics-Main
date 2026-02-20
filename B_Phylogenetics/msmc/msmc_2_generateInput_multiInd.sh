@@ -40,7 +40,7 @@ module list
 for s in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
         do SCAFFOLD=$s
 
-        MSMC_INPUT=${INPUTDIR}/msmc_input.${POP}.${SCAFFOLD}.txt
+        MSMC_INPUT=${OUTDIR}/datafiles/input/msmc_input.${POP}.${SCAFFOLD}.txt
 
         printf "\n \n \n \n"
         date
@@ -52,21 +52,21 @@ for s in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
         echo "MSMC input file: ${MSMC_INPUT}"
 
         for ind in $(cat ${IND})
-                do INDMASK=`ls ${INPUTDIR}/mask/ind/ind_mask.${ind}.${SCAFFOLD}.bed.gz`
-                echo "--mask=$INDMASK " >> ${INPUTDIR}/mask/ind/${POP}.mask_file.$SCAFFOLD
-                INDVCF=`ls ${INPUTDIR}/vcf2/${ind}.${SCAFFOLD}.phased.vcf.gz`
-                echo $INDVCF >> ${INPUTDIR}/vcf2/${POP}.vcf_file.${SCAFFOLD}
+                do INDMASK=`ls ${OUTDIR}/datafiles/msmc/mask/ind/ind_mask.${ind}.${SCAFFOLD}.bed.gz`
+                echo "--mask=$INDMASK " >> ${OUTDIR}/datafiles/msmc/mask/ind/${POP}.mask_file.$SCAFFOLD
+                INDVCF=`ls ${OUTDIR}/datafiles/split_vcfs/${ind}.${SCAFFOLD}.phased.vcf.gz`
+                echo $INDVCF >> ${OUTDIR}/datafiles/split_vcfs/${POP}.vcf_file.${SCAFFOLD}
         done
 
 ### Generate MSMC input files:
         if [ $METHOD == samtools ]
                 then
-                MASK_GENOME=${INPUTDIR}/mask/genom/${prefix}_revised_${SCAFFOLD}_mask.${k}.50.bed.gz
+                MASK_GENOME=${OUTDIR}/datafiles/mask/genom/${prefix}_revised_${SCAFFOLD}_mask.${k}.50.bed.gz
 
                 echo "MAPPABILITY MASK: ${MASK_GENOME}"
                 echo "Creating MSMC input file WITH individual mask (samtools)"
                 #${MSMCTOOLS}/generate_multihetsep.py --negative_mask=$MASK_REPEATS --mask=$MASK_INDIV $VCF > $MSMC_INPUT # with repeat mask
-                ${MSMCTOOLS}/generate_multihetsep.py `cat ${INPUTDIR}/mask/ind/${POP}.mask_file.${SCAFFOLD}` --mask=$MASK_GENOME `cat ${INPUTDIR}/vcf2/${POP}.vcf_file.${SCAFFOLD}` > ${MSMC_INPUT} # without repeat mask
+                ${MSMCTOOLS}/generate_multihetsep.py `cat ${OUTDIR}/datafiles/msmc/mask/ind/${POP}.mask_file.${SCAFFOLD}` --mask=$MASK_GENOME `cat ${OUTDIR}/datafiles/split_vcfs/${POP}.vcf_file.${SCAFFOLD}` > ${MSMC_INPUT} # without repeat mask
 
         elif [ $METHOD == gatk ]
                 then
