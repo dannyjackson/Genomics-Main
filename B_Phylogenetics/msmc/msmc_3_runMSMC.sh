@@ -4,25 +4,20 @@
 # all parameters come from the msmc_param control file
 # make edits there before using this script!
 
-source ~/.bashrc
-micromamba activiate msmc_env
-
 # Check for at least one argument (parameter file path)
 if [ $# -lt 1 ]; then
     echo "Usage: $0 -p <path_to_parameter_file>"
     echo "This script generates input files for MSMC."
     echo "Required Argument:"
-    echo "  -p   Path to project base parameter file (example in GitHub repository as params.sh)"
-    echo "  -m   File Name of your unique project msmc params file"
+    echo "  -p   Path to project msmc parameter file"
     echo "  -i   Individual or Population Name"
     exit 1
 fi
 
 # Parse command-line arguments
-while getopts ":p:m:i:" opt; do
+while getopts ":p:i:" opt; do
     case "${opt}" in
         p) PARAMS=${OPTARG} ;;
-        m) MSMCPARAMS=${OPTARG} ;;
         i) POP_OR_IND=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}"
            exit 1 
@@ -41,7 +36,6 @@ fi
 
 # Source/list needed param files and modules
 source "${PARAMS}"
-source "${SCRIPTDIR}/${MSMCPARAMS}"
 module list
 RUN_NAME=msmc_${POP_OR_IND}_${DATE}
 

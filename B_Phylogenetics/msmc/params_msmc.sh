@@ -1,5 +1,8 @@
 # msmc specific
 
+source ~/.bashrc
+micromamba activate msmc_env
+
 source ../params_base.sh
 
 # msmc input generation

@@ -51,7 +51,7 @@ for s in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
         echo "Method: ${METHOD}"
         echo "MSMC input file: ${MSMC_INPUT}"
 
-        for ind in $IND
+        for ind in $(cat ${IND})
                 do INDMASK=`ls ${INPUTDIR}/mask/ind/ind_mask.${ind}.${SCAFFOLD}.bed.gz`
                 echo "--mask=$INDMASK " >> ${INPUTDIR}/mask/ind/${POP}.mask_file.$SCAFFOLD
                 INDVCF=`ls ${INPUTDIR}/vcf2/${ind}.${SCAFFOLD}.phased.vcf.gz`
