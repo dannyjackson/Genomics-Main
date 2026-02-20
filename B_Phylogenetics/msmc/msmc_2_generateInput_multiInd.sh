@@ -62,7 +62,7 @@ for s in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
 ### Generate MSMC input files:
         if [ $METHOD == samtools ]
                 then
-                MASK_GENOME=${OUTDIR}/datafiles/mask/genom/${prefix}_revised_${SCAFFOLD}_mask.${k}.50.bed.gz
+                MASK_GENOME=${OUTDIR}/datafiles/msmc/mask/genom/${prefix}_revised_${SCAFFOLD}_mask.${k}.50.bed.gz
 
                 echo "MAPPABILITY MASK: ${MASK_GENOME}"
                 echo "Creating MSMC input file WITH individual mask (samtools)"
