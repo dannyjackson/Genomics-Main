@@ -7,6 +7,7 @@ module load gsl
 source ../../../params_base.sh
 
 INPUT_DIR=${OUTDIR}/datafiles/ldhelmet
+RESULT_DIR=${OUTDIR}/analyses/ldhelmet
 
 # General Parameters
 THREADS=12
