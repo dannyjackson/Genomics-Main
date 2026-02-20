@@ -46,12 +46,12 @@ ${PROGDIR}/LDhelmet/ldhelmet find_confs --num_threads ${THREADS} -w ${WINDOW_SIZ
 printf "\n"
 echo "|---------------Generating Likelihood Lookup Table for ${CHR}---------------|"
 printf "\n"
-ldhelmet table_gen --num_threads ${THREADS} -t ${MUT_RATE} -r ${REC_RATE_GRID} -c ${INPUT_DIR}/${POP}/${CHR}.conf -o ${INPUT_DIR}/${POP}/${CHR}.lk 
+${PROGDIR}/LDhelmet/ldhelmet table_gen --num_threads ${THREADS} -t ${MUT_RATE} -r ${REC_RATE_GRID} -c ${INPUT_DIR}/${POP}/${CHR}.conf -o ${INPUT_DIR}/${POP}/${CHR}.lk 
 
 printf "\n"
 echo "|---------------Generating Pade Coefficients for ${CHR}---------------|"
 printf "\n"
-ldhelmet pade --num_threads ${THREADS} -t ${MUT_RATE} -x ${PADE_COEF} --defect_threshold ${DEFECT} -c ${INPUT_DIR}/${POP}/${CHR}.conf -o ${INPUT_DIR}/${POP}/${CHR}.pade
+${PROGDIR}/LDhelmet/ldhelmet pade --num_threads ${THREADS} -t ${MUT_RATE} -x ${PADE_COEF} --defect_threshold ${DEFECT} -c ${INPUT_DIR}/${POP}/${CHR}.conf -o ${INPUT_DIR}/${POP}/${CHR}.pade
 
 
 printf "\n"
@@ -67,7 +67,7 @@ if [ -n "${ANC_PRIOR}" ]; then
     OPT_FLAGS="${OPT_FLAGS} -a ${ANC_PRIOR}"
 fi
 
-ldhelmet rjmcmc --num_threads ${THREADS} -l ${INPUT_DIR}/${POP}/${CHR}.lk -p ${INPUT_DIR}/${POP}/${CHR}.pade -s ${INPUT_DIR}/${POP}/${CHR}.ldhelmet.snps \
+${PROGDIR}/LDhelmet/ldhelmet rjmcmc --num_threads ${THREADS} -l ${INPUT_DIR}/${POP}/${CHR}.lk -p ${INPUT_DIR}/${POP}/${CHR}.pade -s ${INPUT_DIR}/${POP}/${CHR}.ldhelmet.snps \
                 -b ${BLOCK_PENALTY} --burn_in ${BURN_IN} -n ${ITERATIONS} -o ${INPUT_DIR}/${POP}/${CHR}.post ${OPT_FLAGS}
 
 
