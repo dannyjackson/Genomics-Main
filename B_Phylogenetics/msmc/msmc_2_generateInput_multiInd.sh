@@ -54,7 +54,7 @@ for s in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
         for ind in $(cat ${IND})
                 do INDMASK=`ls ${OUTDIR}/datafiles/msmc/mask/ind/ind_mask.${ind}.${SCAFFOLD}.bed.gz`
                 echo "--mask=$INDMASK " >> ${OUTDIR}/datafiles/msmc/mask/ind/${POP}.mask_file.$SCAFFOLD
-                INDVCF=`ls ${OUTDIR}/datafiles/split_vcfs/${ind}.${SCAFFOLD}.phased.vcf.gz`
+                INDVCF=`ls ${OUTDIR}/datafiles/split_vcfs/${ind}_${SCAFFOLD}.vcf.gz`
                 echo $INDVCF >> ${OUTDIR}/datafiles/split_vcfs/${POP}.vcf_file.${SCAFFOLD}
         done
 
