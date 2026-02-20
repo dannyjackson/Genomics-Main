@@ -35,12 +35,12 @@ source "${PARAMS}"
 
 printf "\n\n\n\n"
 date
-echo "Current script: ldhelmet_run_mcmc.sh"
+echo "Current script: ldhelmet_analysis.sh"
 
 printf "\n"
 echo "|---------------Generating Haplotype Config for ${CHR}---------------|"
 printf "\n"
-ldhelmet find_confs --num_threads ${THREADS} -w ${WINDOW_SIZE} -o ${INPUT_DIR}/${POP}/${CHR}.conf ${INPUT_DIR}/${POP}/${CHR}.ldhelmet.snps
+${PROGDIR}/LDhelmet/ldhelmet find_confs --num_threads ${THREADS} -w ${WINDOW_SIZE} -o ${INPUT_DIR}/${POP}/${CHR}.conf ${INPUT_DIR}/${POP}/${CHR}.ldhelmet.snps
 
 
 printf "\n"

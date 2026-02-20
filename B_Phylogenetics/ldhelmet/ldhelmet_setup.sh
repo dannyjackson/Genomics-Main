@@ -18,6 +18,7 @@ date
 # This cannot be changed with any simple component flags. In this scenario you'll have to be prepared to split your data into smaller partitions to reduce memory load.
 
 # Therefore, to avoid this for an easier time in the long-run I'd strongly recommend installing LDHelmet from github and making some required edits to the source code and Makefile.
+# You can refer to the file `template_makefile` for a reference of what your Makefile should look like. As of Feb 20, 2026, this template version works on the UA HPC, so feel free to give it a try.
 #======================================
 
 
@@ -64,3 +65,5 @@ echo "To remove the memory limit in LDHelmet, open 'src/common/site_map_log_lk.c
 #micromamba config append channels bioconda
 #micromamba config list
 #micromamba create -n ldhelmet_env ldhelmet
+
+echo "After editing the makefile and source code, you can run 'make' to build LDHelmet. Remember to load the required modules (boost and gsl) in an interactive session."
