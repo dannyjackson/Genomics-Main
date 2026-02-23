@@ -32,7 +32,7 @@ source "${PARAMS}"
 
 printf "\n\n\n\n"
 date
-echo "Current script: ldhelmet_input_generation.sh"
+echo "Current script: ldhelmet_1_input_generation.sh"
 
 module load vcftools
 

@@ -35,7 +35,7 @@ source "${PARAMS}"
 
 printf "\n\n\n\n"
 date
-echo "Current script: ldhelmet_analysis.sh"
+echo "Current script: ldhelmet_2_analysis.sh"
 
 printf "\n"
 echo "|---------------Generating Haplotype Config for ${CHR}---------------|"
