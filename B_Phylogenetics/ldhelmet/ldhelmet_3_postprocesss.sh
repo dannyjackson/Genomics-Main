@@ -16,7 +16,7 @@ Required argument:
 fi
 
 # Parse command-line arguments
-while getopts p:d:c: option; do
+while getopts :p:d:c: option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
 		d) POP=${OPTARG};;
