@@ -45,6 +45,6 @@ if [ -d "${RESULT_DIR}/${POP}" ]; then
 
 # Have found that 20 threads on ocelote cluster can work for most max-likelihood analyses for bigger chromosomes. Configure your slurm script as needed and edit thread limit for max_lk.
 
-${PROGDIR}/LDhelmet/ldhelmet post_to_text -m -p 0.025 -p 0.50 -p 0.975 -o ${RESULT_DIR}/${POP}/${POP}_${CHR}_STATS.txt ${INPUT_DIR}/${POP}/${CHR}.post
+#${PROGDIR}/LDhelmet/ldhelmet post_to_text -m -p 0.025 -p 0.50 -p 0.975 -o ${RESULT_DIR}/${POP}/${POP}_${CHR}_STATS.txt ${INPUT_DIR}/${POP}/${CHR}.post
 
 ${PROGDIR}/LDhelmet/ldhelmet max_lk --num_threads ${THREADS} -l ${INPUT_DIR}/${POP}/${CHR}.lk -p ${INPUT_DIR}/${POP}/${CHR}.pade -s ${INPUT_DIR}/${POP}/${CHR}.ldhelmet.snps > ${RESULT_DIR}/${POP}/${POP}_${CHR}_maxlk.txt
