@@ -30,6 +30,8 @@ if [ -z "${PARAMS}" ]; then
     exit 1
 fi
 
+source "${PARAMS}"
+
 printf "\n"
 echo "|---------------Post-Processing ${CHR}---------------|"
 printf "\n"
