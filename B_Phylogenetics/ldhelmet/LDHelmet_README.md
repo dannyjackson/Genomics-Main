@@ -1,4 +1,4 @@
-# WIP LDHelmet Pipeline - Estimating Fine-Scale Recombination Rates
+# LDHelmet Pipeline - Estimating Fine-Scale Recombination Rates
 ===========================================
 
 Estimating fine-scale recombination rates in LDHelmet should follow the outline below.
@@ -21,7 +21,7 @@ You can run LDHelmet using `ldhelmet_2_analysis.sh`. Be sure to revise your `par
 
 **Result Post-Processing**
 
-LDHelmet will output a binary file with the extension `.post`. You can textualize and assess these outputs using `ldhelmet_3_postprocess.sh`. Note that this step often requires a moderate-to-high amount of memory.
+LDHelmet will output a binary file with the extension `.post`. You can textualize and assess these outputs using `ldhelmet_3_postprocess.sh`. Note that this step often requires a moderate-to-high amount of memory. This script will also use a maximum likelihood approach to estimate a most probably recombination rate to each other.
 
 
 ===========================================

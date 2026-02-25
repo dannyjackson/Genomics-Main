@@ -52,6 +52,12 @@ if [ -d "${RESULT_DIR}/${POP}" ]; then
 
 ${PROGDIR}/LDhelmet/ldhelmet post_to_text -m -p 0.025 -p 0.50 -p 0.975 -o ${RESULT_DIR}/${POP}/${POP}_${CHR}_STATS.txt ${INPUT_DIR}/${POP}/${CHR}.post
 
-echo "Finding max likelihood estimates for ${CHR} and writing to file"
+printf "\n"
+echo "|---------------Estimating max-likelihood recombination rate for ${CHR}---------------|"
+printf "\n"
 
 ${PROGDIR}/LDhelmet/ldhelmet max_lk --num_threads ${THREADS} -l ${INPUT_DIR}/${POP}/${CHR}.lk -p ${INPUT_DIR}/${POP}/${CHR}.pade -s ${INPUT_DIR}/${POP}/${CHR}.ldhelmet.snps > ${RESULT_DIR}/${POP}/${POP}_${CHR}_maxlk.txt
+
+printf "\n"
+echo "|---------------Finished post-processing for ${CHR}---------------|"
+printf "\n"
