@@ -92,18 +92,15 @@ fi
 
 echo "Output File Location: ${MSMC_OUTPUT}"
 
-
-# Run MSMC now that all necessary params are set
-msmc2_Linux -t $THREADS -p $P_PAR -i $NUM_OPT -o ${MSMC_OUTPUT} -I `echo $INDEX` $MSMC_INPUT 
-
-
-
 if [ -d "${OUTDIR}/datafiles/msmc/output/log_and_loop/" ]; then
         echo "log-loop output directory already exists."
     else
         echo "log-loop output does not exist. Creating it now..."
         mkdir -p "${OUTDIR}/datafiles/msmc/output/log_and_loop/"
     fi
+
+# Run MSMC now that all necessary params are set
+msmc2_Linux -t $THREADS -p $P_PAR -i $NUM_OPT -o ${MSMC_OUTPUT} -I `echo $INDEX` $MSMC_INPUT 
 
 mv $MSMC_OUTPUT*loop.txt ${OUTDIR}/datafiles/msmc/output/log_and_loop/
 mv $MSMC_OUTPUT*log ${OUTDIR}/datafiles/msmc/output/log_and_loop/
