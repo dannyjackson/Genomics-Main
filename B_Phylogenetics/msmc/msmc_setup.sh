@@ -1,7 +1,7 @@
 # base_setup.sh
 
 # make main directories
-# specific to selection analyses (fst, dxy, Tajima's D, RAiSD)
+# specific to demography analyses (msmc)
 # make directories for intermediate files-- will fail if these don't exist
 
 mkdir -p ${OUTDIR}/analyses/msmc/outputs/
