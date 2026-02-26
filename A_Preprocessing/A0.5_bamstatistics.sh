@@ -46,19 +46,22 @@ ls ${BAMDIR} | awk -F "." '{print $1}' | sort -u > "${OUTDIR}/referencelists/${R
 ## Compute statistics on bam files 
 
 while read -r bird; do
+echo "Current bam: $bird"
 echo $bird >> ${OUTDIR}/datafiles/bamstats/"$bird"_depthstats.txt 
 samtools depth ${BAMDIR}/"$bird".realigned.bam >> ${OUTDIR}/datafiles/bamstats/"$bird"_depthstats.txt 
+echo "Finished: $bird"
 done <  ${OUTDIR}/referencelists/${RUNNAME}.sampleids.txt
 
 
 # Create one file with all bam stats
+echo "generating summary bamstats file for all individuals"
 
 # Print header
 echo "Sample,Average,Stdev" > ${OUTDIR}/datafiles/bamstats/${RUNNAME}.depthstats.txt
 
 while read -r bird; do 
   # Compute average and standard deviation
-  stats=$(awk '{sum+=$3; sumsq+=$3*$3} END { print sum/NR, sqrt(sumsq/NR - (sum/NR)**2) }' ${OUTDIR}/datafiles/bamstats/"$bird"_depthstats.txt)
+  stats=$(awk '{sum+=$3; sumsq+=$3*$3} END { print sum/NR "," sqrt(sumsq/NR - (sum/NR)**2) }' ${OUTDIR}/datafiles/bamstats/"$bird"_depthstats.txt)
   
   # Append results in CSV format
   echo "$bird,$stats" >> ${OUTDIR}/datafiles/bamstats/${RUNNAME}.depthstats.txt
