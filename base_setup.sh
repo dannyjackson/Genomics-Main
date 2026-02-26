@@ -37,9 +37,17 @@ if [ -f "${CHR_FILE}" ]
         else
             echo "Creating chromosome conversion table from RefGenome..."
 
+            if micromamba env list | grep -Eq "\\bncbi_datasets\\b"
+                then 
+                    echo "ncbi_datasets environment is found"
+                else
+                    echo "ncbi_datasets environment is not found, creating it now..."
+                    micromamba create -n ncbi_datasets -c conda-forge ncbi-datasets-cli
+                fi
+
             micromamba activate ncbi_datasets  # Acivate environment with NCBI toolkit installed
             datasets summary genome accession ${REF_ACC} --report sequence --as-json-lines | dataformat tsv genome-seq --fields refseq-seq-acc,chr-name > ${OUTDIR}/referencelists/chrom_name_mapping.txt #Unfortunately I don't think ncbi_datasets toolkit has the ability to outptu as csv, so we'll have to do that outrselves in the python script below.
-            python ${SCRIPTDIR}/make_chrom_conversion_file.py -i ${OUTDIR}/referencelists/chrom_name_mapping.txt -o ${CHR_FILE} -e ${SEXCHR},${SCAF_LEAD}
+            python ${SCRIPTDIR}/Genomics-Main/A_Preprocessing/make_chrom_conversion_file.py -i ${OUTDIR}/referencelists/chrom_name_mapping.txt -o ${CHR_FILE} -e ${SEXCHR},${SCAF_LEAD}
             micromamba deactivate # Deactivate NCBI datasets environment
 # Alternative: manually create the chromosome conversion file
 #        echo '1,NC_044571.1' > ${CHR_FILE}
