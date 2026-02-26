@@ -7,16 +7,14 @@ This uses ANGSD to identify SNPs from the bam files
 
 Required argument:
   -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
-  -b  Path to bam directory for analysis (if you are following the full pipeline, this will be ${OUTDIR}/datafiles/indelrealignment/)
   -r  Run name, required for providing a unique name to output files."
     exit 1
 fi
 
 # Parse command-line arguments
-while getopts p:b:r: option; do
+while getopts p:r: option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
-        b) BAMDIR=${OPTARG};;
         r) RUNNAME=${OPTARG};;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac

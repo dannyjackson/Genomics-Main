@@ -86,24 +86,24 @@ if [ $NR_IND == 1 ]
 else
         echo "Running MSMC for $NR_IND individuals"
         MSMC_INPUT=`cat ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}`
-        MSMC_OUTPUT=${OUTDIR}/datafiles/msmc/output/msmc_output.${RUN_NAME}
+        MSMC_OUTPUT=${OUTDIR}/analyses/msmc/output/msmc_output.${RUN_NAME}
 
 fi
 
 echo "Output File Location: ${MSMC_OUTPUT}"
 
-if [ -d "${OUTDIR}/datafiles/msmc/output/log_and_loop/" ]; then
+if [ -d "${OUTDIR}/analyses/msmc/output/log_and_loop/" ]; then
         echo "log-loop output directory already exists."
     else
         echo "log-loop output does not exist. Creating it now..."
-        mkdir -p "${OUTDIR}/datafiles/msmc/output/log_and_loop/"
+        mkdir -p "${OUTDIR}/analyses/msmc/output/log_and_loop/"
     fi
 
 # Run MSMC now that all necessary params are set
 msmc2_Linux -t $THREADS -p $P_PAR -i $NUM_OPT -o ${MSMC_OUTPUT} -I `echo $INDEX` $MSMC_INPUT 
 
-mv $MSMC_OUTPUT*loop.txt ${OUTDIR}/datafiles/msmc/output/log_and_loop/
-mv $MSMC_OUTPUT*log ${OUTDIR}/datafiles/msmc/output/log_and_loop/
+mv $MSMC_OUTPUT*loop.txt ${OUTDIR}/analyses/msmc/output/log_and_loop/
+mv $MSMC_OUTPUT*log ${OUTDIR}/analyses/msmc/output/log_and_loop/
 
 
 echo "done running msmc2 for ${POP_OR_IND}"
