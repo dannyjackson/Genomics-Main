@@ -48,7 +48,7 @@ else
     # Overwrites any existing text (we do this to in case the file has been appended to before and prevent endlessly appending upon reruns)
     echo "" > ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}
 
-    for s in `cat /xdisk/mcnew/finches/ljvossler/finches/SCAFFOLDS.txt`
+    for s in `cat /xdisk/mcnew/finches/ljvossler/finches/referencelists/SCAFFOLDS.txt`
         do echo $s
         ls ${OUTDIR}/datafiles/msmc/input/msmc_input.${POP_OR_IND}.${s}.txt >> ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}
     done
