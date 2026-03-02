@@ -22,8 +22,8 @@ PADE_COEF=12
 DEFECT=40
 
 # MCMC Analysis
-BURN_IN=10000
-BLOCK_PENALTY=50
-ITERATIONS=100000
+BURN_IN=100000
+BLOCK_PENALTY=25
+ITERATIONS=1000000
 MUT_MATRIX= # Optional, leave empty if not using a custom mutation matrix. If using, provide the path to the mutation matrix file.
 ANC_PRIOR= # Optional, leave empty if not using ancestral allele priors. If using, provide the path to the ancestral allele prior file. 
