@@ -10,7 +10,7 @@ library(patchwork)
 # SCRIPT PARAMETERS ===========================================
 mu = 1.0e-8
 gen = 4.5
-out_path = '~/Desktop/new_msmc_outputs/lines/'
+out_path = '~/Desktop/msmc_output.msmc_CRA_pre_022826.final.txt'
 
 # =============================================================
 

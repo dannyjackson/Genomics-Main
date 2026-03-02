@@ -7,7 +7,7 @@ This uses VCFtools to generate input files for LDHelmet.
 
 Required argument:
   -p  Path to the parameter file (e.g., params_ldhelmet.sh in the GitHub repository).
-  -v  VCF file path. Must be phased.
+  -v  VCF file path. Must be phased. Assuming bgzipped
   -c  Path to file containing chromosome names to proceess, one per line."
     exit 1
 fi
@@ -36,7 +36,7 @@ echo "Current script: ldhelmet_1_input_generation.sh"
 
 module load vcftools
 
-OUTPREFIX=$(basename "$VCF" .vcf)
+OUTPREFIX=$(basename "$VCF" .vcf.gz)
 
 if [ -d "${INPUT_DIR}/${OUTPREFIX}" ]; then
         echo "${OUTPREFIX} input directory already exists."
@@ -48,5 +48,5 @@ if [ -d "${INPUT_DIR}/${OUTPREFIX}" ]; then
 for CHR in $(cat ${CHR_LST}); do
     echo "Processing chromosome: ${CHR}"
 
-    vcftools --vcf ${VCF} --chr ${CHR} --ldhelmet --out ${INPUT_DIR}/${OUTPREFIX}/${CHR}
+    vcftools --gzvcf ${VCF} --chr ${CHR} --ldhelmet --out ${INPUT_DIR}/${OUTPREFIX}/${CHR}
 done
