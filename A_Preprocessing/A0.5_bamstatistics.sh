@@ -7,15 +7,20 @@ This script computes average depth statistics of each bam file in a directory.
 
 Required argument:
   -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
-  -r  Run name, required for providing a unique name to output files."
+  -r  Run name, required for providing a unique name to output files.
+  -c  Optional flag to indicate whether to compress the output files (e.g., with bgzip)."
     exit 1
 fi
 
+# Set default values for optional variables
+COMPRESS=false
+
 # Parse command-line arguments
-while getopts p:r: option; do
+while getopts p:r:c option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
         r) RUNNAME=${OPTARG};;
+        c) COMPRESS=true ;;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done
@@ -68,3 +73,10 @@ while read -r bird; do
 
 done < ${OUTDIR}/referencelists/${RUNNAME}.sampleids.txt
 
+
+# Since the sample bamstats files are really large, let's compress them for now while we may need them in the near future.
+if [ "$COMPRESS" = true ]; then
+    for bird in $(cat ${OUTDIR}/referencelists/${RUNNAME}.sampleids.txt); do
+         bgzip "${OUTDIR}/datafiles/bamstats/${bird}_depthstats.txt"
+    done
+fi
