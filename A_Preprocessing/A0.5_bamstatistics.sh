@@ -8,7 +8,7 @@ This script computes average depth statistics of each bam file in a directory.
 Required argument:
   -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
   -r  Run name, required for providing a unique name to output files.
-  -c  Optional flag to indicate whether to compress the output files (e.g., with bgzip)."
+  -c  Optional flag to indicate whether to compress the output files with bgzip."
     exit 1
 fi
 
@@ -59,7 +59,7 @@ done <  ${OUTDIR}/referencelists/${RUNNAME}.sampleids.txt
 
 
 # Create one file with all bam stats
-echo "generating summary bamstats file for all individuals"
+echo "Generating summary bamstats file for all individuals"
 
 # Print header
 echo "Sample,Average,Stdev" > ${OUTDIR}/datafiles/bamstats/${RUNNAME}.depthstats.txt
@@ -77,6 +77,7 @@ done < ${OUTDIR}/referencelists/${RUNNAME}.sampleids.txt
 # Since the sample bamstats files are really large, let's compress them for now while we may need them in the near future.
 if [ "$COMPRESS" = true ]; then
     for bird in $(cat ${OUTDIR}/referencelists/${RUNNAME}.sampleids.txt); do
+         echo "Compressing ${bird} depthstats file"
          bgzip "${OUTDIR}/datafiles/bamstats/${bird}_depthstats.txt"
     done
 fi
