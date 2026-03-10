@@ -43,5 +43,5 @@ fi
 echo "Beginning trimming for "$IND>>${OUTDIR}/datafiles/trimming/${IND}_trim_log.txt
 java -jar ${TRIMJAR} PE -threads 12 \
 ${FASTAS}/"$IND"_R1.fastq.gz  ${FASTAS}/"$IND"_R2.fastq.gz  \
--baseout ${OUTDIR}/datafiles/trimmed_fastas/"$IND"_trimmed.fq.gz \
+-baseout ${OUTDIR}/datafiles/trimmed_fastas_test/"$IND"_trimmed.fq.gz \
 LEADING:${LEAD} TRAILING:${TRAIL} SLIDINGWINDOW:${SLIDE} MINLEN:${MINREADLEN}>>${OUTDIR}/datafiles/trimming/${IND}_trim_log.txt
