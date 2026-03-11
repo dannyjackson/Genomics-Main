@@ -70,3 +70,5 @@ if [ "$COMPRESS" = true ]; then
     echo "Compressing ${IND} depthstats file"
     bgzip "${OUTDIR}/datafiles/bamstats/${IND}_depthstats.txt"
 fi
+
+echo "Finished bam statistics for $IND"
