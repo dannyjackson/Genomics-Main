@@ -20,6 +20,7 @@ if [ -d "GONE2" ]; then
     echo "GONE2 directory exists."
     cd GONE2
     make gone # Edit this as needed based on your system and project memory requirements. See GONE2 documentation for details.
+    #make MAXLOCI=10000000 MAXIND=1000 gone # Uncomment to increase maxloci to 10 million. On the Puma HPC Cluster, this can run with 10 standard CPUs on a single node
 else
     echo "Error: Failed to build GONE2."
 fi

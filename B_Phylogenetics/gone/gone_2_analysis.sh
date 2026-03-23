@@ -13,12 +13,15 @@ Required argument:
     exit 1
 fi
 
+THREADS=8
+
 # Parse command-line arguments
-while getopts p:s:r: option; do
+while getopts p:s:r:t option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
         s) POPPARAMS=${OPTARG};;
         r) RUNNAME=${OPTARG};;
+        t) THREADS=${OPTARG};;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done
@@ -49,7 +52,7 @@ else
   echo "Directory for gone2 output for ${RUNNAME} with ${POPNAME} already exists. WARNING: Existing files in this directory may be overwritten."
 fi
 
-${PROGDIR}/GONE2/gone2 $INDIR/$POPNAME.ped -g $GENO_DTYPE -r $RECOMB_RATE -i $NUMIND -t 4 -o $RESULT_DIR/$POPNAME $EXTRA_FLAGS
+${PROGDIR}/GONE2/gone2 $INDIR/$POPNAME.ped -g $GENO_DTYPE -r $RECOMB_RATE -i $NUMIND -t ${THREADS} -o $RESULT_DIR/$POPNAME $EXTRA_FLAGS
 
 
 

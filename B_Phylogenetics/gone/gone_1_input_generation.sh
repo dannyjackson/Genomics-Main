@@ -62,7 +62,7 @@ vcftools $CHR_SUBSET_FLAGS --vcf $VCFFILE --recode --recode-INFO-all --max-missi
 
 # Convert VCF to plink formats
 # --allow-extra-chr to deal with non-standard chromosome names
-# --thin-count to randomly sample a subset of SNPs from the VCF (needed since GONE2 can't handle too many SNPs by default)
+# --thin-count to randomly sample a subset of SNPs from the VCF (add only if you are limiting GONE2 memory requirements)
 plink --vcf ${RESULT_DIR}/${POPNAME}.recode.vcf --maf $MAF --allow-extra-chr --recode --out ${RESULT_DIR}/${POPNAME}
 # Note that if you don't have info on SNP position in a genetic map (cM), you'll probably need to set a fixed recombination rate when running GONE2 or do some extra analyses to find this info yourself. (In this case the .map file is not useful)
 
