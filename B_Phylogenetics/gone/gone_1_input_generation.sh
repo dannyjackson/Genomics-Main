@@ -14,15 +14,16 @@ Required argument:
 fi
 
 # Parse command-line arguments
-while getopts p:s:r: option; do
+while getopts p:s:r:m option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
         s) POPPARAMS=${OPTARG};;
         r) RUNNAME=${OPTARG};;
+        m) MAF=${OPTARG};;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done
-
+MREC
 if [ -z "${PARAMS}" ]; then
     echo "Error: No parameter file provided." >&2
     exit 1
