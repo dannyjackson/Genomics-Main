@@ -19,7 +19,6 @@ while getopts p:s:r:m option; do
         p) PARAMS=${OPTARG};;
         s) POPPARAMS=${OPTARG};;
         r) RUNNAME=${OPTARG};;
-        m) MAF=${OPTARG};;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done
@@ -35,7 +34,7 @@ source "${POPPARAMS}"
 
 printf "\n\n\n\n"
 date
-echo "Current script: input_generation.sh"
+echo "Current script: gone_1_input_generation.sh"
 
 
 echo ARRAY NAME: $RUNNAME
