@@ -22,7 +22,7 @@ while getopts p:s:r:m option; do
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done
-MREC
+
 if [ -z "${PARAMS}" ]; then
     echo "Error: No parameter file provided." >&2
     exit 1
