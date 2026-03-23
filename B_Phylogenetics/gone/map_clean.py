@@ -31,3 +31,5 @@ for line in mapfile:
 
 with open(args.map, 'w') as f:
     mapfile = f.writelines(cleaned_map)
+
+print('Completed map file cleanup')

@@ -25,3 +25,5 @@ for line in file:
 
 with open(args.ped, 'w') as f:
     f.writelines(cleaned_str_lst)
+
+print('Completed ped file cleanup')
