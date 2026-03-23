@@ -67,5 +67,5 @@ plink --vcf ${RESULT_DIR}/${POPNAME}.recode.vcf --maf $MAF --allow-extra-chr --r
 # Note that if you don't have info on SNP position in a genetic map (cM), you'll probably need to set a fixed recombination rate when running GONE2 or do some extra analyses to find this info yourself. (In this case the .map file is not useful)
 
 # Due to not having standard chromosome names and that outputted files aren't always consistent with what GONE2 wants, we use these python scripts to reformat the data. (No filtering or analyses done here, just moving the numbers around)
-python map_clean.py --map ${RESULT_DIR}/${POPNAME}.map
-python ped_clean.py --ped ${RESULT_DIR}/${POPNAME}.ped
+python $SCRIPTDIR/Genomics-Main/B_Phylogenetics/gone/map_clean.py --map ${RESULT_DIR}/${POPNAME}.map
+python $SCRIPTDIR/Genomics-Main/B_Phylogenetics/gone/ped_clean.py --ped ${RESULT_DIR}/${POPNAME}.ped
