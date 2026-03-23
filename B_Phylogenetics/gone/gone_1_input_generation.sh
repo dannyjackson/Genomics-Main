@@ -58,7 +58,7 @@ fi
 
 # Create a filtered VCF to only include a specific subset of chromosomes
 # --max-missing to set proportion of missing data you'll permit.
-vcftools $CHR_SUBSET_FLAGS --gzvcf $VCFFILE --recode --recode-INFO-all --max-missing $MAX_MISSING --out ${RESULT_DIR}/${POPNAME}
+vcftools $CHR_SUBSET_FLAGS --vcf $VCFFILE --recode --recode-INFO-all --max-missing $MAX_MISSING --out ${RESULT_DIR}/${POPNAME}
 
 # Convert VCF to plink formats
 # --allow-extra-chr to deal with non-standard chromosome names
