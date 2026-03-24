@@ -38,6 +38,7 @@ source "${POPPARAMS}"
 printf "\n\n\n\n"
 date
 echo "Current script: gone_2_analysis.sh"
+echo Threads: ${THREADS}
 
 
 echo "Running GONE for ${POPNAME} with ${NUMIND} individuals with recombination rate of ${RECOMB_RATE}..."
