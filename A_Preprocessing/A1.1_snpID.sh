@@ -38,19 +38,31 @@ if [ -z "$BAMDIR" ] || [ -z "$ANGSD" ] || [ -z "$SNPPVAL" ] || [ -z "$MINDEPTHIN
     exit 1
 fi
 
+if [ -d "${OUTDIR}/referencelists/${RUNNAME}" ];
+        then
+            echo "output dir for ${RUNNAME} already exists, moving on!"
+        else
+        echo "no output dir found. making..."
+        mkdir -p "${OUTDIR}/referencelists/${RUNNAME}"
+fi
 
-
-ls ${BAMDIR}/*bam > ${OUTDIR}/referencelists/${RUNNAME}.bamlist.txt
+if [ -f "${OUTDIR}/referencelists/${RUNNAME}.bamlist.txt" ];
+        then
+            echo "bamlist file for ${RUNNAME} already exists, moving on!"
+        else
+        echo "no bam list found. making..."
+        ls ${BAMDIR}/*bam > ${OUTDIR}/referencelists/${RUNNAME}.bamlist.txt
+fi
 
 
 ${ANGSD}/angsd -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 1 -doCounts 1 -doDepth 1 -dumpCounts 1 -doIBS 1 -makematrix 1 -doCov 1 \
     -P 32 -SNP_pval ${SNPPVAL} -setMinDepthInd ${MINDEPTHIND} -minInd ${MININD} -minQ ${MINQ} -minMaf ${MINMAF} -minMapQ ${MINMAPQ} \
     -bam ${OUTDIR}/referencelists/${RUNNAME}.bamlist.txt \
-    -out ${OUTDIR}/referencelists/${RUNNAME} \
+    -out ${OUTDIR}/referencelists/${RUNNAME}/${RUNNAME} \
     -nThreads ${THREADS}
 
-zcat ${OUTDIR}/referencelists/${RUNNAME}.mafs.gz | awk '{print $1, $2, $3, $4}' > ${OUTDIR}/referencelists/${RUNNAME}.sites.mafs
+zcat ${OUTDIR}/referencelists/${RUNNAME}/${RUNNAME}.mafs.gz | awk '{print $1, $2, $3, $4}' > ${OUTDIR}/referencelists/${RUNNAME}/${RUNNAME}.sites.mafs
 
-grep ${CHRLEAD} ${OUTDIR}/referencelists/${RUNNAME}.sites.mafs | grep -v ${MTCODE} | tail -n +2 > ${OUTDIR}/referencelists/${RUNNAME}.sites_headless.mafs
+grep ${CHRLEAD} ${OUTDIR}/referencelists/${RUNNAME}/${RUNNAME}.sites.mafs | grep -v ${MTCODE} | tail -n +2 > ${OUTDIR}/referencelists/${RUNNAME}/${RUNNAME}.sites_headless.mafs
 
-${ANGSD}/angsd sites index ${OUTDIR}/referencelists/${RUNNAME}.sites_headless.mafs
+${ANGSD}/angsd sites index ${OUTDIR}/referencelists/${RUNNAME}/${RUNNAME}.sites_headless.mafs
