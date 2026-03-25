@@ -10,7 +10,7 @@ if [ $# -lt 1 ]
     This is an essential step for analyzing fst, dxy, and Tajima's D.
     
     REQUIRED ARGUMENTS
-    [-p] Path to parameter file (example is saved in the GitHub repository as params.sh).
+    -p Path to parameter file (example is saved in the GitHub repository as params.sh).
     -n Name of population 
     -m Path to headless MAF file generated in A1.1_snpID.sh"
 
@@ -42,7 +42,7 @@ if [ -f "${OUTDIR}/datafiles/safs/${POP}"* ]
             echo "${POP} files present in SAFs directory, assuming they are already generated and moving on!"
         else
             echo "Computing SAFs for ${POP}"
-            ${ANGSD}/angsd -bam ${OUTDIR}/referencelists/${POP}_bams.txt -out ${OUTDIR}/datafiles/safs/${POP} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 \
+            ${ANGSD}/angsd -bam ${OUTDIR}/referencelists/${POP}.bamlist.txt -out ${OUTDIR}/datafiles/safs/${POP} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 \
             -setMinDepthInd ${MINDEPTHIND} -minInd ${MININD} -minQ ${MINQ} -minMapQ ${MINMAPQ} -sites ${MAFFILE} -anc ${REF} -nThreads ${THREADS} 
 fi
 
