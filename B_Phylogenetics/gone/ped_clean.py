@@ -14,10 +14,12 @@ cleaned_str_lst = []
 
 for line in file:
     indv = line.split()
+    
     if indv[0] != indv[1]:
         name = indv[0] + indv[1]
     else:
         name = indv[0]
+
     indv[0] = '1'
     indv[1] = name
     cleaned_str_lst.append(' '.join(indv)+'\n')
