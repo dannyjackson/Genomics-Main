@@ -13,21 +13,18 @@ with open(args.map, 'r') as f:
 cleaned_map = []
 parsed_scaffolds = []
 scaffold_num = 0
+
 for line in mapfile:
-    clean_lst = []
-    splt = line.split()
-    if splt[0] not in parsed_scaffolds:
+    snp_info = line.split()
+
+    if snp_info[0] not in parsed_scaffolds:
+        parsed_scaffolds.append(snp_info[0])
         scaffold_num += 1
-        parsed_scaffolds.append(splt[0])
-    snp_name = '.'.join([splt[0], splt[3]])
-    genetic_loc_cm = splt[2]
-    genetic_loc_snp = splt[3]
-    clean_lst.append(str(scaffold_num))
-    clean_lst.append(snp_name)
-    clean_lst.append(genetic_loc_cm)
-    clean_lst.append(genetic_loc_snp)
-    #print('\t'.join(clean_lst))
-    cleaned_map.append('\t'.join(clean_lst)+'\n')
+    snp_name = '.'.join([snp_info[0], snp_info[3]])
+    genetic_loc_cm = snp_info[2]
+    genetic_loc_snp = snp_info[3]
+
+    cleaned_map.append('\t'.join([str(scaffold_num), snp_name, genetic_loc_cm, genetic_loc_snp])+'\n')
 
 with open(args.map, 'w') as f:
     mapfile = f.writelines(cleaned_map)
