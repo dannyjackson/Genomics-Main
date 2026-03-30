@@ -13,10 +13,9 @@ Required argument:
 fi
 
 # Parse command-line arguments
-while getopts p:b:r: option; do
+while getopts p:r: option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
-        b) BAMDIR=${OPTARG};;
         r) RUNNAME=${OPTARG};;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
