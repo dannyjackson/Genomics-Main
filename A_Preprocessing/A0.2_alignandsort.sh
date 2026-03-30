@@ -75,5 +75,5 @@ picard MarkDuplicates \
 # Index the final BAM file
 samtools index "${OUTDIR}/datafiles/sortedbamfiles/${IND}/${IND}_sorted_RGadded_dupmarked.bam"
 
-# Generate alignment statistics
-samtools flagstat "${OUTDIR}/datafiles/sortedbamfiles/${IND}/${IND}_sorted_RGadded.bam"
+# Generate alignment statistics and save to file
+samtools flagstat -O json "${OUTDIR}/datafiles/sortedbamfiles/${IND}/${IND}_sorted_RGadded.bam" > "${OUTDIR}/datafiles/sortedbamfiles/${IND}/${IND}_flagstat.json"

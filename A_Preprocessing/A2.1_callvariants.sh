@@ -3,7 +3,7 @@
 if [ $# -lt 1 ]; then
     echo "Usage: $0 -p <parameter_file>
 
-This script computes average depth statistics of each bam file in a directory.
+This script calls variants for VCF file creation from BAM files.
 
 Required argument:
   -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
@@ -32,7 +32,7 @@ source "${PARAMS}"
 
 printf "\n\n\n\n"
 date
-echo "Current script: A2_ClipOverlap.sh"
+echo "Current script: A2.1_callvariants.sh"
 
 # Ensure required variables are set
 if [ -z "$OUTDIR" ] || [ -z "$REF" ]; then
