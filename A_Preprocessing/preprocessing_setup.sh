@@ -9,6 +9,7 @@ mkdir -p "${OUTDIR}/datafiles/clipoverlap"
 mkdir -p "${OUTDIR}/datafiles/indelmaps"
 mkdir -p "${OUTDIR}/datafiles/bamstats"
 mkdir -p "${OUTDIR}/datafiles/indelrealignment"
+mkdir -p "${OUTDIR}/datafiles/sapphire_polishing"
 
 # A1
 # Create necessary directories
@@ -55,3 +56,12 @@ echo "Environment setup completed."
 pip3 install --user whatshap
 
 micromamba create -n shapeit4_env -c bioconda shapeit4
+
+if [ ! -d sapphire ]; then
+    git clone https://github.com/stschiff/sapphire || { echo "Error: Failed to clone sapphire."; exit 1; }
+fi
+cd sapphire # Note that you should be on the Puma Cluster to successfully build sapphire
+module load htslib
+make
+
+cd ../

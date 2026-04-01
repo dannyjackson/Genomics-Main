@@ -2,7 +2,7 @@
 
 # Usage message function
 usage() {
-    echo "Usage: $0 -p <parameter_file> -i <individual> -b <bam_directory>"
+    echo "Usage: $0 -p <parameter_file> -i <individual> [-s]"
     echo ""
     echo "This script phases a VCF file with SHAPEIT5 using a VCF split by scaffold generated previously through the SNPable pipeline. It can also polish the phased output with SAPPHIRE, which is highly recommended"
     echo "It is best run as a Slurm array that calls this script for each individual."
@@ -10,7 +10,6 @@ usage() {
     echo "Required arguments:"
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository)."
     echo "  -i  Name of the population to analyze."
-    echo "  -b  Directory containing BAM files."
     echo "  -s  Optional flag to enable SAPPHIRE polishing of phased VCFs (recommended)."
     exit 1
 }
@@ -18,11 +17,10 @@ usage() {
 SAPPHIRE=false
 
 # Parse command-line arguments
-while getopts ":p:i:b:s" option; do
+while getopts ":p:i:s" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         i) POP=${OPTARG} ;;
-        b) BAMDIR=${OPTARG} ;;
         s) SAPPHIRE=true ;; # False by default, recommended to set to true
         *) echo "Invalid option: -${OPTARG}" >&2; usage ;;
     esac
@@ -129,7 +127,7 @@ while read -r SCAFFOLD; do
         # Sanity check the annotated VCF
         bcftools view "$VCF_ANNOTATED" | less
 
-        ./sapphire/pp_extractor/pp_extract -f $VCF_ANNOTATED --show-number -o $EXTRACTED_PP
+        ${PROGDIR}/sapphire/pp_extractor/pp_extract -f $VCF_ANNOTATED --show-number -o $EXTRACTED_PP
         # Copy the file as SAPPHIRE will modify it, with this we will be able to compare
         cp "$EXTRACTED_PP" "$EXTRACTED_PP_ORIGINAL"
 
@@ -137,7 +135,7 @@ while read -r SCAFFOLD; do
         awk '{print NR-1 "," $0 ",CRAM_PATH"}' > \
         $ANNOTATED_CSV
 
-        ./sapphire/phase_caller/phase_caller \
+        ${PROGDIR}/sapphire/phase_caller/phase_caller \
         -f $VCF_ANNOTATED \
         -S $ANNOTATED_CSV \
         --cram-path-from-samples-file \
@@ -150,7 +148,7 @@ while read -r SCAFFOLD; do
         #-S $ANNOTATED_CSV \
         #--extra-info --more | less
 
-        ./sapphire/pp_update/pp_update -f $VCF_ANNOTATED \
+        ${PROGDIR}/sapphire/pp_update/pp_update -f $VCF_ANNOTATED \
         -b $EXTRACTED_PP \
         -o $VCF_REPHASED
 
