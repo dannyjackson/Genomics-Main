@@ -53,3 +53,5 @@ echo "Environment setup completed."
 
 # Install required dependencies
 pip3 install --user whatshap
+
+micromamba create -n shapeit4_env -c bioconda shapeit4

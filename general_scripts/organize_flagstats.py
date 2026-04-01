@@ -17,7 +17,7 @@ parser.add_argument("-f", "--fstats", type=str, nargs='+', default=['percent_map
 parser.add_argument("-t", "--stattype", default='pass', choices=['pass', 'fail', 'both'], help="Specify what stats type to output. Either 'pass', 'fail', or 'both'. (Default to pass)")
 parser.add_argument("-a", "--all", action='store_true', help='Specify to output ALL stats')
 parser.add_argument("-s", "--samples", type=str, help='Specify path to file with sample names to collect flagstats from. Optional for if only want a subset of samples to be gathered')
-parser.add_argument("-d", "--directory", type=str, help="Specify directory containing where flagstats are. Should be the 'datafiles/stats/flagstats/' directory if following Gen-Main pipeline")
+parser.add_argument("-d", "--directory", type=str, help="Specify directory containing where flagstats are. Should be the 'datafiles/sortedbamfiles/' directory if following Gen-Main pipeline")
 args = parser.parse_args()
 
 def filter_cols(df, opts):
@@ -67,7 +67,7 @@ else:
 # Grab stats for each sample
 fstat_df_lst = []
 for sample in sample_lst:
-    with open(os.path.join(args.directory, 'flagstats', f'{sample}_flagstat.json')) as j:
+    with open(os.path.join(args.directory, sample, f'{sample}_flagstat.json')) as j:
         sample_file = json.load(j)
 
     if args.all == True or qc_type == 'both':
