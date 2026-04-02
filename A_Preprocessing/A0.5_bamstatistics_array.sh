@@ -47,6 +47,7 @@ fi
 
 ## Compute statistics on bam file
 echo "Current bam: $IND"
+echo "Current bampath: ${BAMDIR}/$IND.realigned.bam"
 echo $IND >> ${OUTDIR}/datafiles/bamstats/"$IND"_depthstats.txt 
 samtools depth ${BAMDIR}/"$IND".realigned.bam >> ${OUTDIR}/datafiles/bamstats/"$IND"_depthstats.txt 
 echo "Finished: $IND"
