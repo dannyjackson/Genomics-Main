@@ -81,7 +81,8 @@ for sample in sample_lst:
         sample_stats = pd.json_normalize(sample_file[qc_type])
         sample_stats.rename(columns=fstat_name_dct, inplace=True)
         filter_cols(sample_stats, args.fstats)
-    
+
+    sample_stats['Sample'] = sample
     fstat_df_lst.append(sample_stats)
 
 fstat_df = pd.concat(fstat_df_lst, ignore_index=True)
