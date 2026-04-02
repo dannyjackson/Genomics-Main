@@ -41,12 +41,6 @@ if [ -z "$OUTDIR" ]; then
     exit 1
 fi
 
-# Ensure genome reference is set
-if [ -z "$REF" ]; then
-    echo "Error: REF variable is not defined in params.sh"
-    exit 1
-fi
-
 echo "Processing individual: $IND"
 
 
@@ -99,8 +93,8 @@ while read -r SCAFFOLD; do
 
         echo "Polishing phased VCF for scaffold $SCAFFOLD with SAPPHIRE..."
 
-        VCF_ANNOTATED="${OUTDIR}/datafiles/split_vcf/${POP}_${SCAFFOLD}.phased_PP_annotated.bcf"
-        VCF_REPHASED="${OUTDIR}/datafiles/split_vcf/${POP}_${SCAFFOLD}.rephased.bcf"
+        VCF_ANNOTATED="${OUTDIR}/datafiles/split_vcf/${POP}_${SCAFFOLD}.phased_PP_annotated.vcf"
+        VCF_REPHASED="${OUTDIR}/datafiles/split_vcf/${POP}_${SCAFFOLD}.rephased.vcf"
         EXTRACTED_PP="${OUTDIR}/datafiles/sapphire_polishing/${POP}_${SCAFFOLD}.phased_PP_extract.bin"
         EXTRACTED_PP_ORIGINAL="${OUTDIR}/datafiles/sapphire_polishing/${POP}_${SCAFFOLD}.phased_PP_extract.bin.original"
         ANNOTATED_CSV="${OUTDIR}/datafiles/sapphire_polishing/${POP}_${SCAFFOLD}.phased_PP_annotated.samples.csv"
@@ -154,8 +148,9 @@ while read -r SCAFFOLD; do
 
 
         
-        #Remove the unpolished phased VCF
+        #Remove the unpolished phased VCF and intermediate VCFs
         rm "$VCF_OUT"
+        rm "$VCF_ANNOTATED"
         
     fi
 

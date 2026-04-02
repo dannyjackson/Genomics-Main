@@ -28,9 +28,9 @@ def filter_cols(df, opts):
 def rename_cols(df):
     for col in df.columns:
         if 'passed' in col:
-            df.rename(columns={col:f'passed.{col.split('.')[1]}'}, inplace=True)
+            df.rename(columns={col:f'passed.{col.split(".")[1]}'}, inplace=True)
         elif 'failed' in col: 
-            df.rename(columns={col:f'failed.{col.split('.')[1]}'}, inplace=True)
+            df.rename(columns={col:f'failed.{col.split(".")[1]}'}, inplace=True)
 
 # Decide stattype
 if not args.all:
