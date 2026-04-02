@@ -69,7 +69,7 @@ else:
 # Grab stats for each sample
 fstat_df_lst = []
 for sample in sample_lst:
-    with open(os.path.join(args.directory, sample, f'{sample}_flagstat.json')) as j:
+    with open(os.path.join(args.directory, f'{sample}_flagstat.json')) as j:
         sample_file = json.load(j)
 
     if args.all == True or qc_type == 'both':
