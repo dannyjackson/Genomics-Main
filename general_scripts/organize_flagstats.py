@@ -23,7 +23,7 @@ args = parser.parse_args()
 def filter_cols(df, opts):
     for col in df:
         if col not in opts:
-            df.drop(col, axis=1)
+            df.drop(col, axis=1, inplace=True)
 
 def rename_cols(df):
     for col in df.columns:
