@@ -83,6 +83,8 @@ for sample in sample_lst:
         filter_cols(sample_stats, args.fstats)
 
     sample_stats['Sample'] = sample
+    col = sample_stats.pop('Sample')
+    sample_stats.insert(0, 'Sample', col)
     fstat_df_lst.append(sample_stats)
 
 fstat_df = pd.concat(fstat_df_lst, ignore_index=True)
