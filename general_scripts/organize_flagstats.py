@@ -8,7 +8,7 @@ qc_type=''
 fname_suffix = ''
 fstat_name_dct = {'total': 'total_reads','primary': 'primary','secondary': 'secondary','supplementary': 'supplementary','duplicates': 'duplicates','primary duplicates': 'primary_duplicates',
  'mapped': 'mapped','mapped %': 'percent_mapped','primary mapped': 'primary_mapped','primary mapped %': 'percent_primary_mapped','paired in sequencing': 'paired_in_seq',
- 'read1': 'read1','read2': 'read2','properly paired': 'proper_pair','properly paired %': 'precent_proper_pair','with itself and mate mapped': 'itself_and_mate','singletons': 'singleton','singletons %': 'percent_singleton',
+ 'read1': 'read1','read2': 'read2','properly paired': 'proper_pair','properly paired %': 'percent_proper_pair','with itself and mate mapped': 'itself_and_mate','singletons': 'singleton','singletons %': 'percent_singleton',
  'with mate mapped to a different chr': 'mate_mapped_diff_chr','with mate mapped to a different chr (mapQ >= 5)': 'mate_mapped_diff_chr_mapQ>5'}
 
 import argparse
