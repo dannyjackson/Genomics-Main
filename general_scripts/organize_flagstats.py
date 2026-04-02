@@ -51,7 +51,9 @@ if not args.all:
 # Decide sample list
 if args.samples:
     print('User inputted sample file')
-    sample_lst = args.samples
+    with open(args.samples, 'r') as s:
+        sample_lst = s.readlines()
+        sample_lst = [line.strip() for line in sample_lst]
 else:
     print('Assuming sample names by files in given directory')
     sample_lst = os.listdir(args.directory)
