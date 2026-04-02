@@ -57,6 +57,7 @@ if args.samples:
 else:
     print('Assuming sample names by files in given directory')
     sample_lst = os.listdir(args.directory)
+    sample_lst = [line.split('_')[0] for line in sample_lst]
 
 # Print flagstat options
 if args.all:
@@ -84,6 +85,6 @@ for sample in sample_lst:
     fstat_df_lst.append(sample_stats)
 
 fstat_df = pd.concat(fstat_df_lst, ignore_index=True)
-fstat_df.to_csv(os.path.join(args.directory, 'flagstats', f'flagstats{fname_suffix}.csv'))
+fstat_df.to_csv(os.path.join(args.directory, f'flagstats{fname_suffix}.csv'))
 
 print('Finished grabbing flagstats')
