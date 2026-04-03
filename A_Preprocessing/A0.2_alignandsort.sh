@@ -43,7 +43,7 @@ fi
 # NOTE that we require the ref-genome index (from bwa). If following full pipeline, this is already generated in base_setup.sh
 
 # Align reads using BWA MEM
-bwa mem -t -M "${THREADS}" "${REF}" \
+bwa mem -M -t "${THREADS}" "${REF}" \
     "${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_1P.fq.gz" \
     "${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_2P.fq.gz" | \
     samtools view -b -o "${OUTDIR}/datafiles/bamfiles/${IND}.bam" -S
