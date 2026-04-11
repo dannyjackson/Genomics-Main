@@ -9,15 +9,19 @@ I recommend running it as a slurm array to pass individuals to sbatch jobs for m
 
 Required argument:
   -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
-  -i Individual name (can easily be passed through a slurm array)."
+  -i Individual name (can easily be passed through a slurm array).
+  -m  Optional flag to mark duplicates in BWA MEM. Required if you've merged fastq files with multiple runs containing reads with matching labels."
     exit 1
 fi
 
+MARKDUPS=""
+
 # Parse command-line arguments
-while getopts p:i: option; do
+while getopts p:i:m option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
 		i) IND=${OPTARG};;
+        m) MARKDUPS="-M" ;;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done
@@ -43,7 +47,7 @@ fi
 # NOTE that we require the ref-genome index (from bwa). If following full pipeline, this is already generated in base_setup.sh
 
 # Align reads using BWA MEM
-bwa mem -M -t "${THREADS}" "${REF}" \
+bwa mem ${MARKDUPS} -t "${THREADS}" "${REF}" \
     "${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_1P.fq.gz" \
     "${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_2P.fq.gz" | \
     samtools view -b -o "${OUTDIR}/datafiles/bamfiles/${IND}.bam" -S
