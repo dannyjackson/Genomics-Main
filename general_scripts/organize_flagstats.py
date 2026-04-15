@@ -70,6 +70,7 @@ else:
 # Grab stats for each sample
 fstat_df_lst = []
 for sample in sample_lst:
+    print(f'Processing {sample}')
     with open(os.path.join(args.directory, f'{sample}_flagstat.json')) as j:
         sample_file = json.load(j)
 

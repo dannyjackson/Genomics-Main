@@ -62,3 +62,6 @@ apptainer exec ${PROGDIR}/gatk3-3.7-0.sif java -jar /usr/GenomeAnalysisTK.jar -T
 -I ${OUTDIR}/datafiles/clipoverlap/${IND}.all.sorted.marked.clipped.bam \
 --targetIntervals ${OUTDIR}/datafiles/indelmaps/${IND}.intervals \
 -o ${OUTDIR}/datafiles/indelrealignment/${IND}.realigned.bam
+
+# Get flagstats for realigned bam and output to stats directory
+samtools flagstat -O json "${OUTDIR}/datafiles/indelrealignment/${IND}.realigned.bam" > "${OUTDIR}/datafiles/stats/flagstats/${IND}_flagstat.json"
