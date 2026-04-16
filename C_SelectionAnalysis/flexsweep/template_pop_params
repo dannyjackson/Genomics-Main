@@ -1,0 +1,13 @@
+# FlexSweep Parameters
+source ../../../params_base.sh
+
+POPNAME=placeholder # This name will be used across flexsweep pipeline to identify relevant files
+
+#Input Generation 
+
+
+# Simulation and CNN
+NUM_SAMPLES=20 # Number of haploid samples to use in the analysis.
+NUM_SIMULATIONS=10000 # Default 10000
+NUM_THREADS=24 # Default 24
+DEMES=/path/to/demes/file.yaml

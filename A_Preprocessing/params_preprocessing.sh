@@ -7,7 +7,6 @@ module load parallel
 module load bcftools/1.19
 module load vcftools/0.1.16
 module load plink/1.9
-micromamba activate shapeit4_env
 
 source /path/to/params_base.sh
 source /path/to/preprocessing_setup.sh

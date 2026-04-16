@@ -31,30 +31,33 @@ if [ ! -d "$SNPABLE_SCRIPT_PATH" ]; then
     echo "Error: Snpable script directory not found at ${SNPABLE_SCRIPT_PATH}." >&2
     exit 1
 fi
-
 # Add Snpable scripts to PATH
 export PATH="$PATH:$SNPABLE_SCRIPT_PATH"
 
+
+
+echo "Installing Various Program dependencies..."
+
+
+#======================================================
 echo "Adding tools for MSMC pipeline..."
 date
-
 # Clone required repositories if not already present
 cd "${PROGDIR}" || { echo "Error: Could not change directory to ${PROGDIR}."; exit 1; }
 
 if [ ! -d msmc2 ]; then
     git clone https://github.com/stschiff/msmc2 || { echo "Error: Failed to clone msmc2."; exit 1; }
 fi
-
 if [ ! -d msmc-tools ]; then
     git clone https://github.com/stschiff/msmc-tools || { echo "Error: Failed to clone msmc-tools."; exit 1; }
 fi
+#======================================================
 
-echo "Environment setup completed."
-
-
-# Install required dependencies
+echo "Installing whatshap..."
 pip3 install --user whatshap
+#======================================================
 
+echo "Installing shapeit4..."
 micromamba create -n shapeit4_env -c bioconda shapeit4
 
 if [ ! -d sapphire ]; then
@@ -63,5 +66,22 @@ fi
 cd sapphire # Note that you should be on the Puma Cluster to successfully build sapphire
 module load htslib
 make
-
 cd ../
+#======================================================
+
+echo "Installing pyrho..." # Note that you should be on the Puma Cluster to successfully build and run pyrho
+micromamba create -n pyrho_env
+micromamba activate pyrho_env
+module load gsl
+module load htslib
+module load hdf5
+git clone https://github.com/popgenmethods/ldpop.git ldpop
+pip install ldpop/
+pip install cython
+git clone https://github.com/popgenmethods/pyrho.git pyrho
+pip install pyrho/
+#======================================================
+
+echo "Installing SMC++..."
+apptainer pull docker://terhorst/smcpp
+#======================================================
