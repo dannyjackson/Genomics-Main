@@ -42,6 +42,6 @@ flexsweep simulator --sample_size ${NUM_SAMPLES} --demes ${OUTDIR}/datafiles/fle
 
 flexsweep fvs-discoal --simulations_path ${OUTDIR}/analyses/flexsweep_outputs/${RUNNAME}  --nthreads ${THREADS}
 
-flexsweep fvs-vcf --vcf_path ${OUTDIR}/datafiles/flexsweep_inputs/vcfs --recombination_map ${OUTDIR}/datafiles/flexsweep_inputs/recombination_map.txt --nthreads ${THREADS} --pop ${POP}
+flexsweep fvs-vcf --vcf_path ${OUTDIR}/datafiles/flexsweep_inputs/vcfs --recombination_map ${REC_MAP} --nthreads ${THREADS} --pop ${POP}
 
 flexsweep cnn  --train_data ${OUTDIR}/analyses/flexsweep_outputs/${RUNNAME}/fvs.parquet --predict_data ${OUTDIR}/datafiles/flexsweep_inputs/vcfs/fvs_${POP}.parquet --output_folder ${OUTDIR}/analyses/flexsweep_outputs/${RUNNAME}

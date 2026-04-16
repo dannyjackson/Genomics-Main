@@ -38,10 +38,18 @@ source "${POPPARAMS}"
 printf "\n\n\n\n"
 date
 echo "Current script: gone_2_analysis.sh"
-echo Threads: ${THREADS}
 
+RECOMBINATION_OPTION=""
+if [ "$REC_MAP" == "NONE" ]; then
+    echo "No recombination map provided. Using provided constant recombination rate ${RECOMB_RATE}."
+    echo "Running GONE for ${POPNAME} with ${NUMIND} individuals with recombination rate of ${RECOMB_RATE}..."
+    RECOMBINATION_OPTION=""
+else
+    echo "Using provided recombination map: ${REC_MAP}"
+    echo "Running GONE for ${POPNAME} with ${NUMIND} individuals with recombination map..."
+    RECOMBINATION_OPTION="-r $RECOMB_RATE"
+fi
 
-echo "Running GONE for ${POPNAME} with ${NUMIND} individuals with recombination rate of ${RECOMB_RATE}..."
 echo "NOTE: We are using Input files from: ${INDIR}"
 
 RESULT_DIR=${OUTDIR}/analyses/gone2_outputs/${RUNNAME}/${POPNAME}
@@ -53,7 +61,7 @@ else
   echo "Directory for gone2 output for ${RUNNAME} with ${POPNAME} already exists. WARNING: Existing files in this directory may be overwritten."
 fi
 
-${PROGDIR}/GONE2/gone2 ${INDIR}/${POPNAME}.ped -g $GENO_DTYPE -r $RECOMB_RATE -i $NUMIND -t ${THREADS} -o ${RESULT_DIR}/${POPNAME} $EXTRA_FLAGS
+${PROGDIR}/GONE2/gone2 ${INDIR}/${POPNAME}.ped -g $GENO_DTYPE -i $NUMIND -t ${THREADS} -o ${RESULT_DIR}/${POPNAME} $EXTRA_FLAGS $RECOMBINATION_OPTION
 
 
 
