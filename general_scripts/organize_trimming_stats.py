@@ -1,6 +1,7 @@
 # A quick script to grab the trimming stats from the slurm output in A0.1_trimming.sh
 # Better and less storage intensive than using -trimlog argument
-# We're just searching for some specific strings outputted by trimmomatic and using those to parse the read stats
+# We're just searching for some specific strings outputted by trimmomatic that are always the same and using those to parse the read stats
+# Places trimming stats csv file into working directory
 
 slurm_outs = 'path/to/trimming/slurm/out/files'
 sample_ids = 'path/to/sampleid/list/'
