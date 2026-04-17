@@ -3,7 +3,7 @@
 if [ $# -lt 1 ]; then
     echo "Usage: $0 -p <parameter_file>
 
-This script generates linkage map for a population using pyrho. It requires outputs from SMC++ in the datafiles/demography directory
+This script generates linkage map for a population using pyrho. It requires csv outputs from SMC++ in the datafiles/demography directory
 
 Required argument:
   -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).

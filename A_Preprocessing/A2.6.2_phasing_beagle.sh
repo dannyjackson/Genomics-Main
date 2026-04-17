@@ -54,7 +54,7 @@ bcftools index ${VCF_OUT}
 # Perform sapphire rephasing
 
 if [ "$SAPPHIRE" = true ]; then
-    ${SCRIPT_DIR}/A2.6_rephasing.sh -p "${PARAMS}" -i "${POP}" -v "${VCF_OUT}"
+    ${SCRIPT_DIR}/Genomics-Main/A_Preprocessing/A2.6_rephasing.sh -p "${PARAMS}" -i "${POP}" -v "${VCF_OUT}"
 
 
 echo "VCF phasing completed."
