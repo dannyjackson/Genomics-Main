@@ -85,3 +85,7 @@ pip install pyrho/
 echo "Installing SMC++..."
 apptainer pull docker://terhorst/smcpp
 #======================================================
+
+echo "Installing BEAGLE5.5..."
+micromamba create -n beagle_env -c bioconda beagle
+#======================================================

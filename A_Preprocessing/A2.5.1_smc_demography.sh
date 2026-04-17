@@ -42,7 +42,7 @@ if [ -f "${OUTDIR}/datafiles/demography/" ];
         then
             echo "demography directory already exists, moving on!"
         else
-        mkdir -p "${OUTDIR}/datafiles/demography/"
+            mkdir -p "${OUTDIR}/datafiles/demography/"
 fi
 
 apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc ${VCF} ${OUT_SMC_FILE} ${POPSET} --mask ${OUTDIR}/datafiles/snpable/${prefix}_revised_mask.bed.gz
@@ -51,4 +51,4 @@ apptainer run ${PROGDIR}/smcpp_latest.sif plot ${OUTDIR}/datafiles/demography/${
 
 # Convert popsize csv to demes
 if [ "$DEMES" = true ]; then
-    ${SCRIPT_DIR}/Genomics-Main/general_scripts/convert_to_demes.py -c ${OUTDIR}/datafiles/demography/${OUTFNAME}.csv -t 'years' -d "popsizes from smc++" -g 25 -o ${OUTFNAME}
+    python3 ${SCRIPT_DIR}/Genomics-Main/general_scripts/convert_to_demes.py -c ${OUTDIR}/datafiles/demography/${OUTFNAME}.csv -t 'years' -d "popsizes from smc++" -g 25 -o ${OUTFNAME}

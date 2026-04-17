@@ -3,7 +3,6 @@
 
 source ../../../params_base.sh
 
-mkdir -p "${OUTDIR}/datafiles/flexsweep_inputs"
 mkdir -p "${OUTDIR}/analyses/flexsweep_outputs"
 
 echo "Getting FlexSweep using micromamba..."
