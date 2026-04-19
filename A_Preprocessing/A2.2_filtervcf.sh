@@ -17,7 +17,7 @@ if [ $# -lt 1 ]; then
 fi
 
 # Parse command-line arguments
-while getopts "p:i:" option; do
+while getopts "p:i:mindp:maxdp:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         i) ID=${OPTARG} ;;
