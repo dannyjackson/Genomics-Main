@@ -21,6 +21,8 @@ while getopts "p:i:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         i) ID=${OPTARG} ;;
+        mindp) MINDEPTH=${OPTARG} ;;
+        maxdp) MAXDEPTH=${OPTARG} ;;
         *) usage ;;
     esac
 done
@@ -43,8 +45,8 @@ if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_filtered.recode.vcf" ]
         then
             echo "qualitysort vcf file is present in genotype_calls directory, assuming it is already generated and moving on!"
         else
-            echo "filtering VCF file by depth (min 2, max 8), remove indels"
-            vcftools --vcf "${OUTDIR}/datafiles/genotype_calls/${ID}_qualitysort.vcf" --min-meanDP 2 --max-meanDP 8 --remove-indels --recode --out "${OUTDIR}/datafiles/genotype_calls/${ID}_depthfiltered"
+            echo "filtering VCF file by depth, remove indels"
+            vcftools --vcf "${OUTDIR}/datafiles/genotype_calls/${ID}_qualitysort.vcf" --min-meanDP ${MINDEPTH} --max-meanDP ${MAXDEPTH} --remove-indels --recode --out "${OUTDIR}/datafiles/genotype_calls/${ID}_depthfiltered"
 fi
 
 
