@@ -1,14 +1,13 @@
 #!/bin/bash
 
-# This script filters a vcf s.
-
 # Function to display usage
 usage() {
     echo "Usage: $0 -p <path_to_parameter_file>"
-    echo "This script generates a mask for a reference genome to determine SNPable regions."
+    echo "This script filters the VCF generated in A2.1_callvariants.sh"
     echo
     echo "Required Arguments:"
     echo "  -p  Path to the parameter file (e.g., params.sh from the GitHub repository)"
+    echo "  -i  Prefix of vcf file"
     exit 1
 }
 
@@ -18,9 +17,10 @@ if [ $# -lt 1 ]; then
 fi
 
 # Parse command-line arguments
-while getopts "p:" option; do
+while getopts "p:i:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
+        i) ID=${OPTARG} ;;
         *) usage ;;
     esac
 done
@@ -44,7 +44,7 @@ if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_filtered.recode.vcf" ]
             echo "qualitysort vcf file is present in genotype_calls directory, assuming it is already generated and moving on!"
         else
             echo "filtering VCF file by depth (min 2, max 8), remove indels"
-            vcftools --vcf "${OUTDIR}/datafiles/genotype_calls/${ID}_qualitysort.vcf" --min-meanDP 2 --max-meanDP 8 --remove-indels --recode --out "${OUTDIR}/datafiles/genotype_calls/${ID}_filtered"
+            vcftools --vcf "${OUTDIR}/datafiles/genotype_calls/${ID}_qualitysort.vcf" --min-meanDP 2 --max-meanDP 8 --remove-indels --recode --out "${OUTDIR}/datafiles/genotype_calls/${ID}_depthfiltered"
 fi
 
 
@@ -55,9 +55,9 @@ if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_filtered_mind2.vcf" ]
             echo "plink filtered vcf file is present in genotype_calls directory, assuming it is already generated and moving on!"
         else
             echo "filtering VCF file by geno 0.2, minimum ind 0.2, maf 0.01, remove indels"
-            plink --vcf "${OUTDIR}/datafiles/genotype_calls/${ID}_filtered.recode.vcf" \
+            plink --vcf "${OUTDIR}/datafiles/genotype_calls/${ID}_depthfiltered.recode.vcf" \
             --allow-extra-chr --snps-only 'just-acgt' \
             --geno 0.02 --mind 0.2 --maf 0.01 \
-            --recode vcf-iid --out "${OUTDIR}/datafiles/genotype_calls/${ID}_filtered_mind2"
+            --recode vcf-iid --out "${OUTDIR}/datafiles/genotype_calls/${ID}_plinkfiltered"
 fi
 
