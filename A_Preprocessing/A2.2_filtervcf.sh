@@ -17,12 +17,12 @@ if [ $# -lt 1 ]; then
 fi
 
 # Parse command-line arguments
-while getopts "p:i:mindp:maxdp:" option; do
+while getopts "p:i:l:h:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         i) ID=${OPTARG} ;;
-        mindp) MINDEPTH=${OPTARG} ;;
-        maxdp) MAXDEPTH=${OPTARG} ;;
+        l) MINDEPTH=${OPTARG} ;;
+        h) MAXDEPTH=${OPTARG} ;;
         *) usage ;;
     esac
 done
