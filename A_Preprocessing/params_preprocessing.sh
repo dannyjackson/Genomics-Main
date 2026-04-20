@@ -14,6 +14,7 @@ source /path/to/preprocessing_setup.sh
 # across all preprocessing
 THREADS=<SET_VALUE>
 
+
 # trimming
 FASTAS=/path/to/fasta/files # format must be samplename_
 TRIMJAR=/path/to/trimmomatic/jarfile.jar
@@ -22,22 +23,36 @@ TRAIN=<SET_VALUE> # value to trim from trailing strand, often 20
 SLIDE=<SET_VALUE> # threshold and windlow length, often 4:20
 MINREADLEN=<SET_VALUE> # minimum length for a read to be kept, often 90 for 150bp sequencing
 
+
 # clipping
 BAMUTILBAM=/path/to/bamutil/bin/bam/file
 
-# bam statistics
 
 # snp ID
-ANGSD=~/programs/angsd/ # path to directory with angsd executables
+ANGSD=${PROGDIR}/angsd # path to directory with angsd executables
 SNPPVAL=<SET_VALUE> # max p-value for snp to be considered significant, often 1e-6
 MINDEPTHIND=<SET_VALUE> # minimum depth per individual required for a site to be kept
 MININD=<SET_VALUE> # minimum number of individuals required for a site to be kept
 MINQ=<SET_VALUE> # minimum quality score required for a site to be kept
 MINMAF=<SET_VALUE> # minimum minor allele frequency required for a site to be kept
 MINMAPQ=<SET_VALUE> # minimum mapping quality score required for a site to be kept
-POP=<SET_VALUE> # name of population
 
 
 # generate mask
 k=<SET_VALUE>
 prefix=<SET_VALUE>
+
+
+# Linkage Mapping
+#===============================
+# General Params
+VCF=${OUTDIR}/datafiles/genotype_calls/<SET_VALUE>.vcf
+MUT_RATE=<SET_VALUE>
+POP=<SET_VALUE>
+# SMC++ Params
+POPSET="${POP}:$(cat ${OUTDIR}/referencelists/sampleids.txt | paste -sd ",")"
+OUTFNAME=<SET_VALUE>
+# Pyrho Params
+NUM_HAPS=<SET_VALUE>
+SMCFILE=${OUTDIR}/datafiles/demography/${OUTFNAME}.csv
+#===============================

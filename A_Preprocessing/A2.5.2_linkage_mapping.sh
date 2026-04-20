@@ -4,10 +4,10 @@ if [ $# -lt 1 ]; then
     echo "Usage: $0 -p <parameter_file>
 
 This script generates linkage map for a population using pyrho. It requires csv outputs from SMC++ in the datafiles/demography directory
+Requires file with specific run parameters and sourcing from params_preprocessing.sh.
 
 Required argument:
-  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
-  -i Individual name (can easily be passed through a slurm array)."
+  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository)."
     exit 1
 fi
 
@@ -15,8 +15,6 @@ fi
 while getopts p:r:v: option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
-        r) RUNPARAMS=${OPTARG};;
-        v) VCF=${OPTARG};;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done
