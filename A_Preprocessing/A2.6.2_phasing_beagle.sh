@@ -44,7 +44,7 @@ if [ -z "$OUTDIR" ]; then
     exit 1
 fi
 
-VCF_IN="${OUTDIR}/datafiles/vcf/${POP}_all.vcf.gz"
+VCF_IN="${OUTDIR}/datafiles/genotype_calls/${POP}_plinkfiltered.vcf"
 VCF_OUT="${OUTDIR}/datafiles/phased_vcf/${POP}_phased.vcf.gz"
 
 beagle gt=${VCF_IN} out=${VCF_OUT} map=${OUTDIR}/datafiles/linkage_map/${POP}_all.rmap

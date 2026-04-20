@@ -52,7 +52,7 @@ fi
 cd "${OUTDIR}/datafiles/snpable" || { echo "Error: Could not change directory to ${OUTDIR}/datafiles/snpable."; exit 1; }
 
 echo "Extracting overlapping ${k}-mer subsequences..."
-splitfa "${REF}" "${k}" | split -l 20000000
+${PROGDIR}/seqbility-20091110/splitfa "${REF}" "${k}" | split -l 20000000
 cat x* > "${prefix}_split.${k}"
 
 # Check if REF is indexed before proceeding
@@ -70,10 +70,10 @@ bwa aln -t 8 -R 1000000 -O 3 -E 3 "${REF}" "${prefix}_split.${k}" > "${prefix}_s
 bwa samse -f "${prefix}_split.${k}.sam" "${REF}" "${prefix}_split.${k}.sai" "${prefix}_split.${k}" || { echo "Error: BWA SAM conversion failed."; exit 1; }
 
 echo "Reads aligned. Generating raw mask..."
-gen_raw_mask.pl "${prefix}_split.${k}.sam" > "${prefix}_rawMask.${k}.fa" || { echo "Error: Failed to generate raw mask."; exit 1; }
+${PROGDIR}/seqbility-20091110/gen_raw_mask.pl "${prefix}_split.${k}.sam" > "${prefix}_rawMask.${k}.fa" || { echo "Error: Failed to generate raw mask."; exit 1; }
 
 echo "Generating final mask..."
-gen_mask -l "${k}" -r 0.5 "${prefix}_rawMask.${k}.fa" > "${prefix}_mask.${k}.50.fa" || { echo "Error: Failed to generate final mask."; exit 1; }
+${PROGDIR}/seqbility-20091110/gen_mask -l "${k}" -r 0.5 "${prefix}_rawMask.${k}.fa" > "${prefix}_mask.${k}.50.fa" || { echo "Error: Failed to generate final mask."; exit 1; }
 
 echo "Final mask saved as ${prefix}_mask.${k}.50.fa"
 echo "MSMC pipeline completed successfully!"
