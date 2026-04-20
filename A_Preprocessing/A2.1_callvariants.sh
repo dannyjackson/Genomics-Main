@@ -7,16 +7,17 @@ This script calls variants for VCF file creation from BAM files.
 
 Required argument:
   -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
-  -b  Path to bam directory for analysis (if you are following the full pipeline, this will be OUTDIR/datafiles/indelrealignment/)
+  -b  Path to bam list file for analysis
   -r  Run name, required for providing a unique name to output files."
     exit 1
 fi
 
 # Parse command-line arguments
-while getopts p:r: option; do
+while getopts p:r:b: option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
         r) RUNNAME=${OPTARG};;
+        b) BAMLIST=${OPTARG};;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done
@@ -40,4 +41,4 @@ if [ -z "$OUTDIR" ] || [ -z "$REF" ]; then
 fi
 
 
-bcftools mpileup -Ou -f ${REF} -a FORMAT/AD,DP,INFO/AD,SP "${BAMDIR}"/*.bam | bcftools call --threads ${THREADS} -mv -V indels -Oz -o ${OUTDIR}/datafiles/genotype_calls/"$RUNNAME"_snps_multiallelic.vcf.gz
+bcftools mpileup -Ou -f ${REF} -a FORMAT/AD,DP,INFO/AD,SP --bam-list ${BAMLIST} | bcftools call --threads ${THREADS} -mv -V indels -o ${OUTDIR}/datafiles/genotype_calls/"$RUNNAME"_snps_multiallelic.vcf.gz
