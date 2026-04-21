@@ -123,5 +123,18 @@ fi
 
 python2 ${PROGDIR}/msmc-tools/makeMappabilityMask.py ${INPUT_MASK} ${OUTPREFIX}
 
+# This script doesn't output in bgzip, which is needed for some other analysis, so we do that here
+
+for file in ${OUTDIR}/datafiles/snpable/*.mask.bed.gz; do
+    echo "uncompressing $file"
+    gunzip $file
+done
+
+for file in ${OUTDIR}/datafiles/snpable/*.mask.bed; do
+    echo "bgzipping $file"
+    bgzip $file
+    tabix $file.gz
+done
+
 echo "Mappability mask conversion completed."
 date
