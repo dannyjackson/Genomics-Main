@@ -16,11 +16,11 @@ fi
 DEMES=false
 
 # Parse command-line arguments
-while getopts p:d option; do
+while getopts ":p:d" option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
         d) DEMES=true
-        *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
+        *) echo "Invalid option: -${OPTARG}" >&2; usage ;;
     esac
 done
 
