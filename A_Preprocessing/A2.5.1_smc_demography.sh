@@ -19,7 +19,7 @@ DEMES=false
 while getopts ":p:d" option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
-        d) DEMES=true
+        d) DEMES=true ;;
         *) echo "Invalid option: -${OPTARG}" >&2; usage ;;
     esac
 done
