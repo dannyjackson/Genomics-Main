@@ -43,6 +43,8 @@ if [ -f "${OUTDIR}/datafiles/demography/smc_inputs" ];
             mkdir -p "${OUTDIR}/datafiles/demography/smc_inputs"
 fi
 
+tabix ${VCF}
+
 
 for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt);
 do
