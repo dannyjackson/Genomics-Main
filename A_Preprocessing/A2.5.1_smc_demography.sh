@@ -50,8 +50,8 @@ for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt);
 do
     echo "Processing $chr into SMC++ Input"
     echo $POP:$POPSAMPLES
-    echo "COMMAND: apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc $VCF ${OUTDIR}/datafiles/demography/smc_inputs/${chr}.smc.gz $chr $POP:$POPSAMPLES --mask ${OUTDIR}/datafiles/snpable/${prefix}_revised_mask.${chr}.mask.bed.gz"
-    apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc ${VCF} ${OUTDIR}/datafiles/demography/smc_inputs/${chr}.smc.gz ${CHR} ${POPSET} --mask ${OUTDIR}/datafiles/snpable/${prefix}_revised_mask.${chr}.mask.bed.gz
+    COMMAND="$VCF ${OUTDIR}/datafiles/demography/smc_inputs/${chr}.smc.gz $chr $POP:$POPSAMPLES --mask ${OUTDIR}/datafiles/snpable/${prefix}_revised_mask.${chr}.mask.bed.gz"
+    apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc $COMMAND
 done
 
 echo "Making and Plotting Model"
