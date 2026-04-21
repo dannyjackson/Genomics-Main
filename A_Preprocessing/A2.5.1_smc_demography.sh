@@ -45,6 +45,7 @@ fi
 
 tabix ${VCF}
 
+smc_input_lst=()
 
 for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt);
 do
@@ -52,10 +53,11 @@ do
     echo $POP:$POPSAMPLES
     COMMAND="$VCF ${OUTDIR}/datafiles/demography/smc_inputs/${chr}.smc.gz $chr $POP:$POPSAMPLES --mask ${OUTDIR}/datafiles/snpable/${prefix}_revised_mask.${chr}.mask.bed.gz"
     apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc $COMMAND
+    smc_input_lst+=("${OUTDIR}/datafiles/demography/smc_inputs/${chr}.smc.gz")
 done
 
 echo "Making and Plotting Model"
-apptainer run ${PROGDIR}/smcpp_latest.sif estimate ${MUT_RATE} $(ls ${OUTDIR}/datafiles/demography/smc_inputs) -o ${OUTDIR}/datafiles/demography
+apptainer run ${PROGDIR}/smcpp_latest.sif estimate ${MUT_RATE} ${smc_input_lst} -o ${OUTDIR}/datafiles/demography
 apptainer run ${PROGDIR}/smcpp_latest.sif plot ${OUTDIR}/datafiles/demography/${OUTFNAME} ${OUTDIR}/datafiles/demography/model.final.json -c # Ensure to output csv file with model info for linkage mapping later
 echo "Raw SMC++ Model outputted to model.final.json. CSV outputted to ${OUTFNAME}.csv"
 
