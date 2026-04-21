@@ -11,7 +11,7 @@ parser=argparse.ArgumentParser()
 parser.add_argument("-c", "--csv_file", type=str, help='Path to CSV file output from SMC++ plotting')
 parser.add_argument("-t", "--time_units", default='years', choices=['years', 'generations'], help="Specify time units. Either 'years', 'generations'. (Default to years)")
 parser.add_argument("-d", "--description", type=str, default="popsizes from smc++", help='Add a description to the demes file')
-parser.add_argument("-g", "--gen_time", type=str, help='Specify generation time. Be sure to set to 1 if using generations as time units')
+parser.add_argument("-g", "--gen_time", type=int, help='Specify generation time. Be sure to set to 1 if using generations as time units')
 parser.add_argument("-o", "--outfilename", type=str, help='Specify output yaml file name. File will output to same directory as scmc csv file')
 args = parser.parse_args()
 
