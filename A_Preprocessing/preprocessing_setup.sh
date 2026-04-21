@@ -72,6 +72,7 @@ cd ../
 echo "Installing pyrho..." # Note that you should be on the Puma Cluster to successfully build and run pyrho
 micromamba create -n pyrho_env
 micromamba activate pyrho_env
+micromamba install python=3.11 numpy=2.4 cython
 module load gsl
 module load htslib
 module load hdf5

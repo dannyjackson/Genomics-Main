@@ -26,7 +26,6 @@ fi
 
 # Load parameters
 source "${PARAMS}"
-source "${RUNPARAMS}"
 
 printf "\n\n\n\n"
 date
@@ -39,10 +38,8 @@ if [ -f "${OUTDIR}/datafiles/linkage_map/" ];
         mkdir -p "${OUTDIR}/datafiles/linkage_map/"
 fi
 
-N=$(( ${NUM_HAPS} * 0.25 ))
-
-pyrho make_table -n ${NUM_HAPS} -N $(( ${NUM_HAPS} + ${N} )) --mu ${MUT_RATE} --logfile ${OUTDIR}/datafiles/linkage_map/ --outfile ${OUTDIR}/datafiles/linkage_map/${POP}.hdf \
-	--approx --smcpp_file ${SMCFILE} --decimate_rel_tol 0.1 --num_threads ${THREADS}
+pyrho make_table -n ${NUM_HAPS} -N ${N} --mu ${MUT_RATE} --logfile ${OUTDIR}/datafiles/linkage_map/ --outfile ${OUTDIR}/datafiles/linkage_map/${POP}.hdf \
+	--approx --smcpp_file ${SMCFILE} --decimate_rel_tol 0.1
 
 # Run this to get probably better estimates of hyperparameters prior to running optimize
 #pyrho hyperparam -n ${NUM_HAPS} --mu ${MUT_RATE} --blockpenalty 50,100 \
