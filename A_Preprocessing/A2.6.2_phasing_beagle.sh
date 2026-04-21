@@ -7,24 +7,24 @@
 usage() {
     echo "Usage: $0 -p <parameter_file> -i <individual> [-s]"
     echo ""
-    echo "This script phases a VCF file with BEAGLE5.5 using a VCF file containing all individuals in a desired population. It can also polish the phased output with SAPPHIRE, which is highly recommended"
+    echo "This script phases a VCF file with BEAGLE5.5 using a VCF file containing all individuals in a desired population."
     echo "It is best run as a Slurm array that calls this script for each individual/population."
     echo ""
     echo "Required arguments:"
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository)."
-    echo "  -i  Name of the population to analyze."
-    echo "  -s  Optional flag to enable SAPPHIRE polishing of phased VCFs (recommended)."
+    echo "  -v  Path to VCF to phase."
+    echo "  -o  Output VCF file path."
+    echo "  -m  Path to recombination map file."
     exit 1
 }
 
-SAPPHIRE=false
-
 # Parse command-line arguments
-while getopts ":p:i:s" option; do
+while getopts ":p:v:o:m:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
-        i) POP=${OPTARG} ;;
-        s) SAPPHIRE=true ;; # False by default, recommended to set to true
+        v) VCF_IN=${OPTARG} ;;
+        o) VCF_OUT=${OPTARG} ;;
+        m) MAP=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}" >&2; usage ;;
     esac
 done
@@ -44,18 +44,8 @@ if [ -z "$OUTDIR" ]; then
     exit 1
 fi
 
-VCF_IN="${OUTDIR}/datafiles/genotype_calls/${POP}_plinkfiltered.vcf"
-VCF_OUT="${OUTDIR}/datafiles/phased_vcf/${POP}_phased.vcf.gz"
-
 beagle gt=${VCF_IN} out=${VCF_OUT} map=${OUTDIR}/datafiles/linkage_map/${POP}_all.rmap
-
 bcftools index ${VCF_OUT}
-
-# Perform sapphire rephasing
-
-if [ "$SAPPHIRE" = true ]; then
-    ${SCRIPT_DIR}/Genomics-Main/A_Preprocessing/A2.6_rephasing.sh -p "${PARAMS}" -i "${POP}" -v "${VCF_OUT}"
-
 
 echo "VCF phasing completed."
 date

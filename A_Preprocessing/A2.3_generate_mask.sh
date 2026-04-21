@@ -98,6 +98,7 @@ date
 # Convert mask format
 INPUT_MASK="${OUTDIR}/datafiles/snpable/${prefix}_mask.150.50.fa"
 OUTPUT_MASK="${OUTDIR}/datafiles/snpable/${prefix}_revised_mask.150.50.fa"
+OUTPREFIX="${OUTDIR}/datafiles/snpable/${prefix}_revised"
 
 if [ ! -f "${INPUT_MASK}" ]; then
     echo "Error: Input mask file '${INPUT_MASK}' not found." >&2
@@ -120,7 +121,7 @@ if [ ! -f "${PROGDIR}/msmc-tools/makeMappabilityMask.py" ]; then
     exit 1
 fi
 
-python2 "${PROGDIR}/msmc-tools/makeMappabilityMask.py"
+python2 ${PROGDIR}/msmc-tools/makeMappabilityMask.py ${INPUT_MASK} ${OUTPREFIX}
 
 echo "Mappability mask conversion completed."
 date

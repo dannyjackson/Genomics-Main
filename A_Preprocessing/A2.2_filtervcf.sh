@@ -41,9 +41,9 @@ if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_qualitysort.vcf" ]
 fi
 
 # Filter VCF based on depth, remove indels
-if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_filtered.recode.vcf" ]
+if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_depthfiltered.vcf" ]
         then
-            echo "qualitysort vcf file is present in genotype_calls directory, assuming it is already generated and moving on!"
+            echo "depthfilter vcf file is present in genotype_calls directory, assuming it is already generated and moving on!"
         else
             echo "filtering VCF file by depth, remove indels"
             vcftools --vcf "${OUTDIR}/datafiles/genotype_calls/${ID}_qualitysort.vcf" --min-meanDP ${MINDEPTH} --max-meanDP ${MAXDEPTH} --remove-indels --recode --out "${OUTDIR}/datafiles/genotype_calls/${ID}_depthfiltered"
@@ -52,7 +52,7 @@ fi
 
 
 # Further filtering using PLINK
-if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_filtered_mind2.vcf" ]
+if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_plinkfiltered.vcf" ]
         then
             echo "plink filtered vcf file is present in genotype_calls directory, assuming it is already generated and moving on!"
         else

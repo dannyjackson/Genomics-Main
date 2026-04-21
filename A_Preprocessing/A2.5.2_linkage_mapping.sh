@@ -12,7 +12,7 @@ Required argument:
 fi
 
 # Parse command-line arguments
-while getopts p:r:v: option; do
+while getopts p: option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;

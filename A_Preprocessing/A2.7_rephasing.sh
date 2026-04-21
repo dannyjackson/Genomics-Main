@@ -7,12 +7,13 @@ usage() {
     echo "Usage: $0 -p <parameter_file> -i <individual> [-v <vcf_file>]"
     echo ""
     echo "This script rephases low confidence variants in a VCF file with SAPPHIRE. PUMA CLUSTER REQUIRED FOR THIS SCRIPT."
-    echo "It is best run as a Slurm array that calls this script for each individual/population." Meant to be used after phasing in ste A2.5
+    echo "It is best run as a Slurm array that calls this script for each individual/population." Meant to be used after stat-based phasing in step A2.5
+    echo "Prior to running, you should split your phased VCF by chromosome and pass each split vcf in a slurm array."
     echo ""
     echo "Required arguments:"
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository)."
-    echo "  -i  Name of the population to analyze."
-    echo "  -v  Path to the VCF file to rephase."
+    echo "  -c  Name of chromosome present in VCF file."
+    echo "  -v  Path to the VCF file to rephase. This file should be one split by chromosome"
 
     exit 1
 }
@@ -21,7 +22,7 @@ usage() {
 while getopts ":p:i:v:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
-        i) POP=${OPTARG} ;;
+        c) CHR=${OPTARG} ;;
         v) VCF=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}" >&2; usage ;;
     esac
@@ -43,8 +44,7 @@ if [ -z "$OUTDIR" ]; then
 fi
 
 echo Inputted VCF: $VCF
-FILE="$VCF"
-BCF="${FILE%.*}".bcf
+BCF="${VCF%.*}".bcf
 
 bcftools view $VCF -Ob -o ${BCF}
 bcftools index ${BCF}
@@ -53,25 +53,24 @@ bcftools index ${BCF}
 
 REPHASE_DIR="${OUTDIR}/datafiles/rephased_vcf"
 
-if [ -d "${REPHASE_DIR}" ]; then
+if [ -d "${REPHASE_DIR}/bcfs" ]; then
     echo "Directory ${REPHASE_DIR} exists."
 else
     echo "Directory ${REPHASE_DIR} does not exist. Creating it now."
-    mkdir -p ${REPHASE_DIR}
+    mkdir -p ${REPHASE_DIR}/bcfs
 fi
 
-echo "Polishing phased VCF for $POP with SAPPHIRE..."
+echo "Polishing phased VCF for $CHR with SAPPHIRE..."
 
 # Key File Paths
-BCF_ANNOTATED="${REPHASE_DIR}/${POP}_phased_PP_annotated.bcf"
-BCF_REPHASED="${REPHASE_DIR}/${POP}_rephased.vcf"
+BCF_ANNOTATED="${REPHASE_DIR}/${CHR}_phased_PP_annotated.bcf"
+BCF_REPHASED="${REPHASE_DIR}/bcfs/${CHR}_rephased.bcf"
 
-EXTRACTED_PP="${REPHASE_DIR}/${POP}_phased_PP_extract.bin"
-EXTRACTED_PP_ORIGINAL="${REPHASE_DIR}/${POP}_phased_PP_extract.bin.original"
-ANNOTATED_CSV="${REPHASE_DIR}/${POP}_phased_PP_annotated_samples.csv"
-PP_INFO="${REPHASE_DIR}/pp_info.tsv"
+EXTRACTED_PP="${REPHASE_DIR}/${CHR}_phased_PP_extract.bin"
+ANNOTATED_CSV="${REPHASE_DIR}/${CHR}_phased_PP_annotated_samples.csv"
+PP_INFO="${REPHASE_DIR}/${CHR}_pp_info.tsv"
 HEADER="${REPHASE_DIR}/header.txt"
-CRAM_PATH="${OUTDIR}/datafiles/indelrealignment/${POP}.realigned.bam"
+CRAM_PATH="${OUTDIR}/datafiles/indelrealignment/${POP}.cram" # Should be a CRAM file containing all individuals in your population (merged cram file)
 
 # Extract all variants with AF < 0.01 and replace heterozygous by "0.5" and homozygous by "."
 echo "line 78"
@@ -84,33 +83,28 @@ if [ -f "${HEADER}" ];
     then
         echo "Header file already exists, moving on!"
     else
-        echo '##FORMAT=<ID=PP,Number=1,Type=Float,Description="SHAPEIT Phasing Probability (PP) field">' > ${HEADER}
+        echo '##FORMAT=<ID=PP,Number=1,Type=Float,Description="Phasing Probability (PP) field">' > ${HEADER}
 fi
 
 echo "line 91"
-bcftools annotate -a ${PP_INFO}.gz -h ${HEADER} -c CHROM,POS,ID,REF,ALT,FORMAT/PP \
-$BCF -Ob -o $BCF_ANNOTATED
+bcftools annotate -a ${PP_INFO}.gz -h ${HEADER} -c CHROM,POS,ID,REF,ALT,FORMAT/PP $BCF -Ob -o $BCF_ANNOTATED
 
 # Sanity check the annotated VCF
 #bcftools view "$BCF_ANNOTATED" | less
 
 echo "line 98"
-${PROGDIR}/sapphire/pp_extractor/pp_extract -f ${BCF_ANNOTATED} --pp-from-maf --maf-threshold ${MAF} -o ${EXTRACTED_PP}
+${PROGDIR}/sapphire/pp_extractor/pp_extract -f ${BCF_ANNOTATED} --pp-from-maf --maf-threshold 0.01 -o ${EXTRACTED_PP}
 # Copy the file as SAPPHIRE will modify it, with this we will be able to compare
-cp "$EXTRACTED_PP" "$EXTRACTED_PP_ORIGINAL"
+cp "$EXTRACTED_PP" "${EXTRACTED_PP}.original"
 
 echo "line 103"
 bcftools query --list-samples $BCF_ANNOTATED | \
-awk '{print NR-1 "," $0 ",${CRAM_PATH}"}' > \
-$ANNOTATED_CSV
+awk '{print NR-1 "," $0 ",${CRAM_PATH}"}' > $ANNOTATED_CSV
 
 echo "line 108"
 ${PROGDIR}/sapphire/phase_caller/phase_caller \
--f $BCF_ANNOTATED \
--S $ANNOTATED_CSV \
---cram-path-from-samples-file \
--b "$EXTRACTED_PP" \
--t $(nproc)
+-f $BCF_ANNOTATED -S $ANNOTATED_CSV --cram-path-from-samples-file \
+-b "$EXTRACTED_PP" -t $(nproc)
 
 #./sapphire/bin_tools/bin_diff -a "$EXTRACTED_PP_ORIGINAL" \
 #-b "$EXTRACTED_PP" \
@@ -119,13 +113,11 @@ ${PROGDIR}/sapphire/phase_caller/phase_caller \
 #--extra-info --more | less
 
 echo "line 122"
-${PROGDIR}/sapphire/pp_update/pp_update -f $BCF_ANNOTATED \
--b $EXTRACTED_PP \
--o $BCF_REPHASED
+${PROGDIR}/sapphire/pp_update/pp_update -f $BCF_ANNOTATED -b $EXTRACTED_PP -o $BCF_REPHASED
 
 
 
-#Remove intermediate VCFs
+#Remove large intermediate files
 rm "$BCF_ANNOTATED"
 
 echo "VCF phasing completed."

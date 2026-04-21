@@ -16,7 +16,7 @@ fi
 DEMES=false
 
 # Parse command-line arguments
-while getopts p:s:v:d option; do
+while getopts p:d option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
         d) DEMES=true
@@ -47,13 +47,15 @@ fi
 for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt);
 do
     echo "Processing $chr into SMC++ Input"
-    apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc ${VCF} ${OUTDIR}/datafiles/demography/smc_inputs/${CHR}.smc.gz ${CHR} ${POPSET} --mask ${OUTDIR}/datafiles/snpable/${prefix}_revised_mask.bed.gz
+    apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc ${VCF} ${OUTDIR}/datafiles/demography/smc_inputs/${chr}.smc.gz ${CHR} ${POPSET} --mask ${OUTDIR}/datafiles/snpable/${prefix}_revised_mask.${chr}.mask.bed.gz
 done
 
 echo "Making and Plotting Model"
 apptainer run ${PROGDIR}/smcpp_latest.sif estimate ${MUT_RATE} $(ls ${OUTDIR}/datafiles/demography/smc_inputs) -o ${OUTDIR}/datafiles/demography
 apptainer run ${PROGDIR}/smcpp_latest.sif plot ${OUTDIR}/datafiles/demography/${OUTFNAME} ${OUTDIR}/datafiles/demography/model.final.json -c # Ensure to output csv file with model info for linkage mapping later
+echo "Raw SMC++ Model outputted to model.final.json. CSV outputted to ${OUTFNAME}.csv"
 
 if [ "$DEMES" = true ]; then
-    echo "Converting model CSV file to Demes YAML file
+    echo "Converting model CSV file to Demes YAML file"
     python3 ${SCRIPT_DIR}/Genomics-Main/general_scripts/convert_to_demes.py -c ${OUTDIR}/datafiles/demography/${OUTFNAME}.csv -t 'years' -d "popsizes from smc++" -g 25 -o ${OUTFNAME}
+    echo "Demes YAML outputted to ${OUTFNAME}.yaml"
