@@ -38,20 +38,28 @@ if [ -f "${OUTDIR}/datafiles/linkage_map/" ];
         mkdir -p "${OUTDIR}/datafiles/linkage_map/"
 fi
 
-pyrho make_table -n ${NUM_HAPS} -N ${N} --mu ${MUT_RATE} --logfile ${OUTDIR}/datafiles/linkage_map/ --outfile ${OUTDIR}/datafiles/linkage_map/${POP}.hdf \
-	--approx --smcpp_file ${SMCFILE} --decimate_rel_tol 0.1
+if [ -f "${OUTDIR}/datafiles/linkage_map/${POP}.hdf" ];
+        then
+            echo "lookup table already exists, moving on!"
+        else
+            pyrho make_table -n ${NUM_HAPS} -N ${N} --mu ${MUT_RATE} --logfile ${OUTDIR}/datafiles/linkage_map/pyrho_table_log.txt --outfile ${OUTDIR}/datafiles/linkage_map/${POP}.hdf \
+	        --approx --smcpp_file ${SMCFILE} --decimate_rel_tol 0.1
+fi
 
 # Run this to get probably better estimates of hyperparameters prior to running optimize
 #pyrho hyperparam -n ${NUM_HAPS} --mu ${MUT_RATE} --blockpenalty 50,100 \
 #	--windowsize 25,50 --logfile ${OUTDIR}/datafiles/linkage_map/ --tablefile ${OUTDIR}/datafiles/linkage_map/${POP}.hdf \
 #	--num_sims 3 --num_threads ${THREADS}\
-#	--smcpp_file ${SMCFILE} --outfile ${OUTDIR}/datafiles/linkage_map/${POP}_hyperparam_results.txt 
+#	--smcpp_file ${SMCFILE} --outfile ${OUTDIR}/datafiles/linkage_map/${POP}_hyperparam_results.txt
 
-pyrho optimize --tablefile ${OUTDIR}/datafiles/linkage_map/${POP}.hdf \
-	--vcffile ${VCF} \
-	--outfile ${OUTDIR}/datafiles/linkage_map/${POP}.rmap \
-	--blockpenalty 50 --windowsize 50 \
-	--logfile ${OUTDIR}/datafiles/linkage_map/
+
+for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt); do
+    pyrho optimize --tablefile ${OUTDIR}/datafiles/linkage_map/${POP}.hdf \
+        --vcffile ${VCFDIR}/${POP}_${chr}.vcf.gz \
+        --outfile ${OUTDIR}/datafiles/linkage_map/${POP}_${chr}.rmap \
+        --blockpenalty 50 --windowsize 50 \
+        --logfile ${OUTDIR}/datafiles/linkage_map/pyrho_optimize_${chr}_log.txt;
+done
 
 pyrho compute_r2 --quantiles .25,.5,.75 --compute_mean --samplesize ${NUM_HAPS} \
 	--tablefile ${OUTDIR}/datafiles/linkage_map/${POP}.hdf \
