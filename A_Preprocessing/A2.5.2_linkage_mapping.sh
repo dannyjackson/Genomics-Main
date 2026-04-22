@@ -42,8 +42,7 @@ if [ -f "${OUTDIR}/datafiles/linkage_map/${POP}.hdf" ];
         then
             echo "lookup table already exists, moving on!"
         else
-            pyrho make_table -n ${NUM_HAPS} -N ${N} --mu ${MUT_RATE} --logfile ${OUTDIR}/datafiles/linkage_map/pyrho_table_log.txt --outfile ${OUTDIR}/datafiles/linkage_map/${POP}.hdf \
-	        --approx --smcpp_file ${SMCFILE} --decimate_rel_tol 0.1
+            pyrho make_table -n ${NUM_HAPS} -N ${N} --mu ${MUT_RATE} --logfile ${OUTDIR}/datafiles/linkage_map/pyrho_table_log.txt --outfile ${OUTDIR}/datafiles/linkage_map/${POP}.hdf --smcpp_file ${SMCFILE} --decimate_rel_tol 0.1
 fi
 
 # Run this to get probably better estimates of hyperparameters prior to running optimize
