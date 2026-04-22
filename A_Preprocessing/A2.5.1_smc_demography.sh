@@ -43,7 +43,7 @@ if [ -f "${OUTDIR}/datafiles/demography/smc_inputs" ];
             mkdir -p "${OUTDIR}/datafiles/demography/smc_inputs"
 fi
 
-tabix ${VCF}
+bcftools index ${VCF}
 
 smc_input_lst=()
 
