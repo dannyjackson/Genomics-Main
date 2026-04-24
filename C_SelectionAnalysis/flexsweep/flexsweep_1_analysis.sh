@@ -38,10 +38,10 @@ if [ -z "$OUTDIR" ] || [ -z "$THREADS" ] |; then
     exit 1
 fi
 
-flexsweep simulator --sample_size ${NUM_SAMPLES} --demes ${OUTDIR}/datafiles/demography/${RUNNAME}.yaml --output_folder ${OUTDIR}/analyses/flexsweep_outputs/${RUNNAME}  --nthreads ${THREADS} --num_simulation ${NUM_SIMULATIONS}
+flexsweep simulator --sample_size ${NUM_HAPS} --demes ${OUTDIR}/datafiles/demography/${POPNAME}.yaml --output_folder ${OUTDIR}/analyses/flexsweep_outputs/${POP}  --nthreads ${THREADS} --num_simulation ${NUM_SIMULATIONS}
 
-flexsweep fvs-discoal --simulations_path ${OUTDIR}/analyses/flexsweep_outputs/${RUNNAME}  --nthreads ${THREADS}
+flexsweep fvs-discoal --simulations_path ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}  --nthreads ${THREADS}
 
-flexsweep fvs-vcf --vcf_path ${OUTDIR}/datafiles/rephased_vcf/ --recombination_map ${REC_MAP} --nthreads ${THREADS} --pop ${POP}
+flexsweep fvs-vcf --vcf_path ${OUTDIR}/datafiles/rephased_vcf/ --recombination_map ${REC_MAP} --nthreads ${THREADS} --pop ${POPNAME}
 
-flexsweep cnn  --train_data ${OUTDIR}/analyses/flexsweep_outputs/${RUNNAME}/fvs.parquet --predict_data ${OUTDIR}/datafiles/rephased_vcf/fvs_${POP}.parquet --output_folder ${OUTDIR}/analyses/flexsweep_outputs/${RUNNAME}
+flexsweep cnn  --train_data ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}/fvs.parquet --predict_data ${OUTDIR}/datafiles/rephased_vcf/fvs_${POPNAME}.parquet --output_folder ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}

@@ -37,7 +37,6 @@ fi
 # Source/list needed param files and modules
 source "${PARAMS}"
 module list
-RUN_NAME=msmc_${POP_OR_IND}_${DATE}
 
 
 if [ $NR_IND == 1 ]; then
@@ -61,14 +60,14 @@ echo "Script: msmc_3_runMSMC.sh"
 echo "Run name: $RUN_NAME"
 echo "SNP calling method: $METHOD"
 echo "Period setting: $P_PAR"
-echo "Nr of individuals (1 or 2+): $NR_IND"
+echo "Nr of individuals (1 or 2+): $NUMIND"
 echo "Haplotype Indices Used: ${INDEX}"
 echo "Population or Individuals ID: $POP_OR_IND"
 echo "MSMC Inputs Read from: ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}"
 echo "Iterations: ${NUM_OPT}"
 
 
-if [ $NR_IND == 1 ]
+if [ $NUMIND == 1 ]
         then
         echo "Running MSMC for one individual"
         MSMC_INPUT=`cat ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}`
@@ -84,7 +83,7 @@ if [ $NR_IND == 1 ]
         fi
 
 else
-        echo "Running MSMC for $NR_IND individuals"
+        echo "Running MSMC for $NUMIND individuals"
         MSMC_INPUT=`cat ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}`
         MSMC_OUTPUT=${OUTDIR}/analyses/msmc/output/msmc_output.${RUN_NAME}
 

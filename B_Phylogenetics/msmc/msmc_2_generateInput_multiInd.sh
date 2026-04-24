@@ -9,17 +9,13 @@ if [ $# -lt 1 ]; then
     echo "This script generates input files for MSMC."
     echo "Required Argument:"
     echo "  -p   Path to parameter file (example in GitHub repository as params.sh)"
-    echo "  -m   File Name of your unique project msmc params file"
-    echo "  -s   POP Name"
     exit 1
 fi
 
 # Parse command-line arguments
-while getopts ":p:i:s:" option; do
+while getopts ":p:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
-        i) IND=${OPTARG} ;;
-        s) POP=${OPTARG} ;;
         *) echo "Invalid option: -$OPTARG" >&2; exit 1 ;;
     esac
 done
@@ -38,25 +34,25 @@ source "${PARAMS}"
 # Check available modules (useful for debugging environment)
 module list
 
-for s in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
-        do SCAFFOLD=$s
+for SCAFFOLD in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
+        do
 
-        MSMC_INPUT=${OUTDIR}/datafiles/msmc/input/msmc_input.${POP}.${SCAFFOLD}.txt
+        MSMC_INPUT=${OUTDIR}/datafiles/msmc/input/msmc_input.${POPNAME}.${SCAFFOLD}.txt
 
         printf "\n \n \n \n"
         date
         echo "Script: msmc_2_generateInput_multiInd"
-        echo "Individuals: ${IND}"
-        echo "Population: ${POP}"
+        echo "Individuals: ${INDFILE}"
+        echo "Population: ${POPNAME}"
         echo "Scaffold: ${SCAFFOLD}"
         echo "Method: ${METHOD}"
         echo "MSMC input file: ${MSMC_INPUT}"
 
-        for ind in $(cat ${IND})
+        for ind in $(cat ${INDFILE})
                 do INDMASK=`ls ${OUTDIR}/datafiles/msmc/mask/ind/ind_mask.${ind}.${SCAFFOLD}.bed.gz`
-                echo "--mask=$INDMASK " >> ${OUTDIR}/datafiles/msmc/mask/ind/${POP}.mask_file.$SCAFFOLD
-                INDVCF=`ls ${OUTDIR}/datafiles/split_vcfs/${ind}_${SCAFFOLD}.vcf.gz`
-                echo $INDVCF >> ${OUTDIR}/datafiles/split_vcfs/${POP}.vcf_file.${SCAFFOLD}
+                echo "--mask=$INDMASK " >> ${OUTDIR}/datafiles/msmc/mask/ind/${POPNAME}.mask_file.$SCAFFOLD
+                INDVCF=`ls ${OUTDIR}/datafiles/split_vcfs/${POPNAME}_${ind}_${SCAFFOLD}.vcf.gz`
+                echo $INDVCF >> ${OUTDIR}/datafiles/split_vcfs/${POPNAME}.vcf_file.${SCAFFOLD}
         done
 
 ### Generate MSMC input files:
@@ -67,7 +63,7 @@ for s in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
                 echo "MAPPABILITY MASK: ${MASK_GENOME}"
                 echo "Creating MSMC input file WITH individual mask (samtools)"
                 #${MSMCTOOLS}/generate_multihetsep.py --negative_mask=$MASK_REPEATS --mask=$MASK_INDIV $VCF > $MSMC_INPUT # with repeat mask
-                ${MSMCTOOLS}/generate_multihetsep.py `cat ${OUTDIR}/datafiles/msmc/mask/ind/${POP}.mask_file.${SCAFFOLD}` --mask=$MASK_GENOME `cat ${OUTDIR}/datafiles/split_vcfs/${POP}.vcf_file.${SCAFFOLD}` > ${MSMC_INPUT} # without repeat mask
+                ${PROGDIR}/msmc-tools/generate_multihetsep.py `cat ${OUTDIR}/datafiles/msmc/mask/ind/${POPNAME}.mask_file.${SCAFFOLD}` --mask=$MASK_GENOME `cat ${OUTDIR}/datafiles/split_vcfs/${POPNAME}.vcf_file.${SCAFFOLD}` > ${MSMC_INPUT} # without repeat mask
 
 
         # WARNING: THIS CODE HAS BEEN NEGLECTED AND NOT TESTED

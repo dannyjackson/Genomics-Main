@@ -3,8 +3,7 @@
 if [ $# -lt 1 ]; then
     echo "Usage: $0 -p <parameter_file>
 
-This script generates linkage map for a population using pyrho. It requires csv outputs from SMC++ in the datafiles/demography directory
-Requires file with specific run parameters and sourcing from params_preprocessing.sh.
+This script generates linkage map for a population using pyrho. It requires csv outputs from SMC++
 
 Required argument:
   -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository)."
@@ -42,7 +41,8 @@ if [ -f "${OUTDIR}/datafiles/linkage_map/${POP}.hdf" ];
         then
             echo "lookup table already exists, moving on!"
         else
-            pyrho make_table -n ${NUM_HAPS} -N ${N} --mu ${MUT_RATE} --logfile ${OUTDIR}/datafiles/linkage_map/pyrho_table_log.txt --outfile ${OUTDIR}/datafiles/linkage_map/${POP}.hdf --smcpp_file ${SMCFILE} --decimate_rel_tol 0.1
+            pyrho make_table -n ${NUM_HAPS} -N ${N} --mu ${MUT_RATE} --logfile ${OUTDIR}/datafiles/linkage_map/pyrho_table_log.txt \
+            --outfile ${OUTDIR}/datafiles/linkage_map/${POP}.hdf --smcpp_file ${SMCFILE} --decimate_rel_tol 0.1
 fi
 
 # Run this to get probably better estimates of hyperparameters prior to running optimize
@@ -53,6 +53,7 @@ fi
 
 
 for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt); do
+    echo "Optimizing $chr map"
     pyrho optimize --tablefile ${OUTDIR}/datafiles/linkage_map/${POP}.hdf \
         --vcffile ${VCFDIR}/${POP}_${chr}.vcf.gz \
         --outfile ${OUTDIR}/datafiles/linkage_map/${POP}_${chr}.rmap \
@@ -61,6 +62,7 @@ for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt); do
         --ploidy 2;
 done
 
+echo "Computing Linakge Map Stats"
 pyrho compute_r2 --quantiles .25,.5,.75 --compute_mean --samplesize ${NUM_HAPS} \
 	--tablefile ${OUTDIR}/datafiles/linkage_map/${POP}.hdf \
 	--outfile ${OUTDIR}/datafiles/linkage_map/${POP}_r2.txt

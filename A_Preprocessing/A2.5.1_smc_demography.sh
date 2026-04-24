@@ -4,12 +4,11 @@ if [ $# -lt 1 ]; then
     echo "Usage: $0 -p <parameter_file>
 
 This script generates demography estimates for a population using SMC++. This is a prerequisite for generating recombination maps using pyrho in A2.5.1_linkage_mapping.sh
-Requires file with specific run parameters and sourcing from params_preprocessing.sh.
 
 Required argument:
   -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
 Optional argument:
-  -d  Boolean argument specifying whether to convert a copy of SMC++ output to demes YAML file (Default to false)"
+  -d  Boolean argument specifying whether to convert a copy of SMC++ output to demes YAML file (Default to false). Needed if want to use downstream Flexsweep analysis"
     exit 1
 fi
 

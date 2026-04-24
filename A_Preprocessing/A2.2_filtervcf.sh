@@ -6,7 +6,7 @@ usage() {
     echo "This script filters the VCF generated in A2.1_callvariants.sh"
     echo
     echo "Required Arguments:"
-    echo "  -p  Path to the parameter file (e.g., params.sh from the GitHub repository)"
+    echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh from the GitHub repository)"
     echo "  -i  Prefix of vcf file"
     exit 1
 }
@@ -17,12 +17,10 @@ if [ $# -lt 1 ]; then
 fi
 
 # Parse command-line arguments
-while getopts "p:i:l:h:" option; do
+while getopts "p:i:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         i) ID=${OPTARG} ;;
-        l) MINDEPTH=${OPTARG} ;;
-        h) MAXDEPTH=${OPTARG} ;;
         *) usage ;;
     esac
 done

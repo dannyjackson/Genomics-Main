@@ -37,6 +37,9 @@ MINQ=<SET_VALUE> # minimum quality score required for a site to be kept
 MINMAF=<SET_VALUE> # minimum minor allele frequency required for a site to be kept
 MINMAPQ=<SET_VALUE> # minimum mapping quality score required for a site to be kept
 
+# filter variants
+MINDEPTH=<SET_VALUE>
+MAXDEPTH=<SET_VALUE>
 
 # generate mask
 k=<SET_VALUE>

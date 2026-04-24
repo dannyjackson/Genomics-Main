@@ -21,7 +21,6 @@ while getopts p:s:r:t: option; do
         p) PARAMS=${OPTARG};;
         s) POPPARAMS=${OPTARG};;
         r) RUNNAME=${OPTARG};;
-        t) THREADS=${OPTARG};;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done
