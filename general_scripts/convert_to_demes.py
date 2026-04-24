@@ -35,4 +35,4 @@ demes_graph = b.resolve()
 #demesdraw.tubes(demes_graph)
 
 outdir = os.path.split(args.csv_file)[0]
-demes.dump(demes_graph, os.path.join(outdir, args.outfilename, '.yaml'))
+demes.dump(demes_graph, os.path.join(outdir, f'{args.outfilename}.yaml'))
