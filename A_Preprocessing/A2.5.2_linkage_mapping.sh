@@ -58,7 +58,7 @@ for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt); do
         --outfile ${OUTDIR}/datafiles/linkage_map/${POP}_${chr}.rmap \
         --blockpenalty 50 --windowsize 50 \
         --logfile ${OUTDIR}/datafiles/linkage_map/pyrho_optimize_${chr}_log.txt \
-        --fast-missing --ploidy 2;
+        --ploidy 2;
 done
 
 pyrho compute_r2 --quantiles .25,.5,.75 --compute_mean --samplesize ${NUM_HAPS} \
