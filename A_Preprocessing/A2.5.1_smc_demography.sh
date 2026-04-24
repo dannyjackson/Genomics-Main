@@ -56,7 +56,7 @@ do
 done
 
 echo "Making and Plotting Model"
-apptainer run ${PROGDIR}/smcpp_latest.sif estimate ${MUT_RATE} ${smc_input_lst} -o ${OUTDIR}/datafiles/demography
+apptainer run ${PROGDIR}/smcpp_latest.sif estimate ${MUT_RATE} $(echo "${rmap_lst[@]}") -o ${OUTDIR}/datafiles/demography
 apptainer run ${PROGDIR}/smcpp_latest.sif plot ${OUTDIR}/datafiles/demography/${OUTFNAME} ${OUTDIR}/datafiles/demography/model.final.json -c # Ensure to output csv file with model info for linkage mapping later
 echo "Raw SMC++ Model outputted to model.final.json. CSV outputted to ${OUTFNAME}.csv"
 
