@@ -17,13 +17,19 @@ usage() {
     exit 1
 }
 
+WINDOW=40
+OVERLAP=2
+
 # Parse command-line arguments
-while getopts ":p:i:o:m:" option; do
+while getopts ":p:i:o:m:w:e:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         i) VCF_IN=${OPTARG} ;;
         o) VCF_OUT=${OPTARG} ;;
         m) MAP=${OPTARG} ;;
+        w) WINDOW=${OPTARG} ;;
+        c) OVERLAP=${OPTARG} ;;
+        e) MARKERFILE=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}" >&2; usage ;;
     esac
 done
@@ -42,7 +48,7 @@ if [ -z "$OUTDIR" ]; then
     exit 1
 fi
 
-beagle gt=${VCF_IN} out=${VCF_OUT} map=${MAP}
+beagle gt=${VCF_IN} out=${VCF_OUT} map=${MAP} window=${WINDOW} overlap=${OVERLAP} excludemarkers=${MARKERFILE}
 bcftools index ${VCF_OUT}
 
 echo "VCF phasing completed."
