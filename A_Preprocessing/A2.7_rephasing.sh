@@ -30,14 +30,6 @@ while getopts ":p:c:b:m:" option; do
     esac
 done
 
-# Ensure all required arguments are provided
-if [[ -z "$PARAMS" || -z "$POP" || -z "$VCF" ]]; then
-    echo "Error: Missing required arguments."
-    usage
-fi
-
-echo $MAF
-
 # Load parameters
 source "${PARAMS}"
 
