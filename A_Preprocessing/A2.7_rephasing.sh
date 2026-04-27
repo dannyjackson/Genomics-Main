@@ -4,7 +4,7 @@
 
 # Usage message function
 usage() {
-    echo "Usage: $0 -p <parameter_file> -i <individual> [-b <bcf_file>]"
+    echo "Usage: $0 -p <parameter_file> -c <chromosome> [-b <bcf_file>]"
     echo ""
     echo "This script rephases low confidence variants in a BCF file with SAPPHIRE. PUMA CLUSTER REQUIRED FOR THIS SCRIPT."
     echo "It is best run as a Slurm array that calls this script for each individual/population." Meant to be used after stat-based phasing in step A2.6
@@ -13,7 +13,7 @@ usage() {
     echo "Required arguments:"
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository)."
     echo "  -c  Name of chromosome present in VCF file."
-    echo "  -b  Path to the BCF file to rephase. This file should be split by chromosome. NOTE: Use the bcftools_fill_tags.sh script as an example of converting VCF to BCF AND using +filltags bcftools plugin to populate allele frequency info (Required if BEAGLE phasing)"
+    echo "  -b  Path to the BCF file to rephase. This file should be split by chromosome. NOTE: You must have allele frequency (AF) INFO field populated."
 
     exit 1
 }

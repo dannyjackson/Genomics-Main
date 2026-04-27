@@ -8,6 +8,7 @@ usage() {
     echo "Required Arguments:"
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh from the GitHub repository)"
     echo "  -i  Prefix of vcf file"
+    echo "  -f  optional boolean flags to fill extra info tags (allele frequency, count, and number)"
     exit 1
 }
 
@@ -23,6 +24,7 @@ while getopts "p:i:f" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         i) ID=${OPTARG} ;;
+        f) FILLTAGS=true ;;
         *) usage ;;
     esac
 done
@@ -62,3 +64,10 @@ if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_plinkfiltered.vcf" ]
             --geno 0.02 --mind 0.2 --maf 0.01 \
             --recode vcf-iid --out "${OUTDIR}/datafiles/genotype_calls/${ID}_plinkfiltered"
 fi
+
+# Filling INFO tags for AD, AC, and AN and converting to BCF
+if [ "$FILLTAGS" = true ]; then
+    echo "Filling INFO tags for AD, AC, and AN"
+    bcftools +fill-tags "${OUTDIR}/datafiles/genotype_calls/${ID}_plinkfiltered".vcf.gz -Ob -o "{$ID}"_tagfilled.bcf -- -t AF,AC,AN
+    bcftools index "{$ID}"_tagfilled.bcf;
+done
