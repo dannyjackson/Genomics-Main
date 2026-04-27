@@ -65,7 +65,7 @@ HEADER="${REPHASE_DIR}/header.txt"
 CRAM_PATH="${OUTDIR}/datafiles/indelrealignment/" # Should be a directory containing all individual CRAM files
 
 # Extract all variants with AF < 0.01 and replace heterozygous by "0.5" and homozygous by "."
-filter_str="INFO/AF < ${MAF}"
+filter_str="INFO/AF<${MAF}"
 bcftools filter -i $filter_str $BCF -Ou | bcftools query -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\t[%GT\t]\n' | sed -e 's/0|0/./g' -e 's/0|1/0.5/g' -e 's/1|0/0.5/g' -e 's/1|1/./g' > $PP_INFO
 # bgzip and tabix annotate the file
 bgzip $PP_INFO
