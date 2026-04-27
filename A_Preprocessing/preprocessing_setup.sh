@@ -63,7 +63,7 @@ micromamba create -n shapeit4_env -c bioconda shapeit4
 if [ ! -d sapphire ]; then
     git clone https://github.com/stschiff/sapphire || { echo "Error: Failed to clone sapphire."; exit 1; }
 fi
-cd sapphire # Note that you should be on the Puma Cluster to successfully build sapphire
+cd sapphire # Note that you should be on the Puma Cluster to successfully build and run sapphire
 module load htslib
 make
 cd ../

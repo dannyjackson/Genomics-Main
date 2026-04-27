@@ -1,8 +1,5 @@
 #!/bin/bash
 
-
-# THIS SCRIPT IS UNTESTED!!!!!!!!!!!!!!
-
 # Usage message function
 usage() {
     echo "Usage: $0 -p <parameter_file> -i <individual> [-s]"
@@ -17,19 +14,13 @@ usage() {
     exit 1
 }
 
-WINDOW=40
-OVERLAP=2
-
 # Parse command-line arguments
-while getopts ":p:i:o:m:w:e:" option; do
+while getopts ":p:i:o:m:e:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         i) VCF_IN=${OPTARG} ;;
         o) VCF_OUT=${OPTARG} ;;
         m) MAP=${OPTARG} ;;
-        w) WINDOW=${OPTARG} ;;
-        c) OVERLAP=${OPTARG} ;;
-        e) MARKERFILE=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}" >&2; usage ;;
     esac
 done
@@ -48,8 +39,8 @@ if [ -z "$OUTDIR" ]; then
     exit 1
 fi
 
-beagle gt=${VCF_IN} out=${VCF_OUT} map=${MAP} window=${WINDOW} overlap=${OVERLAP} excludemarkers=${MARKERFILE}
-bcftools index ${VCF_OUT}
+beagle gt=${VCF_IN} out=${VCF_OUT} map=${MAP}
+bcftools index ${VCF_OUT}.vcf.gz
 
 echo "VCF phasing completed."
 date

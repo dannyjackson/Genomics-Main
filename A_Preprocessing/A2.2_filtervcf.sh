@@ -16,8 +16,10 @@ if [ $# -lt 1 ]; then
     usage
 fi
 
+FILLTAGS=false
+
 # Parse command-line arguments
-while getopts "p:i:" option; do
+while getopts "p:i:f" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         i) ID=${OPTARG} ;;
@@ -38,6 +40,7 @@ if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_qualitysort.vcf" ]
 
 fi
 
+
 # Filter VCF based on depth, remove indels
 if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_depthfiltered.vcf" ]
         then
@@ -46,7 +49,6 @@ if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_depthfiltered.vcf" ]
             echo "filtering VCF file by depth, remove indels"
             vcftools --vcf "${OUTDIR}/datafiles/genotype_calls/${ID}_qualitysort.vcf" --min-meanDP ${MINDEPTH} --max-meanDP ${MAXDEPTH} --remove-indels --recode --out "${OUTDIR}/datafiles/genotype_calls/${ID}_depthfiltered"
 fi
-
 
 
 # Further filtering using PLINK
@@ -60,4 +62,3 @@ if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_plinkfiltered.vcf" ]
             --geno 0.02 --mind 0.2 --maf 0.01 \
             --recode vcf-iid --out "${OUTDIR}/datafiles/genotype_calls/${ID}_plinkfiltered"
 fi
-
