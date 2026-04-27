@@ -4,7 +4,7 @@
 
 # Usage message function
 usage() {
-    echo "Usage: $0 -p <parameter_file> -c <chromosome> [-b <bcf_file>]"
+    echo "Usage: $0 -p <parameter_file> -c <chromosome> -b <bcf_file> -m <minor_allele_freq_threshold>"
     echo ""
     echo "This script rephases low confidence variants in a BCF file with SAPPHIRE. PUMA CLUSTER REQUIRED FOR THIS SCRIPT."
     echo "It is best run as a Slurm array that calls this script for each individual/population." Meant to be used after stat-based phasing in step A2.6
@@ -14,16 +14,18 @@ usage() {
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository)."
     echo "  -c  Name of chromosome present in VCF file."
     echo "  -b  Path to the BCF file to rephase. This file should be split by chromosome. NOTE: You must have allele frequency (AF) INFO field populated."
+    echo "  -m  Minor Allele Frequnency Threshold. Usually should be 0.01"
 
     exit 1
 }
 
 # Parse command-line arguments
-while getopts ":p:c:b:" option; do
+while getopts ":p:c:b:m:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         c) CHR=${OPTARG} ;;
         b) BCF=${OPTARG} ;;
+        m) MAF=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}" >&2; usage ;;
     esac
 done
@@ -33,6 +35,8 @@ if [[ -z "$PARAMS" || -z "$POP" || -z "$VCF" ]]; then
     echo "Error: Missing required arguments."
     usage
 fi
+
+echo $MAF
 
 # Load parameters
 source "${PARAMS}"
@@ -69,7 +73,8 @@ HEADER="${REPHASE_DIR}/header.txt"
 CRAM_PATH="${OUTDIR}/datafiles/indelrealignment/" # Should be a directory containing all individual CRAM files
 
 # Extract all variants with AF < 0.01 and replace heterozygous by "0.5" and homozygous by "."
-bcftools filter -i 'INFO/AF < 0.2' $BCF -Ou | bcftools query -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\t[%GT\t]\n' | sed -e 's/0|0/./g' -e 's/0|1/0.5/g' -e 's/1|0/0.5/g' -e 's/1|1/./g' > $PP_INFO
+filter_str="INFO/AF < ${MAF}"
+bcftools filter -i $filter_str $BCF -Ou | bcftools query -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\t[%GT\t]\n' | sed -e 's/0|0/./g' -e 's/0|1/0.5/g' -e 's/1|0/0.5/g' -e 's/1|1/./g' > $PP_INFO
 # bgzip and tabix annotate the file
 bgzip $PP_INFO
 tabix -s1 -b2 -e2 $PP_INFO.gz
