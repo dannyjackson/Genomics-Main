@@ -86,13 +86,18 @@ bcftools annotate -a ${PP_INFO}.gz -h ${HEADER} -c CHROM,POS,ID,REF,ALT,FORMAT/P
 # Sanity check the annotated VCF
 #bcftools view "$BCF_ANNOTATED" | less
 
+
+echo "Extracting PP INFO"
 ${PROGDIR}/sapphire/pp_extractor/pp_extract -f ${BCF_ANNOTATED} --pp-from-maf --maf-threshold 0.01 -o ${EXTRACTED_PP}
 # Copy the file as SAPPHIRE will modify it, with this we will be able to compare
 cp "$EXTRACTED_PP" "${EXTRACTED_PP}.original"
 
+echo "Saving PP INFO to CSV"
 bcftools query --list-samples $BCF_ANNOTATED | \
 awk -v c=$CRAM_PATH '{ print NR-1 "," $0 "," c $0 ".cram" }' > $ANNOTATED_CSV
 
+
+echo "Beginning Phase Calling"
 ${PROGDIR}/sapphire/phase_caller/phase_caller \
 -f $BCF_ANNOTATED -S $ANNOTATED_CSV --cram-path-from-samples-file \
 -b "$EXTRACTED_PP" -t $THREADS
@@ -103,6 +108,7 @@ ${PROGDIR}/sapphire/phase_caller/phase_caller \
 #-S $ANNOTATED_CSV \
 #--extra-info --more | less
 
+echo "Updating BCF file with new phasing info"
 ${PROGDIR}/sapphire/pp_update/pp_update -f $BCF_ANNOTATED -b $EXTRACTED_PP -o $BCF_REPHASED
 
 
@@ -110,5 +116,5 @@ ${PROGDIR}/sapphire/pp_update/pp_update -f $BCF_ANNOTATED -b $EXTRACTED_PP -o $B
 #Remove large intermediate files
 rm "$BCF_ANNOTATED"
 
-echo "BCF phasing completed."
+echo "BCF rephasing completed."
 date
