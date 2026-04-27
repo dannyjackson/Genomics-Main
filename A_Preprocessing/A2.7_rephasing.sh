@@ -1,14 +1,13 @@
 #!/bin/bash
 
-# THIS SCRIPT IS UNTESTED!!!!!!!!!!!!!!
-
 # Usage message function
 usage() {
     echo "Usage: $0 -p <parameter_file> -c <chromosome> -b <bcf_file> -m <minor_allele_freq_threshold>"
     echo ""
-    echo "This script rephases low confidence variants in a BCF file with SAPPHIRE. PUMA CLUSTER REQUIRED FOR THIS SCRIPT."
+    echo "This script rephases low confidence variants in a BCF file with SAPPHIRE. This is meant to be used with BEAGLE-phased inputs."
     echo "It is best run as a Slurm array that calls this script for each individual/population." Meant to be used after stat-based phasing in step A2.6
     echo "Prior to running, you should split your phased BCF by chromosome and pass each split vcf in a slurm array."
+    echo "PUMA CLUSTER REQUIRED FOR THIS SCRIPT."
     echo ""
     echo "Required arguments:"
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository)."
@@ -85,7 +84,7 @@ bcftools annotate -a ${PP_INFO}.gz -h ${HEADER} -c CHROM,POS,ID,REF,ALT,FORMAT/P
 
 
 echo "Extracting PP INFO"
-${PROGDIR}/sapphire/pp_extractor/pp_extract -f ${BCF_ANNOTATED} --pp-from-maf --maf-threshold 0.2 -o ${EXTRACTED_PP}
+${PROGDIR}/sapphire/pp_extractor/pp_extract -f ${BCF_ANNOTATED} --pp-from-maf --maf-threshold ${MAF} -o ${EXTRACTED_PP}
 # Copy the file as SAPPHIRE will modify it, with this we will be able to compare
 cp "$EXTRACTED_PP" "${EXTRACTED_PP}.original"
 
@@ -106,8 +105,7 @@ ${PROGDIR}/sapphire/phase_caller/phase_caller \
 #--extra-info --more | less
 
 echo "Updating BCF file with new phasing info"
-${PROGDIR}/sapphire/pp_update/pp_update -f $BCF_ANNOTATED -b $EXTRACTED_PP -o $BCF_REPHASED
-
+${PROGDIR}/sapphire/pp_update/pp_update -f $BCF_ANNOTATED -b $EXTRACTED_PP -o $BCF_REPHASED --no-pp
 
 
 #Remove large intermediate files
