@@ -39,10 +39,16 @@ else
   echo "Directory for flexsweep output for ${POPNAME} already exists. WARNING: Existing files in this directory may be overwritten."
 fi
 
+echo "Starting Simulations"
 flexsweep simulator --sample_size ${NUM_HAPS} --demes ${OUTDIR}/datafiles/demography/${POPNAME}.yaml --output_folder ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}  --nthreads ${THREADS} --num_simulations ${NUM_SIMULATIONS}
 
+echo "Estimating feature vectors from simulations"
 flexsweep fvs-discoal --simulations_path ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}  --nthreads ${THREADS}
 
+echo "Estmating feature vectors from vcf"
 flexsweep fvs-vcf --vcf_path ${OUTDIR}/datafiles/rephased_vcf/ --recombination_map ${REC_MAP} --nthreads ${THREADS} --pop ${POPNAME}
 
+echo "Starting CNN"
 flexsweep cnn  --train_data ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}/fvs.parquet --predict_data ${OUTDIR}/datafiles/rephased_vcf/fvs_${POPNAME}.parquet --output_folder ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}
+
+echo "Done"
