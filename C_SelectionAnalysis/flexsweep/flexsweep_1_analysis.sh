@@ -30,7 +30,7 @@ source "${PARAMS}"
 
 printf "\n\n\n\n"
 date
-echo "Current script: flexsweep_2_analysis.sh"
+echo "Current script: flexsweep_1_analysis.sh"
 
 if [ ! -d "${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}" ]; then
   echo "Directory for flexsweep output for ${POPNAME} does not exist. Creating it now..."
@@ -39,7 +39,7 @@ else
   echo "Directory for flexsweep output for ${POPNAME} already exists. WARNING: Existing files in this directory may be overwritten."
 fi
 
-flexsweep simulator --sample_size ${NUM_HAPS} --demes ${OUTDIR}/datafiles/demography/${POPNAME}.yaml --output_folder ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}  --nthreads ${THREADS} --num_simulation ${NUM_SIMULATIONS}
+flexsweep simulator --sample_size ${NUM_HAPS} --demes ${OUTDIR}/datafiles/demography/${POPNAME}.yaml --output_folder ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}  --nthreads ${THREADS} --num_simulations ${NUM_SIMULATIONS}
 
 flexsweep fvs-discoal --simulations_path ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}  --nthreads ${THREADS}
 
