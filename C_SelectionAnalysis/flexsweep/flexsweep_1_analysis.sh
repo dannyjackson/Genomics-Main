@@ -38,7 +38,14 @@ if [ -z "$OUTDIR" ] || [ -z "$THREADS" ] |; then
     exit 1
 fi
 
-flexsweep simulator --sample_size ${NUM_HAPS} --demes ${OUTDIR}/datafiles/demography/${POPNAME}.yaml --output_folder ${OUTDIR}/analyses/flexsweep_outputs/${POP}  --nthreads ${THREADS} --num_simulation ${NUM_SIMULATIONS}
+if [ ! -d "${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}" ]; then
+  echo "Directory for flexsweep output for ${POPNAME} does not exist. Creating it now..."
+  mkdir -p "${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}" # -p creates parent directories if they don't exist
+else
+  echo "Directory for flexsweep output for ${POPNAME} already exists. WARNING: Existing files in this directory may be overwritten."
+fi
+
+flexsweep simulator --sample_size ${NUM_HAPS} --demes ${OUTDIR}/datafiles/demography/${POPNAME}.yaml --output_folder ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}  --nthreads ${THREADS} --num_simulation ${NUM_SIMULATIONS}
 
 flexsweep fvs-discoal --simulations_path ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}  --nthreads ${THREADS}
 

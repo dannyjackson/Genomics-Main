@@ -16,10 +16,9 @@ fi
 THREADS=8
 
 # Parse command-line arguments
-while getopts p:s:r:t: option; do
+while getopts p:s:r: option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
-        s) POPPARAMS=${OPTARG};;
         r) RUNNAME=${OPTARG};;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
@@ -32,7 +31,6 @@ fi
 
 # Load parameters
 source "${PARAMS}"
-source "${POPPARAMS}"
 
 printf "\n\n\n\n"
 date

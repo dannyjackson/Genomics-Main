@@ -107,6 +107,7 @@ ${PROGDIR}/sapphire/phase_caller/phase_caller \
 echo "Updating BCF file with new phasing info"
 ${PROGDIR}/sapphire/pp_update/pp_update -f $BCF_ANNOTATED -b $EXTRACTED_PP -o $BCF_REPHASED --no-pp
 
+bcftools index $BCF_REPHASED
 
 #Remove large intermediate files
 rm "$BCF_ANNOTATED"

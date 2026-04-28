@@ -1,4 +1,4 @@
-#!/bin/bash
+n#!/bin/bash
 
 if [ $# -lt 1 ]; then
     echo "Usage: $0 -p <parameter_file>
