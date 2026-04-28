@@ -32,12 +32,6 @@ printf "\n\n\n\n"
 date
 echo "Current script: flexsweep_2_analysis.sh"
 
-# Ensure required variables are set
-if [ -z "$OUTDIR" ] || [ -z "$THREADS" ] |; then
-    echo "Error: Missing required parameters in the parameter file." >&2
-    exit 1
-fi
-
 if [ ! -d "${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}" ]; then
   echo "Directory for flexsweep output for ${POPNAME} does not exist. Creating it now..."
   mkdir -p "${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}" # -p creates parent directories if they don't exist
