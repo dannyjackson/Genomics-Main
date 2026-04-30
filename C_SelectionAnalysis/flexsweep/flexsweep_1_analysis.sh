@@ -40,7 +40,7 @@ else
 fi
 
 echo "Starting Simulations"
-flexsweep simulator --sample_size ${NUM_HAPS} --demes ${OUTDIR}/datafiles/demography/${POPNAME}.yaml --output_folder ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}  --nthreads ${THREADS} --num_simulations ${NUM_SIMULATIONS}
+flexsweep simulator --sample_size ${NUM_HAPS} --demes ${DEMES} --output_folder ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}  --nthreads ${THREADS} --num_simulations ${NUM_SIMULATIONS}
 
 echo "Estimating feature vectors from simulations"
 flexsweep fvs-discoal --simulations_path ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}  --nthreads ${THREADS}
