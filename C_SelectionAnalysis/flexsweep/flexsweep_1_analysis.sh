@@ -46,7 +46,7 @@ echo "Estimating feature vectors from simulations"
 flexsweep fvs-discoal --simulations_path ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}  --nthreads ${THREADS}
 
 echo "Estmating feature vectors from vcf"
-flexsweep fvs-vcf --vcf_path ${OUTDIR}/datafiles/rephased_vcf/ --recombination_map ${REC_MAP} --nthreads ${THREADS} --suffix ${POPNAME}
+flexsweep fvs-vcf --vcf_path ${OUTDIR}/datafiles/rephased_vcf --recombination_map ${REC_MAP} --nthreads ${THREADS} --suffix ${POPNAME}
 
 echo "Starting CNN"
 flexsweep cnn  --train_data ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}/fvs.parquet --predict_data ${OUTDIR}/datafiles/rephased_vcf/fvs_${POPNAME}.parquet --output_folder ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}
