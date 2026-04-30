@@ -46,7 +46,7 @@ echo "Estimating feature vectors from simulations"
 flexsweep fvs-discoal --simulations_path ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}  --nthreads ${THREADS}
 
 echo "Estmating feature vectors from vcf"
-# Note that flexsweep is looking for bgzip compressed vcf files (despite that it won't output an error message saying this).
+# Note that flexsweep is looking for bgzip compressed vcf or bcf files (despite that it won't output an error message saying this).
 flexsweep fvs-vcf --vcf_path ${OUTDIR}/datafiles/rephased_vcf --recombination_map ${REC_MAP} --nthreads ${THREADS} --suffix ${POPNAME}
 
 echo "Starting CNN"
