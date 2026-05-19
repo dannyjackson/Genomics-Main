@@ -9,20 +9,20 @@ Required argument:
   -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
   -r  Run name, required for providing a unique name to output files.
   -i  Individual name (can easily be passed through a slurm array).
-  -c  Optional flag to indicate whether to compress the output files with bgzip."
+  -d  Optional flag to indicate whether to delete depthstats file (recommended)."
     exit 1
 fi
 
 # Set default values for optional variables
-COMPRESS=false
+DELETE=false
 
 # Parse command-line arguments
-while getopts p:r:i:c option; do
+while getopts p:r:i:d option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
         r) RUNNAME=${OPTARG};;
         i) IND=${OPTARG};;
-        c) COMPRESS=true ;;
+        d) DELETE=true ;;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done
@@ -66,10 +66,9 @@ else
 fi
 
 
-# Since the sample bamstats files are really large, let's compress them for now while we may need them in the near future.
-if [ "$COMPRESS" = true ]; then
-    echo "Compressing ${IND} depthstats file"
-    bgzip "${OUTDIR}/datafiles/bamstats/${IND}_depthstats.txt"
+if [ "$DELETE" = true ]; then
+    echo "Deleted ${IND} depthstats file"
+    rm "${OUTDIR}/datafiles/bamstats/${IND}_depthstats.txt"
 fi
 
 echo "Finished bam statistics for $IND"

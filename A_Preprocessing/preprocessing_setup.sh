@@ -9,7 +9,6 @@ mkdir -p "${OUTDIR}/datafiles/clipoverlap"
 mkdir -p "${OUTDIR}/datafiles/indelmaps"
 mkdir -p "${OUTDIR}/datafiles/bamstats"
 mkdir -p "${OUTDIR}/datafiles/indelrealignment"
-mkdir -p "${OUTDIR}/datafiles/sapphire_polishing"
 
 # A1
 # Create necessary directories

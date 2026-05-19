@@ -52,6 +52,7 @@ echo "done " ${IND} >>${OUTDIR}/datafiles/clipoverlap/index_clippedstats.txt
 apptainer exec ${PROGDIR}/gatk3-3.7-0.sif java -jar /usr/GenomeAnalysisTK.jar \
 -T RealignerTargetCreator \
 -R ${REF} \
+--maxIntervalSize 600 \
 -I ${OUTDIR}/datafiles/clipoverlap/${IND}.all.sorted.marked.clipped.bam \
 -o ${OUTDIR}/datafiles/indelmaps/${IND}.intervals
 
@@ -61,6 +62,7 @@ apptainer exec ${PROGDIR}/gatk3-3.7-0.sif java -jar /usr/GenomeAnalysisTK.jar -T
 --consensusDeterminationModel USE_READS \
 -I ${OUTDIR}/datafiles/clipoverlap/${IND}.all.sorted.marked.clipped.bam \
 --targetIntervals ${OUTDIR}/datafiles/indelmaps/${IND}.intervals \
+--maxReadsInMemory 250000 \
 -o ${OUTDIR}/datafiles/indelrealignment/${IND}.realigned.bam
 
 # Get flagstats for realigned bam and output to stats directory

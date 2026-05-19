@@ -46,10 +46,11 @@ echo "Estimating feature vectors from simulations"
 flexsweep fvs-discoal --simulations_path ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}  --nthreads ${THREADS}
 
 echo "Estmating feature vectors from vcf"
-# Note that flexsweep is looking for bgzip compressed vcf or bcf files (despite that it won't output an error message saying this). Remember to index the file prior to running
-flexsweep fvs-vcf --vcf_path ${OUTDIR}/datafiles/rephased_vcf --recombination_map ${REC_MAP} --nthreads ${THREADS} --suffix ${POPNAME}
+# Note that flexsweep is looking for bgzip compressed vcf or bcf files. When you index the compressed files, you MUST use tabix (samtools)
+# can comment out recombination map flag if do not have one
+flexsweep fvs-vcf --vcf_path ${VCFDIR} --recombination_map ${REC_MAP} --nthreads ${THREADS} --suffix ${POPNAME}
 
 echo "Starting CNN"
-flexsweep cnn  --train_data ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}/fvs.parquet --predict_data ${OUTDIR}/datafiles/rephased_vcf/fvs_${POPNAME}.parquet --output_folder ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}
+flexsweep cnn  --train_data ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}/fvs.parquet --predict_data ${VCFDIR}/fvs_${POPNAME}.parquet --output_folder ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}
 
 echo "Done"
