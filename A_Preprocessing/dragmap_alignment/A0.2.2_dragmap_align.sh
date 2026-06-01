@@ -48,13 +48,7 @@ echo "Hash table stored in ${OUTDIR}/referencelists/dragmap_reference"
 
 echo "Aligning ${IND} with dragmap"
 dragen-os -r ${OUTDIR}/referencelists/dragmap_reference/ -1 ${OUTDIR}/datafiles/trimmed_fastas/${IND}_R1_trimmed.fq.gz -2 ${OUTDIR}/datafiles/trimmed_fastas/${IND}_R2_trimmed.fq.gz \
-    --output-directory ${OUTDIR}/datafiles/bamfiles/  --output-file-prefix ${IND}
+    --output-directory ${OUTDIR}/datafiles/bamfiles/  --output-file-prefix ${IND} | \
+    samtools view -b -o "${OUTDIR}/datafiles/bamfiles/${IND}.bam" -S
 
 echo "Done aligning ${IND}"
-
-echo "Converting Dragmap SAM to BAM"
-samtools view -bS ${OUTDIR}/datafiles/bamfiles/${IND}.sam > ${OUTDIR}/datafiles/bamfiles/${IND}.bam
-rm ${OUTDIR}/datafiles/bamfiles/${IND}.sam
-echo "Deleted Intermediate File ${IND}.sam"
-
-echo "Finished ${IND}"
