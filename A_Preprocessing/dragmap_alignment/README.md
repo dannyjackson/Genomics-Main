@@ -1,0 +1,1 @@
+Note that these alignment scripts are not necessarily compatible with downstream analyses. The newer DRAGEN aligner often requires other preprocessing steps and variant callers only present in newer versions of GATK, both of which are not implemented in this repo. Do not attempt to use this scripts as-is without consideration of changes to downstream analyses.
