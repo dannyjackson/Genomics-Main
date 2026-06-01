@@ -15,7 +15,7 @@ usage() {
 }
 
 # Parse command-line arguments
-while getopts ":p:i:o:m:e:" option; do
+while getopts ":p:i:o:m:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         i) VCF_IN=${OPTARG} ;;
