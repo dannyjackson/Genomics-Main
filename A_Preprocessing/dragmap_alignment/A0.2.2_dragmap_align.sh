@@ -4,6 +4,7 @@ if [ $# -lt 1 ]; then
     echo "Usage: $0 -p <parameter_file>
 
 This script aligns FASTQ files to a reference genome using Dragmap Open Source Aligner (https://github.com/Illumina/dragmap).
+Assumes that you are trimming using either fastp or trimgalore
 
 I recommend running it as a slurm array to pass individuals to sbatch jobs for maximum efficiency (see github.com/dannyjackson/BioinformaticTutorials/SubmittingJobs.txt for an explanation of running slurm arrays).
 This script assumes that you've installed dragmap using conda/micromamba environment

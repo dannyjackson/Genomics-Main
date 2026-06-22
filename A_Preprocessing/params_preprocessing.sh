@@ -46,7 +46,7 @@ k=<SET_VALUE>
 prefix=<SET_VALUE>
 
 
-# Linkage Mapping
+# Recombination Mapping
 #===============================
 # General Params
 VCF=${OUTDIR}/datafiles/genotype_calls/<SET_VALUE>.vcf

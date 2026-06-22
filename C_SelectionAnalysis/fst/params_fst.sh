@@ -14,4 +14,4 @@ POP1=population1name
 POP2=population2name
 
 # source the setup file for fst
-source ${SCRIPTDIR}/Genomics-Main/fst/setup_fst.sh
+source ${SCRIPTDIR}/Genomics-Main/C_SelectionAnalysis/fst/setup_fst.sh

@@ -4,15 +4,18 @@
 usage() {
     echo "Usage: $0 -p <parameter_file> -c <chromosome> -b <bcf_file> -m <minor_allele_freq_threshold>"
     echo ""
-    echo "This script rephases low confidence variants in a BCF file with SAPPHIRE. This is meant to be used with BEAGLE-phased inputs."
+    echo "This script rephases low confidence variants in a BCF file with SAPPHIRE using Minor Allele Frequency metrics. This is meant to be used with BEAGLE-phased inputs."
     echo "It is best run as a Slurm array that calls this script for each individual/population." Meant to be used after stat-based phasing in step A2.6
-    echo "Prior to running, you should split your phased BCF by chromosome and pass each split vcf in a slurm array."
     echo "PUMA CLUSTER REQUIRED FOR THIS SCRIPT."
+    echo "Prior to running, you should:
+            1) Convert your phased VCF to BCF
+            2) Split your phased BCF by chromosome.
+            3) Convert your original individual BAM files into CRAM files and ensure they are in the datafiles/indelrealignment directory"
     echo ""
     echo "Required arguments:"
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository)."
     echo "  -c  Name of chromosome present in VCF file."
-    echo "  -b  Path to the BCF file to rephase. This file should be split by chromosome. NOTE: You must have allele frequency (AF) INFO field populated."
+    echo "  -b  Path to the BCF file to rephase. This file should contain sites from only a single chromosome. NOTE: You must have allele frequency (AF) INFO field populated (A2.2)."
     echo "  -m  Minor Allele Frequnency Threshold. Usually should be 0.01"
 
     exit 1
@@ -51,7 +54,7 @@ else
     mkdir -p ${REPHASE_DIR}/bcfs
 fi
 
-echo "Polishing phased VCF for $CHR with SAPPHIRE..."
+echo "Polishing phased BCF for $CHR with SAPPHIRE..."
 
 # Key File Paths
 BCF_ANNOTATED="${REPHASE_DIR}/${CHR}_phased_PP_annotated.bcf"
@@ -83,8 +86,8 @@ bcftools annotate -a ${PP_INFO}.gz -h ${HEADER} -c CHROM,POS,ID,REF,ALT,FORMAT/P
 #bcftools view "$BCF_ANNOTATED" | less
 
 
-echo "Extracting PP INFO"
-${PROGDIR}/sapphire/pp_extractor/pp_extract -f ${BCF_ANNOTATED} --pp-from-maf --maf-threshold ${MAF} -o ${EXTRACTED_PP}
+echo "Extracting PP INFO from Minor Allele Frequency"
+${PROGDIR}/sapphire/pp_extractor/pp_extract -f ${BCF_ANNOTATED} -o ${EXTRACTED_PP} --pp-from-maf --maf-threshold ${MAF} # the --pp-from-maf and --maf-threshold are important here. Required to tell script that we are using non-SHAPEIT-phased BCFs.
 # Copy the file as SAPPHIRE will modify it, with this we will be able to compare
 cp "$EXTRACTED_PP" "${EXTRACTED_PP}.original"
 
@@ -105,7 +108,7 @@ ${PROGDIR}/sapphire/phase_caller/phase_caller \
 #--extra-info --more | less
 
 echo "Updating BCF file with new phasing info"
-${PROGDIR}/sapphire/pp_update/pp_update -f $BCF_ANNOTATED -b $EXTRACTED_PP -o $BCF_REPHASED --no-pp
+${PROGDIR}/sapphire/pp_update/pp_update -f $BCF_ANNOTATED -b $EXTRACTED_PP -o $BCF_REPHASED --no-pp # Using --no-pp to not update the Phasing probability field in the BCF (because it doesn't exist in BEAGLE outputs)
 
 bcftools index $BCF_REPHASED
 
