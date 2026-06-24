@@ -12,4 +12,4 @@ COLOR2=#XXXXXX
 # define the name of the population that will be analyzed
 POP=populationname
 
-source ${SCRIPTDIR}/Genomics-Main/tajima/setup_tajima.sh
+source ${SCRIPTDIR}/Genomics-Main/C_SelectionAnalysis/tajima/setup_tajima.sh

@@ -43,8 +43,8 @@ if ("dxy" %in% names(data)) {
   metric <- "fst"
 } else if ("fst_max" %in% names(data)) {
   metric <- "fst_max"
-} else if ("Tajima" %in% names(data)) {
-  metric <- "Tajima"
+} else if ("tajima" %in% names(data)) {
+  metric <- "tajima"
 } else if ("raisd" %in% names(data)) {
   metric <- "raisd"
 } else if ("delta_af" %in% names(data)) {

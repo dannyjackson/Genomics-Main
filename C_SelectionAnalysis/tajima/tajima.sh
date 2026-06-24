@@ -5,7 +5,7 @@
 # Ensure at least one argument is provided
 if [ $# -lt 1 ]; then
     cat <<EOF
-Usage: $(basename "$0") -p <parameter_file> [-w <window_size>] [-s <step_size>] [-c <chrom_file>]
+Usage: $(basename "$0") -p <parameter_file> [-w <window_size>] [-s <step_size>]
 
 This script computes Tajima's D within a population of genomes using a genotype likelihood framework implemented in ANGSD.
 
@@ -20,11 +20,10 @@ It computes:
 Ensure you read and understand the entire script before running it.
 
 REQUIRED ARGUMENTS:
-    -p  Path to the parameter file (e.g., params_dxy.sh)
+    -p  Path to the parameter file (e.g., params_tajima.sh)
 OPTIONAL ARGUMENTS:
     -w  Window size for sliding window analysis 
     -s  Step size for sliding window analysis
-    -c  Path to a chromosome mapping file (optional)
 EOF
     exit 1
 fi
