@@ -7,8 +7,8 @@ mkdir -p ${OUTDIR}/analyses/genelist/${POP}/${WIN}
 mkdir -p ${OUTDIR}/analyses/thetas/${POP}
 mkdir -p ${OUTDIR}/analyses/thetas/${POP}/${WIN}
 mkdir -p ${OUTDIR}/analyses/thetas/${POP}/snps
-mkdir -p ${OUTDIR}/analyses/Tajima/
-mkdir -p ${OUTDIR}/analyses/Tajima/${POP}
-mkdir -p ${OUTDIR}/analyses/Tajima/${POP}/snps
-mkdir -p ${OUTDIR}/analyses/Tajima/${POP}/${WIN}
+mkdir -p ${OUTDIR}/analyses/tajima/
+mkdir -p ${OUTDIR}/analyses/tajima/${POP}
+mkdir -p ${OUTDIR}/analyses/tajima/${POP}/snps
+mkdir -p ${OUTDIR}/analyses/tajima/${POP}/${WIN}
 
