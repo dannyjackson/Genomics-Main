@@ -43,8 +43,8 @@ if ("dxy" %in% names(data)) {
   metric <- "fst"
 } else if ("fst_max" %in% names(data)) {
   metric <- "fst_max"
-} else if ("tajima" %in% names(data)) {
-  metric <- "tajima"
+} else if ("Tajima" %in% names(data)) {
+  metric <- "Tajima"
 } else if ("raisd" %in% names(data)) {
   metric <- "raisd"
 } else if ("delta_af" %in% names(data)) {
@@ -86,6 +86,6 @@ df <- data[ -c(1) ]
 
 # save file
 cat("Saving Z-transformed data...\n")
-z_file <- file.path(outdir, "analyses", metric, paste0(pop_name, "/", pop_name, ".", metric, ".", win, ".Ztransformed.csv"))
+z_file <- file.path(outdir, "analyses", to.lower(metric), paste0(pop_name, "/", pop_name, ".", metric, ".", win, ".Ztransformed.csv"))
 write_delim(df, z_file, quote = "none", delim = "\t")
   
