@@ -24,7 +24,7 @@ while getopts p:i:m option; do
         p) PARAMS=${OPTARG};;
 		i) IND=${OPTARG};;
         m) MARKDUPS="-M" ;;
-        t) TRIMMETHOD=${OPTARG}
+        t) TRIMMETHOD=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done

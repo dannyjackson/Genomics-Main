@@ -67,8 +67,8 @@ fi
 
 
 if [ "$DELETE" = true ]; then
-    echo "Deleted ${IND} depthstats file"
     rm "${OUTDIR}/datafiles/bamstats/${IND}_depthstats.txt"
+    echo "Deleted ${IND} depthstats file"
 fi
 
 echo "Finished bam statistics for $IND"
