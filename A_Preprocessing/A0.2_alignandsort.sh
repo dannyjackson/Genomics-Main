@@ -52,7 +52,7 @@ fi
 if [ "$TRIMMETHOD" = "trimmomatic" ]; then
     FASTA1="${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_1P.fq.gz"
     FASTA2="${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_2P.fq.gz"
-else;
+else
     FASTA1="${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed.fq.gz"
     FASTA2="${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed.fq.gz"
 fi
