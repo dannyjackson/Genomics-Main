@@ -16,7 +16,7 @@ Required argument:
 fi
 
 MARKDUPS=""
-TRIMMETHOD="trimmomatic"
+TRIMMETHOD=trimmomatic
 
 # Parse command-line arguments
 while getopts p:i:t: option; do
