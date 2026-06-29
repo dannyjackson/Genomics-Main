@@ -53,6 +53,7 @@ if [ "$TRIMMETHOD" = "trimmomatic" ]; then
     FASTA1="${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_1P.fq.gz"
     FASTA2="${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_2P.fq.gz"
 else
+    echo "Trimming method is ${TRIMMETHOD}"
     FASTA1="${OUTDIR}/datafiles/trimmed_fastas/${IND}_R1_trimmed.fq.gz"
     FASTA2="${OUTDIR}/datafiles/trimmed_fastas/${IND}_R2_trimmed.fq.gz"
 fi
