@@ -23,7 +23,7 @@ while getopts p:i:t: option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
 		i) IND=${OPTARG};;
-        t) TRIMMETHOD=${OPTARG} ;;
+        t) TRIMMETHOD=${OPTARG};;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done
