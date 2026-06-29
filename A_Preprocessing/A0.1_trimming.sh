@@ -51,13 +51,13 @@ fi
 
 if [ "$METHOD" = "trimmomatic" ]; then
 
-    echo "Beginning trimming for "$IND "using trimmomatic">>${OUTDIR}/datafiles/trimming/${IND}_trim_log.txt
+    echo "Beginning trimming for "$IND "using trimmomatic"
     java -jar ${TRIMJAR} PE -threads ${THREADS} ${FASTAS}/"$IND"_R1.fastq.gz  ${FASTAS}/"$IND"_R2.fastq.gz  \
     -baseout ${OUTDIR}/datafiles/trimmed_fastas/"$IND"_trimmed.fq.gz \
     LEADING:${LEAD} TRAILING:${TRAIL} SLIDINGWINDOW:${SLIDE} MINLEN:${MINREADLEN} >> ${OUTDIR}/datafiles/trimming/${IND}_trim_log.txt
 
 elif [ "$METHOD" = "trimgalore" ]; then
-    echo "Beginning trimming for "$IND "using trimgalore">>${OUTDIR}/datafiles/trimming/${IND}_trim_log.txt
+    echo "Beginning trimming for "$IND "using trimgalore"
     trim_galore --paired --cores ${THREADS} ${FASTAS}/${IND}_R1.fastq.gz ${FASTAS}/${IND}_R2.fastq.gz -o ${OUTDIR}/datafiles/trimmed_fastas
     # Renaming output files to be consistent with pipeline
     mv ${OUTDIR}/datafiles/trimmed_fastas/${IND}_R1_val_1.fq.gz ${OUTDIR}/datafiles/trimmed_fastas/${IND}_R1_trimmed.fq.gz
@@ -65,7 +65,7 @@ elif [ "$METHOD" = "trimgalore" ]; then
 
 elif [ "$METHOD" = "fastp" ]; then
 
-    echo "Beginning trimming for "$IND "using fastp">>${OUTDIR}/datafiles/trimming/${IND}_trim_log.txt
+    echo "Beginning trimming for "$IND "using fastp"
     fastp --in1 ${FASTAS}/"${IND}"_R1.fastq.gz --in2 ${FASTAS}/"${IND}"_R2.fastq.gz -q 5 -n 15 \
     --out1 ${OUTDIR}/datafiles/trimmed_fastas/"${IND}"_R1_trimmed.fq.gz --out2 ${OUTDIR}/datafiles/trimmed_fastas/"${IND}"_R2_trimmed.fq.gz
 
