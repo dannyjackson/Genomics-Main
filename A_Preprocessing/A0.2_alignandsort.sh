@@ -58,6 +58,8 @@ else
     FASTA2="${OUTDIR}/datafiles/trimmed_fastas/${IND}_R2_trimmed.fq.gz"
 fi
 
+echo ${FASTA1}
+echo ${FASTA2}
 
 # Align reads using BWA MEM
 bwa mem ${MARKDUPS} -t "${THREADS}" "${REF}" \
