@@ -19,7 +19,7 @@ MARKDUPS=""
 TRIMMETHOD="trimmomatic"
 
 # Parse command-line arguments
-while getopts p:i:m option; do
+while getopts p:i:m:t: option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
 		i) IND=${OPTARG};;
