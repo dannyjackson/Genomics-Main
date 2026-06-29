@@ -16,6 +16,7 @@ Required argument:
 fi
 
 MARKDUPS=""
+TRIMMETHOD="trimmomatic"
 
 # Parse command-line arguments
 while getopts p:i:m option; do
@@ -23,6 +24,7 @@ while getopts p:i:m option; do
         p) PARAMS=${OPTARG};;
 		i) IND=${OPTARG};;
         m) MARKDUPS="-M" ;;
+        t) TRIMMETHOD=${OPTARG}
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done
@@ -47,11 +49,21 @@ fi
 
 # NOTE that we require the ref-genome index (from bwa). If following full pipeline, this is already generated in base_setup.sh
 
+if [ "$TRIMMETHOD" = "trimmomatic" ]; then
+    FASTA1="${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_1P.fq.gz"
+    FASTA2="${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_2P.fq.gz"
+else;
+    FASTA1="${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed.fq.gz"
+    FASTA2="${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed.fq.gz"
+fi
+
+
 # Align reads using BWA MEM
 bwa mem ${MARKDUPS} -t "${THREADS}" "${REF}" \
-    "${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_1P.fq.gz" \
-    "${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_2P.fq.gz" | \
-    samtools view -b -o "${OUTDIR}/datafiles/bamfiles/${IND}.bam" -S
+        ${FASTA1} \
+        ${FASTA2} | \
+        samtools view -b -o "${OUTDIR}/datafiles/bamfiles/${IND}.bam" -S
+
 
 if [ -f "${OUTDIR}/datafiles/sortedbamfiles/${IND}/temp" ];
         then
