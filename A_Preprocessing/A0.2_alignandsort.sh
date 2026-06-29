@@ -19,11 +19,10 @@ MARKDUPS=""
 TRIMMETHOD="trimmomatic"
 
 # Parse command-line arguments
-while getopts p:i:m:t: option; do
+while getopts p:i:t: option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
 		i) IND=${OPTARG};;
-        m) MARKDUPS="-M" ;;
         t) TRIMMETHOD=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
@@ -49,20 +48,21 @@ fi
 
 # NOTE that we require the ref-genome index (from bwa). If following full pipeline, this is already generated in base_setup.sh
 
+echo "Trimming method was ${TRIMMETHOD}"
+
 if [ "$TRIMMETHOD" = "trimmomatic" ]; then
     FASTA1="${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_1P.fq.gz"
     FASTA2="${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_2P.fq.gz"
 else
-    echo "Trimming method is ${TRIMMETHOD}"
     FASTA1="${OUTDIR}/datafiles/trimmed_fastas/${IND}_R1_trimmed.fq.gz"
     FASTA2="${OUTDIR}/datafiles/trimmed_fastas/${IND}_R2_trimmed.fq.gz"
 fi
 
-echo ${FASTA1}
-echo ${FASTA2}
+echo FASTA1: ${FASTA1}
+echo FASTA2: ${FASTA2}
 
 # Align reads using BWA MEM
-bwa mem ${MARKDUPS} -t "${THREADS}" "${REF}" \
+bwa mem -t "${THREADS}" "${REF}" \
         ${FASTA1} \
         ${FASTA2} | \
         samtools view -b -o "${OUTDIR}/datafiles/bamfiles/${IND}.bam" -S
