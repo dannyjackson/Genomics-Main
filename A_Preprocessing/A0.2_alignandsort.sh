@@ -19,11 +19,11 @@ MARKDUPS=""
 TRIMMETHOD=trimmomatic
 
 # Parse command-line arguments
-while getopts p:i:t: option; do
+while getopts p:i:m: option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
 		i) IND=${OPTARG};;
-        t) TRIMMETHOD=${OPTARG};;
+        m) TRIMMETHOD=${OPTARG};;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done
@@ -53,7 +53,7 @@ echo "Trimming method was ${TRIMMETHOD}"
 if [ "$TRIMMETHOD" = "trimmomatic" ]; then
     FASTA1="${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_1P.fq.gz"
     FASTA2="${OUTDIR}/datafiles/trimmed_fastas/${IND}_trimmed_2P.fq.gz"
-elif [[ "$TRIMMETHOD" = "fastp" || "$TRIMMETHOD" = "trimmgalore" ]]; then
+elif [[ "$TRIMMETHOD" = "fastp" || "$TRIMMETHOD" = "trimgalore" ]]; then
     FASTA1="${OUTDIR}/datafiles/trimmed_fastas/${IND}_R1_trimmed.fq.gz"
     FASTA2="${OUTDIR}/datafiles/trimmed_fastas/${IND}_R2_trimmed.fq.gz"
 fi
