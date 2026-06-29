@@ -70,6 +70,7 @@ elif [ "$METHOD" = "fastp" ]; then
         --out1 ${OUTDIR}/datafiles/trimmed_fastas/"${IND}"_R1_trimmed.fq.gz --out2 ${OUTDIR}/datafiles/trimmed_fastas/"${IND}"_R2_trimmed.fq.gz
     else
         echo Trimmed fastas already made
+    fi
 
 fi
 
