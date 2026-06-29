@@ -64,13 +64,9 @@ elif [ "$METHOD" = "trimgalore" ]; then
     mv ${OUTDIR}/datafiles/trimmed_fastas/${IND}_R2_val_2.fq.gz ${OUTDIR}/datafiles/trimmed_fastas/${IND}_R2_trimmed.fq.gz
 
 elif [ "$METHOD" = "fastp" ]; then
-    if [ ! -f "${OUTDIR}/datafiles/trimmed_fastas/"${IND}"_R1_trimmed.fq.gz" ]; then
-        echo "Beginning trimming for "$IND "using fastp"
-        fastp --in1 ${FASTAS}/"${IND}"_R1.fastq.gz --in2 ${FASTAS}/"${IND}"_R2.fastq.gz -q 5 -n 15 \
-        --out1 ${OUTDIR}/datafiles/trimmed_fastas/"${IND}"_R1_trimmed.fq.gz --out2 ${OUTDIR}/datafiles/trimmed_fastas/"${IND}"_R2_trimmed.fq.gz
-    else
-        echo Trimmed fastas already made
-    fi
+    echo "Beginning trimming for "$IND "using fastp"
+    fastp --in1 ${FASTAS}/"${IND}"_R1.fastq.gz --in2 ${FASTAS}/"${IND}"_R2.fastq.gz -q 5 -n 15 \
+    --out1 ${OUTDIR}/datafiles/trimmed_fastas/"${IND}"_R1_trimmed.fq.gz --out2 ${OUTDIR}/datafiles/trimmed_fastas/"${IND}"_R2_trimmed.fq.gz
 
 fi
 
