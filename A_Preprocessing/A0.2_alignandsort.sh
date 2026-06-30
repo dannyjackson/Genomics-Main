@@ -11,11 +11,10 @@ I recommend running it as a slurm array to pass individuals to sbatch jobs for m
 Required argument:
   -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
   -i Individual name (can easily be passed through a slurm array).
-  -m  Optional flag to mark duplicates in BWA MEM. Required if you've merged fastq files with multiple runs containing reads with matching labels."
+  -m  Flag to specify prior trimming method. Defaults to trimmomatic. Required if used trimgalore/fastp since these output different file names."
     exit 1
 fi
 
-MARKDUPS=""
 TRIMMETHOD=trimmomatic
 
 # Parse command-line arguments
