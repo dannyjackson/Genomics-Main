@@ -52,7 +52,7 @@ if [[ -f "${BAMFILE}.bai" ]]; then
     echo "BAM index found, proceeding..."
 else
     echo "BAM index not found, creating index..."
-    samtools index "${BAMFILE}"
+    samtools index "${BAMFILE}.bai"
 fi
 
 # Ensure scaffold list file exists
@@ -68,7 +68,7 @@ while read -r s; do
     echo "Processing scaffold: ${s}"
 
     # Calculate mean coverage
-    MEANCOV=$(samtools depth -r "${s}" "${BAMFILE}" | 
+    MEANCOV=$(samtools depth -r "${s}" "${BAMFILE}.bam" | 
               awk '{sum += $3} END {if (NR==0) print 0; else print sum / NR}' | tr ',' '.')
 
     echo "${IND}.${s} ${MEANCOV}" >> "${OUTDIR}/datafiles/bamstats/coverage_samtoolsDepth_${IND}.txt"
@@ -87,7 +87,7 @@ while read -r s; do
     # Generate VCF and mask file if using samtools
 
     echo "Running samtools for scaffold ${s}..."
-    bcftools mpileup -Ou -r "${s}" --threads "${THREADS}" -f "${REF}" "${BAMFILE}" | \
+    bcftools mpileup -Ou -r "${s}" --threads "${THREADS}" -f "${REF}" "${BAMFILE}.bam" | \
     bcftools call -c -V indels --threads "${THREADS}" | \
     "${PROGDIR}/msmc-tools/bamCaller.py" "${MEANCOV}" "${MASK_IND}" > "${VCF}"
 
