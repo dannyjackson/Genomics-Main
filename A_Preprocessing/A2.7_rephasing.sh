@@ -14,7 +14,7 @@ usage() {
     echo ""
     echo "Required arguments:"
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository)."
-    echo "  -c  Name of chromosome present in VCF file."
+    echo "  -c  Name of chromosome present in BCF file."
     echo "  -b  Path to the BCF file to rephase. This file should contain sites from only a single chromosome. NOTE: You must have allele frequency (AF) INFO field populated (A2.2)."
     echo "  -m  Minor Allele Frequnency Threshold. Usually should be 0.01"
 
@@ -81,9 +81,6 @@ if [ -f "${HEADER}" ];
 fi
 
 bcftools annotate -a ${PP_INFO}.gz -h ${HEADER} -c CHROM,POS,ID,REF,ALT,FORMAT/PP $BCF -Ob -o $BCF_ANNOTATED
-
-# Sanity check the annotated VCF
-#bcftools view "$BCF_ANNOTATED" | less
 
 
 echo "Extracting PP INFO from Minor Allele Frequency"

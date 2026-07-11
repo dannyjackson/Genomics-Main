@@ -2,14 +2,13 @@
 
 # Usage message function
 usage() {
-    echo "Usage: $0 -p <parameter_file> -i <individual> -b <bam_directory>"
+    echo "Usage: $0 -p <parameter_file> -i <individual>"
     echo ""
     echo "This script creates a masking file and a vcf file for each chromosome of an individual."
     echo ""
     echo "Required arguments:"
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository)."
     echo "  -i  Name of the individual to analyze."
-    echo "  -b  Directory containing BAM files."
     exit 1
 }
 
@@ -18,13 +17,12 @@ while getopts ":p:i:b:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         i) IND=${OPTARG} ;;
-        b) BAMDIR=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}" >&2; usage ;;
     esac
 done
 
 # Validate required arguments
-if [[ -z "${PARAMS}" || -z "${IND}" || -z "${BAMDIR}" ]]; then
+if [[ -z "${PARAMS}" || -z "${IND}" ]]; then
     echo "Error: Missing required arguments." >&2
     usage
 fi
@@ -37,6 +35,8 @@ fi
 
 # Load parameters
 source "${PARAMS}"
+
+echo "BAMDIR obtained from base params file: ${BAMDIR}"
 
 # Define BAM file
 BAMFILE="${BAMDIR}/${IND}.realigned.bam"

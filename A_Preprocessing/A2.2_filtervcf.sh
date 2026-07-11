@@ -8,7 +8,7 @@ usage() {
     echo "Required Arguments:"
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh from the GitHub repository)"
     echo "  -i  Prefix of vcf file"
-    echo "  -f  optional boolean flags to fill extra info tags (allele frequency, count, and number) Required for SAPPHIRE Rephasing (A2.7)"
+    echo "  -f  Optional boolean flag to fill extra info tags (allele frequency, count, and number) Required for SAPPHIRE Rephasing (A2.7) Using this option will output in BCF format (recommended for SAPPHIRE)"
     exit 1
 }
 

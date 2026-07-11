@@ -10,7 +10,7 @@ usage() {
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository)."
     echo "  -i  Path to VCF to phase."
     echo "  -o  Output VCF file path."
-    echo "  -m  Path to recombination map file."
+    echo "  -m  Path to optional recombination map file."
     exit 1
 }
 
@@ -39,7 +39,13 @@ if [ -z "$OUTDIR" ]; then
     exit 1
 fi
 
-beagle gt=${VCF_IN} out=${VCF_OUT} map=${MAP}
+
+map_flag=""
+if [[ -n "$MAP" ]]; then
+    map_flag="map=${MAP}"
+fi
+
+beagle gt=${VCF_IN} out=${VCF_OUT} ${map_flag}
 bcftools index ${VCF_OUT}.vcf.gz
 
 echo "VCF phasing completed."

@@ -4,7 +4,7 @@
 usage() {
     echo "Usage: $0 -p <parameter_file> -i <individual> -b <bam_directory>"
     echo ""
-    echo "This script phases a BAM file using a VCF and mask generated through the SNPable pipeline."
+    echo "This script phases a BAM file using whatshap with a VCF and mask generated through the SNPable pipeline."
     echo "It is best run as a Slurm array that calls this script for each individual."
     echo ""
     echo "Required arguments:"

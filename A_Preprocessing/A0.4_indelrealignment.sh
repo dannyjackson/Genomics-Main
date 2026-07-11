@@ -44,9 +44,14 @@ fi
 
 # NOTE that we require the ref-genome index (from bwa) and .dict files (from picard) here. If following full pipeline, these are already generated in base_setup.sh
 
-# Index bams
-samtools index ${OUTDIR}/datafiles/clipoverlap/$IND.all.sorted.marked.clipped.bam 
-echo "done " ${IND} >>${OUTDIR}/datafiles/clipoverlap/index_clippedstats.txt 
+# Index bams if needed
+if [[ -f "${IND}.all.sorted.marked.clipped.bam.bai" ]]; then
+    echo "BAM index found, proceeding..."
+else
+    echo "BAM index not found, creating index..."
+    samtools index ${OUTDIR}/datafiles/clipoverlap/$IND.all.sorted.marked.clipped.bam 
+    echo "done " ${IND} >>${OUTDIR}/datafiles/clipoverlap/index_clippedstats.txt 
+fi
 
 # Create indel maps
 apptainer exec ${PROGDIR}/gatk3-3.7-0.sif java -jar /usr/GenomeAnalysisTK.jar \

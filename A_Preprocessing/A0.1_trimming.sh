@@ -9,7 +9,7 @@ I recommend running it as a slurm array to pass individuals to sbatch jobs for m
 
 Notes on trimming methods:
     - trimmomatic: Ensure you have the trimmomatic jar in programs directory
-    - trimgalore & fastp: This script assumes that you have installed and loaded these programs using a conda/micromamba environmenty 
+    - trimgalore & fastp: This script assumes that you have installed and loaded these programs either using a conda/micromamba environment or by loading them as modules on HPC
 
 Required argument:
   -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
