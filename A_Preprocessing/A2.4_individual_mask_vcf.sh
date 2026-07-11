@@ -38,14 +38,14 @@ source "${PARAMS}"
 
 echo "BAMDIR obtained from base params file: ${BAMDIR}"
 
-# Define BAM file
-BAMFILE="${BAMDIR}/${IND}.realigned.bam"
+# Define BAM file prefix
+BAMFILE="${BAMDIR}/${IND}.realigned"
 
 # Print script info
 echo -e "\n\n"
 date
 echo "Individual: ${IND}"
-echo "BAM file: ${BAMFILE}"
+echo "BAM file prefix: ${BAMFILE}"
 
 # Check and create BAM index if needed
 if [[ -f "${BAMFILE}.bai" ]]; then
