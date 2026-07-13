@@ -45,7 +45,7 @@ flexsweep simulator --sample_size ${NUM_HAPS} --demes ${DEMES} --output_folder $
 echo "Estimating feature vectors from simulations"
 flexsweep fvs-discoal --simulations_path ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}  --nthreads ${THREADS}
 
-echo "Estmating feature vectors from vcf"
+echo "Estmating feature vectors from vcfs"
 # Note that flexsweep is looking for bgzip compressed vcf or bcf files. When you index the compressed files, you MUST use tabix (samtools)
 # can comment out recombination map flag if do not have one
 flexsweep fvs-vcf --vcf_path ${VCFDIR} --recombination_map ${REC_MAP} --nthreads ${THREADS} --suffix ${POPNAME}
