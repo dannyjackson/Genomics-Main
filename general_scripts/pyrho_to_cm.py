@@ -9,8 +9,7 @@ import argparse
 import os
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--outmap", type=str, help="output file path")
-parser.add_argument("--cm_conversion", type=float, help="CM conversion rate")
+parser.add_argument("--cm_conversion", type=float, help="CM conversion rate", default=1e8)
 parser.add_argument("--scaffolds", type=str, help="scaffolds list file")
 parser.add_argument("--pop", type=str, help="pop name prefix of rmaps. Assumes filenames are formatted as 'POP_SCAFFOLD.rmap'")
 parser.add_argument("--indir", type=str, help="directory path of rmaps to parse")

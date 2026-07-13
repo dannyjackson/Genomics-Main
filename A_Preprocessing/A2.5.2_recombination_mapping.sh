@@ -76,7 +76,7 @@ if [ "$CM_POSTPROCESSING" = true ]; then
     echo "Starting conversion to CM units"
 
     echo "Generating converted pyrho rmaps"
-    python3 ${SCRIPTDIR}/Genomics-Main/general_scripts/pyrho_to_cm.py --scaffolds ${OUTDIR}/referencelists/SCAFFOLDS.txt --popname ${POP} --indir ${OUTDIR}/datafiles/recombination_maps
+    python3 ${SCRIPTDIR}/Genomics-Main/general_scripts/pyrho_to_cm.py --scaffolds ${OUTDIR}/referencelists/SCAFFOLDS.txt --pop ${POP} --indir ${OUTDIR}/datafiles/recombination_maps
 
     echo "Merging converted pyrho rmaps"
     ls ${OUTDIR}/datafiles/recombination_map/pyrho_cm_converted/*.rmap > ${OUTDIR}/datafiles/recombination_map/pyrho_cm_converted/pyrho_converted_lst.txt
