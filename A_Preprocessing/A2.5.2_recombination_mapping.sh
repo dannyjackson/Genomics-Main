@@ -7,6 +7,10 @@ This script generates recombination map for a population using pyrho. It require
 
 Required argument:
   -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
+  -v  Path to chromosome-split vcfs
+  -s  Path to SMC++ output file
+  -i  Population prefix
+  -n  Maximum haplotypes present (2x sample size)
   -c  Optional boolean parameter to label, merge, and convert pyrho rmap to CM units. Designed to output in format for flexsweep selection analysis."
     exit 1
 fi
@@ -14,9 +18,13 @@ fi
 CM_POSTPROCESSING=false
 
 # Parse command-line arguments
-while getopts p:l option; do
+while getopts ":p:v:s:i:n:c" option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
+        v) VCFDIR=${OPTARG} ;;
+        s) SMCFILE=${OPTARG} ;;
+        i) POP=${OPTARG} ;;
+        n) NUM_HAPS=${OPTARG} ;;
         c) CM_POSTPROCESSING=true
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
@@ -45,8 +53,8 @@ if [ -f "${OUTDIR}/datafiles/recombination_map/${POP}.hdf" ];
         then
             echo "lookup table already exists, moving on!"
         else
-            pyrho make_table -n ${NUM_HAPS} -N ${N} --mu ${MUT_RATE} --logfile ${OUTDIR}/datafiles/recombination_map/pyrho_table_log.txt \
-            --outfile ${OUTDIR}/datafiles/recombination_map/${POP}.hdf --smcpp_file ${SMCFILE} --decimate_rel_tol 0.1
+            pyrho make_table -n ${NUM_HAPS} --approx -N ${NUM_HAPS} --mu ${MUT_RATE} --logfile ${OUTDIR}/datafiles/recombination_map/pyrho_table_log.txt \
+            --outfile ${OUTDIR}/datafiles/recombination_map/${POP}.hdf --smcpp_file ${SMCFILE} --decimate_rel_tol 0.1 --numthreads ${THREADS}
 fi
 
 # Run this to get probably better estimates of hyperparameters prior to running optimize
@@ -82,6 +90,7 @@ if [ "$CM_POSTPROCESSING" = true ]; then
     ls ${OUTDIR}/datafiles/recombination_map/pyrho_cm_converted/*.rmap > ${OUTDIR}/datafiles/recombination_map/pyrho_cm_converted/pyrho_converted_lst.txt
     mapfile -t rmap_lst < ${OUTDIR}/datafiles/recombination_map/pyrho_cm_converted/pyrho_converted_lst.txt
     cat $(echo "${rmap_lst[@]}") > ${OUTDIR}/datafiles/recombination_map/pyrho_cm_converted/${POP}_merged.rmap
+    echo Merged pyrho rmap saved to: ${OUTDIR}/datafiles/recombination_map/pyrho_cm_converted/${POP}_merged.rmap
 
 fi
 

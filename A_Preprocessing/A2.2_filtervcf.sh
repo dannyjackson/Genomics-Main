@@ -8,7 +8,7 @@ usage() {
     echo "Required Arguments:"
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh from the GitHub repository)"
     echo "  -i  Prefix of vcf file"
-    echo "  -f  Optional boolean flag to fill extra info tags (allele frequency, count, and number) Required for SAPPHIRE Rephasing (A2.7) Using this option will output in BCF format (recommended for SAPPHIRE)"
+    echo "  -f  Optional boolean flag to fill extra info tags (allele frequency, count, and number) Required for SAPPHIRE Rephasing (A2.7)"
     exit 1
 }
 
@@ -65,9 +65,10 @@ if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_plinkfiltered.vcf" ]
             --recode vcf-iid --out "${OUTDIR}/datafiles/genotype_calls/${ID}_plinkfiltered"
 fi
 
-# Filling INFO tags for AD, AC, and AN and generating BCF
+# Filling INFO tags for AD, AC, and AN using the fill-tags plugin for bcftools. This should come preinstalled with bcftools on the HPC
 if [ "$FILLTAGS" = true ]; then
     echo "Filling INFO tags for AD, AC, and AN"
-    bcftools +fill-tags "${OUTDIR}/datafiles/genotype_calls/${ID}_plinkfiltered".vcf.gz -Ob -o "{$ID}"_tagfilled.bcf -- -t AF,AC,AN
-    bcftools index "{$ID}"_tagfilled.bcf;
+    bcftools +fill-tags "${OUTDIR}/datafiles/genotype_calls/${ID}_plinkfiltered".vcf -Oz \
+        -o "${OUTDIR}/datafiles/genotype_calls/${ID}_tagfilled.vcf.gz" -- -t AF,AC,AN
+    bcftools index "${OUTDIR}/datafiles/genotype_calls/${ID}_tagfilled.vcf.gz"
 done

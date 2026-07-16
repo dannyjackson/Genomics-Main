@@ -39,7 +39,6 @@ if [ -z "$OUTDIR" ]; then
     exit 1
 fi
 
-
 map_flag=""
 if [[ -n "$MAP" ]]; then
     map_flag="map=${MAP}"

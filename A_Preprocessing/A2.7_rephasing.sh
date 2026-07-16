@@ -5,12 +5,12 @@ usage() {
     echo "Usage: $0 -p <parameter_file> -c <chromosome> -b <bcf_file> -m <minor_allele_freq_threshold>"
     echo ""
     echo "This script rephases low confidence variants in a BCF file with SAPPHIRE using Minor Allele Frequency metrics. This is meant to be used with BEAGLE-phased inputs."
-    echo "It is best run as a Slurm array that calls this script for each individual/population." Meant to be used after stat-based phasing in step A2.6
+    echo "It is best run as a Slurm array that calls this script for each chromosome witihn a population." Meant to be used after stat-based phasing in step A2.6
     echo "PUMA CLUSTER REQUIRED FOR THIS SCRIPT."
     echo "Prior to running, you should:
-            1) Convert your phased VCF to BCF
+            1) Convert your phased VCF to BCF. NOTE: You must have allele frequency (AF) INFO field populated (A2.2).
             2) Split your phased BCF by chromosome.
-            3) Convert your original individual BAM files into CRAM files and ensure they are in the datafiles/indelrealignment directory"
+            3) Convert your individual BAM files into CRAM files. This script assumes that they are in a directory called datafiles/crams"
     echo ""
     echo "Required arguments:"
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository)."
@@ -48,9 +48,9 @@ echo Inputted BCF: $BCF
 REPHASE_DIR="${OUTDIR}/datafiles/rephased_bcf"
 
 if [ -d "${REPHASE_DIR}/bcfs" ]; then
-    echo "Directory ${REPHASE_DIR} exists."
+    echo "Directory ${REPHASE_DIR}/bcfs exists."
 else
-    echo "Directory ${REPHASE_DIR} does not exist. Creating it now."
+    echo "Directory ${REPHASE_DIR}/bcfs does not exist. Creating it now."
     mkdir -p ${REPHASE_DIR}/bcfs
 fi
 
@@ -64,7 +64,7 @@ EXTRACTED_PP="${REPHASE_DIR}/${CHR}_phased_PP_extract.bin"
 ANNOTATED_CSV="${REPHASE_DIR}/${CHR}_phased_PP_annotated_samples.csv"
 PP_INFO="${REPHASE_DIR}/${CHR}_pp_info.tsv"
 HEADER="${REPHASE_DIR}/header.txt"
-CRAM_PATH="${OUTDIR}/datafiles/indelrealignment/" # Should be a directory containing all individual CRAM files
+CRAM_PATH="${OUTDIR}/datafiles/crams" # Should be a directory containing all individual CRAM files
 
 # Extract all variants with AF < 0.01 and replace heterozygous by "0.5" and homozygous by "."
 filter_str="INFO/AF<${MAF}"
@@ -84,7 +84,7 @@ bcftools annotate -a ${PP_INFO}.gz -h ${HEADER} -c CHROM,POS,ID,REF,ALT,FORMAT/P
 
 
 echo "Extracting PP INFO from Minor Allele Frequency"
-${PROGDIR}/sapphire/pp_extractor/pp_extract -f ${BCF_ANNOTATED} -o ${EXTRACTED_PP} --pp-from-maf --maf-threshold ${MAF} # the --pp-from-maf and --maf-threshold are important here. Required to tell script that we are using non-SHAPEIT-phased BCFs.
+${PROGDIR}/sapphire/pp_extractor/pp_extract -f ${BCF_ANNOTATED} -o ${EXTRACTED_PP} --pp-from-maf --maf-threshold ${MAF} # the --pp-from-maf and --maf-threshold are required to tell script that we are using non-SHAPEIT-phased BCFs.
 # Copy the file as SAPPHIRE will modify it, with this we will be able to compare
 cp "$EXTRACTED_PP" "${EXTRACTED_PP}.original"
 

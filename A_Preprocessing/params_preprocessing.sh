@@ -45,17 +45,5 @@ MAXDEPTH=<SET_VALUE>
 k=<SET_VALUE>
 prefix=<SET_VALUE>
 
-
-# Recombination Mapping
-#===============================
-# General Params
-VCF=${OUTDIR}/datafiles/genotype_calls/<SET_VALUE>.vcf
-MUT_RATE=<SET_VALUE>
-POP=<SET_VALUE>
-# SMC++ Params
-POPSET="${POP}:$(cat ${OUTDIR}/referencelists/sampleids.txt | paste -sd ",")"
-OUTFNAME=<SET_VALUE>
-# Pyrho Params
-NUM_HAPS=<SET_VALUE>
-SMCFILE=${OUTDIR}/datafiles/demography/${OUTFNAME}.csv
-#===============================
+# recombination mapping
+MUT_RATE=1.15e-8

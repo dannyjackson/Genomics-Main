@@ -6,7 +6,10 @@ if [ $# -lt 1 ]; then
 This script generates demography estimates for a population using SMC++. This is a prerequisite for generating recombination maps using pyrho in A2.5.1_recombination_mapping.sh
 
 Required argument:
-  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
+  -p  Path to a parameter file (e.g., params_preprocessing.sh in the GitHub repository).
+  -v  Path to Population VCF file
+  -s  Path to Population Sample List File
+  -i  Population prefix
 Optional argument:
   -d  Boolean argument specifying whether to convert a copy of SMC++ output to demes YAML file (Default to false). Needed if want to use downstream Flexsweep analysis"
     exit 1
@@ -15,9 +18,12 @@ fi
 DEMES=false
 
 # Parse command-line arguments
-while getopts ":p:d" option; do
+while getopts ":p:v:s:i:d" option; do
     case "${option}" in
-        p) PARAMS=${OPTARG};;
+        p) PARAMS=${OPTARG} ;;
+        v) VCF=${OPTARG} ;;
+        s) SAMPLES=${OPTARG} ;;
+        i) POP=${OPTARG} ;;
         d) DEMES=true ;;
         *) echo "Invalid option: -${OPTARG}" >&2; usage ;;
     esac
@@ -44,6 +50,8 @@ fi
 
 bcftools index ${VCF}
 
+POPSAMPLES="$(cat ${SAMPLES} | paste -sd ",")"
+
 for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt);
 do
     echo "Processing $chr into SMC++ Input"
@@ -61,10 +69,10 @@ smc_inputs=$(echo "${smc_input_lst[@]}")
 echo "Making and Plotting Model"
 apptainer run ${PROGDIR}/smcpp_latest.sif estimate ${MUT_RATE} ${smc_inputs} -o ${OUTDIR}/datafiles/demography
 apptainer run ${PROGDIR}/smcpp_latest.sif plot ${OUTDIR}/datafiles/demography/${OUTFNAME} ${OUTDIR}/datafiles/demography/model.final.json -c # Ensure to output csv file with model info for recombination mapping later
-echo "Raw SMC++ Model outputted to model.final.json. CSV outputted to ${OUTFNAME}.csv"
+echo "Raw SMC++ Model outputted to model.final.json. CSV outputted to ${POP}.csv"
 
 if [ "$DEMES" = true ]; then
     echo "Converting model CSV file to Demes YAML file"
-    python3 ${SCRIPTDIR}/Genomics-Main/general_scripts/convert_to_demes.py -c ${OUTDIR}/datafiles/demography/${OUTFNAME}.csv -t "years" -d "popsizes from smc++" -g 25 -o ${OUTFNAME}
-    echo "Demes YAML outputted to ${OUTFNAME}.yaml"
+    python3 ${SCRIPTDIR}/Genomics-Main/general_scripts/convert_to_demes.py -c ${OUTDIR}/datafiles/demography/${POP}.csv -t "years" -d "popsizes from smc++" -g 25 -o ${POP}
+    echo "Demes YAML outputted to ${POP}.yaml"
 fi
