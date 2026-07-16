@@ -73,6 +73,6 @@ echo "Raw SMC++ Model outputted to model.final.json. CSV outputted to ${POP}.csv
 
 if [ "$DEMES" = true ]; then
     echo "Converting model CSV file to Demes YAML file"
-    python3 ${SCRIPTDIR}/Genomics-Main/general_scripts/convert_to_demes.py -c ${OUTDIR}/datafiles/demography/${POP}.csv -t "years" -d "popsizes from smc++" -g 25 -o ${POP}
+    python3 ${SCRIPTDIR}/Genomics-Main/general_scripts/convert_to_demes.py -c ${OUTDIR}/datafiles/demography/${POP}.csv -t "years" -d "popsizes from smc++" -g 5 -o ${POP}
     echo "Demes YAML outputted to ${POP}.yaml"
 fi
