@@ -46,4 +46,4 @@ k=<SET_VALUE>
 prefix=<SET_VALUE>
 
 # recombination mapping
-MUT_RATE=1.15e-8
+MUT_RATE=<SET_VALUE> # This should be a per-generation mutation rate for both smc++ and pyrho

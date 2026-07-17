@@ -50,7 +50,7 @@ if [ -d "${OUTDIR}/datafiles/recombination_map/" ];
 fi
 
 if [ -f "${OUTDIR}/datafiles/recombination_map/${POP}.hdf" ];
-        then
+        then 
             echo "lookup table already exists, moving on!"
         else
             pyrho make_table -n ${NUM_HAPS} --approx -N ${NUM_HAPS} --mu ${MUT_RATE} --logfile ${OUTDIR}/datafiles/recombination_map/pyrho_table_log.txt \
@@ -58,10 +58,10 @@ if [ -f "${OUTDIR}/datafiles/recombination_map/${POP}.hdf" ];
 fi
 
 # Run this to get probably better estimates of hyperparameters prior to running optimize
-#pyrho hyperparam -n ${NUM_HAPS} --mu ${MUT_RATE} --blockpenalty 50,100 \
-#	--windowsize 25,50 --logfile ${OUTDIR}/datafiles/linkage_map/ --tablefile ${OUTDIR}/datafiles/linkage_map/${POP}.hdf \
-#	--num_sims 3 --num_threads ${THREADS}\
-#	--smcpp_file ${SMCFILE} --outfile ${OUTDIR}/datafiles/linkage_map/${POP}_hyperparam_results.txt
+pyrho hyperparam -n ${NUM_HAPS} --mu ${MUT_RATE} --blockpenalty 50,100 \
+	--windowsize 25,50 --logfile ${OUTDIR}/datafiles/recombination_map/ --tablefile ${OUTDIR}/datafiles/recombination_map/${POP}.hdf \
+	--num_sims 3 --num_threads ${THREADS}\
+	--smcpp_file ${SMCFILE} --outfile ${OUTDIR}/datafiles/recombination_map/${POP}_hyperparam_results.txt
 
 
 for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt); do

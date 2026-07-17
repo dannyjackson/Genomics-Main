@@ -56,9 +56,6 @@ echo "Installing whatshap..."
 pip3 install --user whatshap
 #======================================================
 
-echo "Installing shapeit4..."
-micromamba create -n shapeit4_env -c bioconda shapeit4
-
 if [ ! -d sapphire ]; then
     git clone https://github.com/stschiff/sapphire || { echo "Error: Failed to clone sapphire."; exit 1; }
 fi
@@ -68,18 +65,34 @@ make
 cd ../
 #======================================================
 
-echo "Installing pyrho..." # Note that you should be on the Puma Cluster to successfully build and run pyrho
-micromamba create -n pyrho_env
-micromamba activate pyrho_env
-micromamba install python=3.11 numpy=2.4 cython
-module load gsl
-module load htslib
-module load hdf5
-git clone https://github.com/popgenmethods/ldpop.git ldpop
-pip install ldpop/
-pip install cython
-git clone https://github.com/popgenmethods/pyrho.git pyrho
-pip install pyrho/
+if [ ! -d pyrho ]; then
+    echo "Installing pyrho..." # Note that you should be on the Puma Cluster to successfully build and run pyrho
+
+    micromamba create -y -n pyrho_env \
+            python=3.7 \
+            numpy=1.19.* \
+            scipy=1.5.* \
+            pandas=1.1.* \
+            msprime=1.0.* \
+            numba=0.53.* \
+            pytables=3.6.* \
+            cyvcf2=0.11.* \
+            htslib=1.9.* \
+            pytest \
+            -c conda-forge -c bioconda
+
+    git clone https://github.com/popgenmethods/ldpop.git ldpop
+    pip install ldpop/
+    git clone https://github.com/popgenmethods/pyrho.git pyrho
+    pip install pyrho/
+
+    python -m pytest ${PROGDIR}/pyrho/tests/tests.py # Ensure that all tests are passed
+fi
+# So there is an issue with the current commit of pyrho (as of July 2026). This may just be the way we are installing on the HPC, not necessarily an issue with pyrho itself.
+# Running hyperparams throws an error since a datafile argument in the code is invalid. 
+# This can be fixed my manually editing the code where it throws the error (remove the subdirectory path), reinstall pyrho, then move that file in the environments folder up one directory
+# ****come back to this later to see if there is just a minor issue in installing that I should fix****
+
 #======================================================
 
 echo "Installing SMC++..."

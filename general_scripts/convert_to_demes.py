@@ -3,7 +3,6 @@
 
 import os
 import demes
-#import demesdraw
 import pandas as pd
 
 import argparse
@@ -27,12 +26,10 @@ for pop in set(ne_df['label']):
     epoch_lst = []
     for row in ne_df.index:
         if ne_df.loc[row,'label'] == pop:
-            epoch_lst.insert(0, dict(start_size=ne_df.loc[row, 'y'], end_time=ne_df.loc[row, 'x'])) # Build list this way since demes wants ancient times first (reverse of SMC++)
+            epoch_lst.insert(0, dict(start_size=ne_df.loc[row, 'y'], end_time=ne_df.loc[row, 'x'])) # Build list in reverse since demes wants ancient times first (reverse of SMC++)
     b.add_deme(pop, epochs=epoch_lst)
 
 demes_graph = b.resolve()
-
-#demesdraw.tubes(demes_graph)
 
 outdir = os.path.split(args.csv_file)[0]
 demes.dump(demes_graph, os.path.join(outdir, f'{args.outfname}.yaml'))
