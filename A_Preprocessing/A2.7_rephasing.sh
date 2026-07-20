@@ -5,7 +5,7 @@ usage() {
     echo "Usage: $0 -p <parameter_file> -c <chromosome> -b <bcf_file> -m <minor_allele_freq_threshold>"
     echo ""
     echo "This script rephases low confidence variants in a BCF file with SAPPHIRE using Minor Allele Frequency metrics. This is meant to be used with BEAGLE-phased inputs."
-    echo "It is best run as a Slurm array that calls this script for each chromosome witihn a population." Meant to be used after stat-based phasing in step A2.6
+    echo "It is best run as a Slurm array that calls this script for each chromosome within a population." Meant to be used after stat-based phasing in step A2.6
     echo "PUMA CLUSTER REQUIRED FOR THIS SCRIPT."
     echo "Prior to running, you should:
             1) Convert your phased VCF to BCF. NOTE: You must have allele frequency (AF) INFO field populated (A2.2).
@@ -16,18 +16,23 @@ usage() {
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository)."
     echo "  -c  Name of chromosome present in BCF file."
     echo "  -b  Path to the BCF file to rephase. This file should contain sites from only a single chromosome. NOTE: You must have allele frequency (AF) INFO field populated (A2.2)."
-    echo "  -m  Minor Allele Frequnency Threshold. Usually should be 0.01"
+    echo "  -m  Minor Allele Frequnency Threshold. Defaults to 0.01"
+    echo "  -o  Path to preferred outdirectory. Defaults to your ${OUTDIR}/datafiles/rephased_bcf folder"
 
     exit 1
 }
 
+REPHASE_DIR="${OUTDIR}/datafiles/rephased_bcf"
+MAF=0.01
+
 # Parse command-line arguments
-while getopts ":p:c:b:m:" option; do
+while getopts ":p:c:b:m:o:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         c) CHR=${OPTARG} ;;
         b) BCF=${OPTARG} ;;
         m) MAF=${OPTARG} ;;
+        o) REPHASE_DIR=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}" >&2; usage ;;
     esac
 done
@@ -44,8 +49,6 @@ fi
 echo Inputted BCF: $BCF
 
 # Perform sapphire polishing
-
-REPHASE_DIR="${OUTDIR}/datafiles/rephased_bcf"
 
 if [ -d "${REPHASE_DIR}/bcfs" ]; then
     echo "Directory ${REPHASE_DIR}/bcfs exists."
@@ -66,7 +69,7 @@ PP_INFO="${REPHASE_DIR}/${CHR}_pp_info.tsv"
 HEADER="${REPHASE_DIR}/header.txt"
 CRAM_PATH="${OUTDIR}/datafiles/crams" # Should be a directory containing all individual CRAM files
 
-# Extract all variants with AF < 0.01 and replace heterozygous by "0.5" and homozygous by "."
+# Extract all variants with AF < inputted MAF and replace heterozygous by "0.5" and homozygous by "."
 filter_str="INFO/AF<${MAF}"
 bcftools filter -i $filter_str $BCF -Ou | bcftools query -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\t[%GT\t]\n' | sed -e 's/0|0/./g' -e 's/0|1/0.5/g' -e 's/1|0/0.5/g' -e 's/1|1/./g' > $PP_INFO
 # bgzip and tabix annotate the file
