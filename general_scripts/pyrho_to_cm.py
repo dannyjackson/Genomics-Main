@@ -14,15 +14,15 @@ parser.add_argument("--pop", type=str, help="pop name prefix of rmaps. Assumes f
 parser.add_argument("--indir", type=str, help="directory path of rmaps to parse")
 args = parser.parse_args()
 
-convert_map = pd.read_csv(args.cm_conversion_file)
+convert_file = pd.read_csv(args.cm_conversion_file)
 
 outpath = os.path.join(args.indir, 'pyrho_cm_converted')
 if not os.path.exists(outpath): os.mkdir(outpath)
 
 # Generate converted files
-for row in convert_map.index:
-    scaffold = convert_map.loc[row, 'scaffold']
-    convert_factor = convert_map.loc[row, 'cm_conversion_rate']
+for row in convert_file.index:
+    scaffold = convert_file.loc[row, 'scaffold']
+    convert_factor = convert_file.loc[row, 'cm_conversion_rate']
     
     print('Converting: ' + scaffold)
     rmap_path = os.path.join(args.indir, f'{args.pop}_{scaffold}.rmap')

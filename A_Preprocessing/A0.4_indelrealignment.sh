@@ -71,4 +71,11 @@ apptainer exec ${PROGDIR}/gatk3-3.7-0.sif java -jar /usr/GenomeAnalysisTK.jar -T
 -o ${OUTDIR}/datafiles/indelrealignment/${IND}.realigned.bam
 
 # Get flagstats for realigned bam and output to stats directory
+if [ -d "${OUTDIR}/datafiles/stats/flagstats" ];
+        then
+            echo "output dir for flagstats already exists, moving on!"
+        else
+            echo "no flagstats dir found. making..."
+            mkdir -p "${OUTDIR}/datafiles/stats/flagstats"
+fi
 samtools flagstat -O json "${OUTDIR}/datafiles/indelrealignment/${IND}.realigned.bam" > "${OUTDIR}/datafiles/stats/flagstats/${IND}_flagstat.json"
