@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 -p <parameter_file>
+    echo "Usage: $0 -p <parameter_file> -r <run_name>
 
 This uses ANGSD to identify SNPs from the bam files
 

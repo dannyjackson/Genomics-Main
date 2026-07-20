@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 -p <parameter_file>
+    echo "Usage: $0 -p <parameter_file> -v <vcf_dir> -s <path_to_smc_file> -i <population_prefix> -n <num_haplotypes> [-c]
 
 This script generates recombination map for a population using pyrho. It requires csv outputs from SMC++
 
@@ -11,7 +11,7 @@ Required argument:
   -s  Path to SMC++ output file
   -i  Population prefix
   -n  Maximum haplotypes present (2x sample size)
-  -c  Optional boolean parameter to label, merge, and convert pyrho rmap to CM units. Designed to output in format for flexsweep selection analysis."
+  -c  Optional boolean parameter to label and convert pyrho rmap to CM units. Designed to output in format for flexsweep selection analysis."
     exit 1
 fi
 

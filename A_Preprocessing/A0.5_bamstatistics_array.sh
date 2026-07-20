@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 -p <parameter_file>
+    echo "Usage: $0 -p <parameter_file> -r <run_name> -i <individual> [-d]>
 
 This script computes average depth statistics of a bam file. Meant to be used in a slurm array
 

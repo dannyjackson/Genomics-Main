@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 -p <parameter_file>
+    echo "Usage: $0 -p <parameter_file> -i <individual> -m <trimming_method>
 
 This script trims FASTQ files with options to use various trimming methods.
 
@@ -12,7 +12,7 @@ Notes on trimming methods:
     - trimgalore & fastp: This script assumes that you have installed and loaded these programs either using a conda/micromamba environment or by loading them as modules on HPC
 
 Required argument:
-  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
+  -p Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
   -i Individual name (can easily be passed through a slurm array).
   -m Optional Argument to state method of trimming. Options include "trimmomatic", "trimgalore", "fastp" (Defaults to trimmomatic)"
     exit 1

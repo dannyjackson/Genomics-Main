@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 -p <parameter_file>
+    echo "Usage: $0 -p <parameter_file> -r <run_name> [-c]>
 
 This script computes average depth statistics of each bam file in a directory.
 

@@ -2,7 +2,7 @@
 
 # Usage message function
 usage() {
-    echo "Usage: $0 -p <parameter_file> -i <individual> -b <bam_directory>"
+    echo "Usage: $0 -p <parameter_file> -i <individual> -m <recombination_map> -b"
     echo ""
     echo "This script phases an Individual-Scaffold VCF file (generated from A2.4) using BEAGLE5.5. This is to be used for the MSMC pipeline"
     echo "It is best run as a Slurm array that calls this script for each individual."
@@ -11,14 +11,14 @@ usage() {
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository)."
     echo "  -i  Name of the individual to analyze."
     echo "  -m  Path to optional recombination map file. (recommended)"
-    echo "  -b  Boolean parameter to convert phased VCF to BCF. Recommended if want to rephase VCF later using A2.7. Will delete intermediate VCF file (default to false)"
+    echo "  -b  Boolean parameter to convert phased VCF to BCF. Recommended if want to rephase VCF later using A2.7. (default to false)"
     exit 1
 }
 
 BCF=false
 
 # Parse command-line arguments
-while getopts ":p:i:m:e:b" option; do
+while getopts ":p:i:m:b" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         i) IND=${OPTARG} ;;

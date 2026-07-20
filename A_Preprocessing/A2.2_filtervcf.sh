@@ -2,7 +2,7 @@
 
 # Function to display usage
 usage() {
-    echo "Usage: $0 -p <path_to_parameter_file>"
+    echo "Usage: $0 -p <path_to_parameter_file> -i <VCF prefix> [-f]"
     echo "This script filters the VCF generated in A2.1_callvariants.sh"
     echo
     echo "Required Arguments:"

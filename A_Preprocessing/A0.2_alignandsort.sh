@@ -1,16 +1,15 @@
 #!/bin/sh
 
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 -p <parameter_file>
+    echo "Usage: $0 -p <parameter_file> -i <individual> -m <trimming_method>
 
-This script aligns FASTQ files to a reference genome using BWA MEM.
-Assumes that you are trimming with trimmomatic
+This script aligns FASTQ files to a reference genome using BWA MEM. Defaults to assuming you trimmed with trimmomatic
 
 I recommend running it as a slurm array to pass individuals to sbatch jobs for maximum efficiency (see github.com/dannyjackson/BioinformaticTutorials/SubmittingJobs.txt for an explanation of running slurm arrays).
 
 Required argument:
   -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
-  -i Individual name (can easily be passed through a slurm array).
+  -i  Individual name (can easily be passed through a slurm array).
   -m  Flag to specify prior trimming method. Defaults to trimmomatic. Required if used trimgalore/fastp since these output different file names."
     exit 1
 fi

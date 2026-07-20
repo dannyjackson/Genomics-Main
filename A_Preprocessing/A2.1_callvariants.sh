@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 -p <parameter_file>
+    echo "Usage: $0 -p <parameter_file> -b <bamlist> -r <run_name>
 
 This script calls variants for VCF file creation from BAM files.
 

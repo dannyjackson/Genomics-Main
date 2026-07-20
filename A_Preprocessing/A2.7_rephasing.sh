@@ -2,7 +2,7 @@
 
 # Usage message function
 usage() {
-    echo "Usage: $0 -p <parameter_file> -c <chromosome> -b <bcf_file> -m <minor_allele_freq_threshold>"
+    echo "Usage: $0 -p <parameter_file> -c <chromosome> -b <bcf_file> -m <minor_allele_freq_threshold> -o <output_dir>"
     echo ""
     echo "This script rephases low confidence variants in a BCF file with SAPPHIRE using Minor Allele Frequency metrics. This is meant to be used with BEAGLE-phased inputs."
     echo "It is best run as a Slurm array that calls this script for each chromosome within a population." Meant to be used after stat-based phasing in step A2.6

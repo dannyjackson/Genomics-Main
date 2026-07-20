@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 -p <parameter_file>
+    echo "Usage: $0 -p <parameter_file> -i <individual>
 
 This script clips overlapping read pairs using BamUtils
 
@@ -9,7 +9,7 @@ I recommend running it as a slurm array to pass individuals to sbatch jobs for m
 
 Required argument:
   -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
-  -i Individual name (can easily be passed through a slurm array)."
+  -i  Individual name (can easily be passed through a slurm array)."
     exit 1
 fi
 
