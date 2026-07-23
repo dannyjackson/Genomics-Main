@@ -44,7 +44,7 @@ fi
 
 
 # Filter VCF based on depth, remove indels
-if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_depthfiltered.vcf" ]
+if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_depthfiltered.recode.vcf" ]
         then
             echo "depthfilter vcf file is present in genotype_calls directory, assuming it is already generated and moving on!"
         else
