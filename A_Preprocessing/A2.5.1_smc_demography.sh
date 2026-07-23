@@ -57,7 +57,7 @@ do
     echo "Processing $chr into SMC++ Input"
     echo $POP:$POPSAMPLES
     COMMAND="$VCF ${OUTDIR}/datafiles/demography/smc_inputs/${POP}/${POP}_${chr}.smc.gz $chr $POP:$POPSAMPLES --mask ${OUTDIR}/datafiles/snpable/${REF_ACC}_revised_mask.${chr}.mask.bed.gz"
-    apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc $COMMAND
+    apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc $COMMAND --ignore-missing
 done
 
 echo "Making SMC Input List"
