@@ -67,6 +67,12 @@ fi
 
 # Filling INFO tags for AD, AC, and AN using the fill-tags plugin for bcftools. This should come preinstalled with bcftools on the HPC
 if [ "$FILLTAGS" = true ]; then
+
+    if [ -z "$BCFTOOLS_PLUGINS" ]; then
+        echo "Setting BCFTOOLS_PLUGIN env variable"
+        export BCFTOOLS_PLUGINS=$(dirname $(which bcftools))/../libexec/bcftools
+    fi
+
     echo "Filling INFO tags for AD, AC, and AN"
     bcftools +fill-tags "${OUTDIR}/datafiles/genotype_calls/${ID}_plinkfiltered".vcf -Oz \
         -o "${OUTDIR}/datafiles/genotype_calls/${ID}_tagfilled.vcf.gz" -- -t AF,AC,AN
