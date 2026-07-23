@@ -71,4 +71,4 @@ if [ "$FILLTAGS" = true ]; then
     bcftools +fill-tags "${OUTDIR}/datafiles/genotype_calls/${ID}_plinkfiltered".vcf -Oz \
         -o "${OUTDIR}/datafiles/genotype_calls/${ID}_tagfilled.vcf.gz" -- -t AF,AC,AN
     bcftools index "${OUTDIR}/datafiles/genotype_calls/${ID}_tagfilled.vcf.gz"
-done
+fi

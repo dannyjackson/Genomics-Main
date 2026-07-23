@@ -77,6 +77,12 @@ while read -r SCAFFOLD; do
 
     if [ "$BCF" = true ]; then
         echo "Converting phased ${IND}-${SCAFFOLD} VCF to BCF"
+        if [ -d "${OUTDIR}/datafiles/vcf2/bcfs" ]; then
+            echo "Directory ${OUTDIR}/datafiles/vcf2/bcfs exists."
+        else
+            echo "Directory ${OUTDIR}/datafiles/vcf2/bcfs does not exist. Creating it now."
+            mkdir -p ${OUTDIR}/datafiles/vcf2/bcfs
+        fi
         bcftools view ${VCF_OUT} -O b -o ${OUTDIR}/datafiles/vcf2/bcfs/${IND}.${SCAFFOLD}.phased.bcf
         bcftools index ${OUTDIR}/datafiles/vcf2/bcfs/${IND}.${SCAFFOLD}.phased.bcf
     fi

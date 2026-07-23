@@ -17,12 +17,11 @@ usage() {
     echo "  -c  Name of chromosome present in BCF file."
     echo "  -b  Path to the BCF file to rephase. This file should contain sites from only a single chromosome. NOTE: You must have allele frequency (AF) INFO field populated (A2.2)."
     echo "  -m  Minor Allele Frequnency Threshold. Defaults to 0.01"
-    echo "  -o  Path to preferred outdirectory. Defaults to your ${OUTDIR}/datafiles/rephased_bcf folder"
+    echo "  -o  Path to preferred outdirectory."
 
     exit 1
 }
 
-REPHASE_DIR="${OUTDIR}/datafiles/rephased_bcf"
 MAF=0.01
 
 # Parse command-line arguments
@@ -87,7 +86,7 @@ bcftools annotate -a ${PP_INFO}.gz -h ${HEADER} -c CHROM,POS,ID,REF,ALT,FORMAT/P
 
 
 echo "Extracting PP INFO from Minor Allele Frequency"
-${PROGDIR}/sapphire/pp_extractor/pp_extract -f ${BCF_ANNOTATED} -o ${EXTRACTED_PP} --pp-from-maf --maf-threshold ${MAF} # the --pp-from-maf and --maf-threshold are required to tell script that we are using non-SHAPEIT-phased BCFs.
+${PROGDIR}/sapphire/pp_extractor/pp_extract -f ${BCF_ANNOTATED} -o ${EXTRACTED_PP} --pp-from-maf --maf-threshold ${MAF} # the --pp-from-maf and --maf-threshold are required to handle non-SHAPEIT-phased BCFs.
 # Copy the file as SAPPHIRE will modify it, with this we will be able to compare
 cp "$EXTRACTED_PP" "${EXTRACTED_PP}.original"
 
