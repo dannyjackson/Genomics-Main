@@ -62,7 +62,7 @@ done
 
 echo "Making SMC Input List"
 ls ${OUTDIR}/datafiles/demography/smc_inputs/${POP}/*.smc.gz > ${OUTDIR}/datafiles/demography/smc_inputs/${POP}/smc_input_lst.txt
-mapfile -t input_lst < ${OUTDIR}/datafiles/demography/smc_inputs/${POP}/input_lst.txt
+mapfile -t smc_input_lst < ${OUTDIR}/datafiles/demography/smc_inputs/${POP}/smc_input_lst.txt
 smc_inputs=$(echo "${smc_input_lst[@]}")
 
 
