@@ -71,7 +71,7 @@ for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt);
 do
     echo "Processing $chr into SMC++ Input"
     echo $POP:$POPSAMPLES
-    COMMAND="$VCF ${OUTDIR}/datafiles/demography/smc_inputs/${POP}/${POP}_${chr}.smc.gz $chr $POP:$POPSAMPLES --mask ${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed"
+    COMMAND="$VCF ${OUTDIR}/datafiles/demography/smc_inputs/${POP}/${POP}_${chr}.smc.gz $chr $POP:$POPSAMPLES --mask ${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed.gz"
     apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc $COMMAND --ignore-missing
 done
 
