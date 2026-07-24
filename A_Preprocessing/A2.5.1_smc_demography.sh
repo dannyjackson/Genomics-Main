@@ -49,6 +49,19 @@ if [ -d "${OUTDIR}/datafiles/demography/smc_inputs/${POP}" ];
 fi
 
 bcftools index ${VCF}
+# Check for bed mask file
+if [ -f "${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed" ];
+        then
+            echo "bed mask file already exists, moving on!"
+        else
+            # Get chrom order of VCF to ensure order in scaffold lengths file matches
+            zgrep -v '^#' ${VCF} | awk '{print $1}' | uniq > ${OUTDIR}/datafiles/genotype_calls/${POP}_vcf_chrom_order.txt
+            awk 'FNR==NR {pos[$1]=NR; next} $1 in pos {print $0, pos[$1]}' vcf_chrom_order.txt ${OUTDIR}/referencelists/scaffold_lengths.txt \
+            | sort -k3,3n \
+            | awk '{print $1"\t"$2}' > ${OUTDIR}/referencelists/scaffold_lengths.vcf_sorted.txt
+            # Generate bed file
+            bedtools complement -i ${VCF}.sorted -g ${OUTDIR}/referencelists/scaffold_lengths.vcf_sorted.txt > ${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed
+fi
 
 POPSAMPLES="$(cat ${SAMPLES} | paste -sd ",")"
 
@@ -56,7 +69,7 @@ for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt);
 do
     echo "Processing $chr into SMC++ Input"
     echo $POP:$POPSAMPLES
-    COMMAND="$VCF ${OUTDIR}/datafiles/demography/smc_inputs/${POP}/${POP}_${chr}.smc.gz $chr $POP:$POPSAMPLES --mask ${OUTDIR}/datafiles/snpable/${REF_ACC}_revised_mask.${chr}.mask.bed.gz"
+    COMMAND="$VCF ${OUTDIR}/datafiles/demography/smc_inputs/${POP}/${POP}_${chr}.smc.gz $chr $POP:$POPSAMPLES --mask ${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed"
     apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc $COMMAND --ignore-missing
 done
 
