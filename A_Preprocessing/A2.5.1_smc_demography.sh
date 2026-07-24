@@ -50,7 +50,7 @@ fi
 
 bcftools index ${VCF}
 # Check for bed mask file
-if [ -f "${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed" ];
+if [ -f "${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed.gz" ];
         then
             echo "bed mask file already exists, moving on!"
         else
@@ -61,6 +61,8 @@ if [ -f "${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed" ];
             | awk '{print $1"\t"$2}' > ${OUTDIR}/referencelists/scaffold_lengths.vcf_sorted.txt
             # Generate bed file
             bedtools complement -i ${VCF}.sorted -g ${OUTDIR}/referencelists/scaffold_lengths.vcf_sorted.txt > ${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed
+            bgzip ${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed
+            tabix ${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed.gz
 fi
 
 POPSAMPLES="$(cat ${SAMPLES} | paste -sd ",")"
