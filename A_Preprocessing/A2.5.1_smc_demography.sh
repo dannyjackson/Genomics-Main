@@ -48,7 +48,7 @@ if [ -d "${OUTDIR}/datafiles/demography/smc_inputs/${POP}" ];
             mkdir -p "${OUTDIR}/datafiles/demography/smc_inputs/${POP}"
 fi
 
-bcftools index ${VCF}
+#bcftools index ${VCF}
 # Check for bed mask file
 #if [ -f "${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed.gz" ];
 #        then
