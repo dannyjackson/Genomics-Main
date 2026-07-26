@@ -70,7 +70,7 @@ POPSAMPLES="$(cat ${SAMPLES} | paste -sd ",")"
 for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt);
 do
     echo "Processing $chr into SMC++ Input"
-    COMMAND="$VCF ${OUTDIR}/datafiles/demography/smc_inputs/${POP}/${POP}_${chr}.smc.gz $chr $POP:$POPSAMPLES --mask ${OUTDIR}/datafiles/mask/${POP}_uncalled_raw.bed.gz"
+    COMMAND="$VCF ${OUTDIR}/datafiles/demography/smc_inputs/${POP}/${POP}_${chr}.smc.gz $chr $POP:$POPSAMPLES --mask ${OUTDIR}/datafiles/mask/${POP}_sorted_mask.bed.gz"
     apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc $COMMAND --ignore-missing # After VCF filtering, some samples may be thrown out. Passing --ignore-missing to proceed with smc without them and log the sample names
 done
 
