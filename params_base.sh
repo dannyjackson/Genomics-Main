@@ -24,13 +24,14 @@ FILENAME_LIST="/path/to/list.txt" # list with sample codes associated with each 
 
 # define aspects of the reference genome
 CHRLEAD=NC_0 # characters at the start of a chromosome number (excluding scaffolds)
-SCAF_LEAD=NW_0 # characters at the start of a scaffold name
-MTCODE=NC_051467.1 # code for mitochondrial chromosome. changed this from sex chromosome since sex chromosomes are already excluded in base_setup SCAFFOLD list generation, but the MTs are included
+SCAF_LEAD=NW_0 # characters at the start of an incomplete scaffold name
+MTCODE=XXXXXXXXXX # code for mitochondrial chromosome, if included. 
+SEXCHR=XXXXXXXXXX
 REF_ACC=GCF_XXXXXXXXXXXXXXXX # accession number for reference genome
 REF=/path/to/reference/genome/file.fna # path to reference genome
 GFF=/path/to/reference/genome/gff/genomic.gff # path to gff file
 
 # define the path for the chromosome conversion file (converts chromosome ascension names to numbers)
-CHR_FILE=/xdisk/mcnew/dannyjackson/cardinals/referencelists/GCF_901933205_chromconversion.txt
+CHR_FILE=${OUTDIR}/referencelists/${REF_ACC}_chromconversion.txt
 
 source /path/to/base_setup.sh

@@ -50,29 +50,28 @@ fi
 
 bcftools index ${VCF}
 # Check for bed mask file
-if [ -f "${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed.gz" ];
-        then
-            echo "bed mask file already exists, moving on!"
-        else
-            # Get chrom order of VCF to ensure order in scaffold lengths file matches
-            zgrep -v '^#' ${VCF} | awk '{print $1}' | uniq > ${OUTDIR}/datafiles/genotype_calls/${POP}_vcf_chrom_order.txt
-            awk 'FNR==NR {pos[$1]=NR; next} $1 in pos {print $0, pos[$1]}' vcf_chrom_order.txt ${OUTDIR}/referencelists/scaffold_lengths.txt \
-            | sort -k3,3n \
-            | awk '{print $1"\t"$2}' > ${OUTDIR}/referencelists/scaffold_lengths.vcf_sorted.txt
-            # Generate bed file
-            bedtools complement -i ${VCF}.sorted -g ${OUTDIR}/referencelists/scaffold_lengths.vcf_sorted.txt > ${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed
-            bgzip ${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed
-            tabix ${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed.gz
-fi
+#if [ -f "${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed.gz" ];
+#        then
+#            echo "bed mask file already exists, moving on!"
+#        else
+#            # Get chrom order of VCF to ensure order in scaffold lengths file matches
+#            zgrep -v '^#' ${VCF} | awk '{print $1}' | uniq > ${OUTDIR}/datafiles/genotype_calls/${POP}_vcf_chrom_order.txt
+#            awk 'FNR==NR {pos[$1]=NR; next} $1 in pos {print $0, pos[$1]}' vcf_chrom_order.txt ${OUTDIR}/referencelists/scaffold_lengths.txt \
+#            | sort -k3,3n \
+#            | awk '{print $1"\t"$2}' > ${OUTDIR}/referencelists/scaffold_lengths.vcf_sorted.txt
+#            # Generate bed file
+#            bedtools complement -i ${VCF}.sorted -g ${OUTDIR}/referencelists/scaffold_lengths.vcf_sorted.txt > ${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed
+#            bgzip ${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed
+#            tabix ${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed.gz
+#fi
 
 POPSAMPLES="$(cat ${SAMPLES} | paste -sd ",")"
 
 for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt);
 do
     echo "Processing $chr into SMC++ Input"
-    echo $POP:$POPSAMPLES
-    COMMAND="$VCF ${OUTDIR}/datafiles/demography/smc_inputs/${POP}/${POP}_${chr}.smc.gz $chr $POP:$POPSAMPLES --mask ${OUTDIR}/datafiles/mask/${POP}_smc_mask.bed.gz"
-    apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc $COMMAND --ignore-missing
+    COMMAND="$VCF ${OUTDIR}/datafiles/demography/smc_inputs/${POP}/${POP}_${chr}.smc.gz $chr $POP:$POPSAMPLES --mask ${OUTDIR}/datafiles/mask/${POP}_uncalled_raw.bed.gz"
+    apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc $COMMAND --ignore-missing # After VCF filtering, some samples may be thrown out. Passing --ignore-missing to proceed with smc without them and log the sample names
 done
 
 echo "Making SMC Input List"
@@ -81,9 +80,11 @@ mapfile -t smc_input_lst < ${OUTDIR}/datafiles/demography/smc_inputs/${POP}/smc_
 smc_inputs=$(echo "${smc_input_lst[@]}")
 
 
-echo "Making and Plotting Model"
+echo "Estimating Model"
 apptainer run ${PROGDIR}/smcpp_latest.sif estimate ${MUT_RATE} ${smc_inputs} -o ${OUTDIR}/datafiles/demography
-apptainer run ${PROGDIR}/smcpp_latest.sif plot ${OUTDIR}/datafiles/demography/${OUTFNAME} ${OUTDIR}/datafiles/demography/model.final.json -c # Ensure to output csv file with model info for recombination mapping later
+
+echo "Plotting Model"
+apptainer run ${PROGDIR}/smcpp_latest.sif plot ${OUTDIR}/datafiles/demography/${POP} ${OUTDIR}/datafiles/demography/model.final.json -c # Also output model info to csv for recombination mapping later
 echo "Raw SMC++ Model outputted to model.final.json. CSV outputted to ${POP}.csv"
 
 if [ "$DEMES" = true ]; then
