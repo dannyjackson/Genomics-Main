@@ -1,31 +1,34 @@
 #!/bin/bash
 
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 -p <parameter_file> -v <vcf_dir> -s <path_to_smc_file> -i <population_prefix> -n <num_haplotypes> [-c]
+    echo "Usage: $0 -p <parameter_file> -v <vcf_dir> -i <population_prefix> -b <block_penalty> -w <windowsize> [-c]
 
-This script generates recombination map for a population using pyrho. It requires csv outputs from SMC++
+This script generates recombination map for a population using pyrho.
 
 Required argument:
   -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
   -v  Path to chromosome-split vcfs
-  -s  Path to SMC++ output file
   -i  Population prefix
-  -n  Maximum haplotypes present (2x sample size)
-  -c  Optional boolean parameter to label and convert pyrho rmap to CM units. Designed to output in format for flexsweep selection analysis."
+  -b  Block Penalty size (Defaults to 50)
+  -w  Window Size (Defaults to 50)
+Optional argument:
+  -c  Boolean parameter to label and convert pyrho rmap to CM units. Designed to output in format for flexsweep selection analysis."
     exit 1
 fi
 
+BLOCK=50
+WINDOW=50
 CM_POSTPROCESSING=false
 
 # Parse command-line arguments
-while getopts ":p:v:s:i:n:c" option; do
+while getopts ":p:v:i:b:w:c" option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
         v) VCFDIR=${OPTARG} ;;
-        s) SMCFILE=${OPTARG} ;;
         i) POP=${OPTARG} ;;
-        n) NUM_HAPS=${OPTARG} ;;
-        c) CM_POSTPROCESSING=true
+        b) BLOCK=${OPTARG} ;;
+        w) WINDOW=${OPTARG} ;;
+        c) CM_POSTPROCESSING=true ;;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done
@@ -40,36 +43,14 @@ source "${PARAMS}"
 
 printf "\n\n\n\n"
 date
-echo "Current script: A2.5.2_recombination_mapping.sh"
-
-if [ -d "${OUTDIR}/datafiles/recombination_map/" ];
-        then
-            echo "recombination map directory already exists, moving on!"
-        else
-        mkdir -p "${OUTDIR}/datafiles/recombination_map/"
-fi
-
-if [ -f "${OUTDIR}/datafiles/recombination_map/${POP}.hdf" ];
-        then 
-            echo "lookup table already exists, moving on!"
-        else
-            pyrho make_table -n ${NUM_HAPS} --approx -N ${NUM_HAPS} --mu ${MUT_RATE} --logfile ${OUTDIR}/datafiles/recombination_map/pyrho_table_log.txt \
-            --outfile ${OUTDIR}/datafiles/recombination_map/${POP}.hdf --smcpp_file ${SMCFILE} --decimate_rel_tol 0.1 --numthreads ${THREADS}
-fi
-
-# Run this to get probably better estimates of hyperparameters prior to running optimize
-pyrho hyperparam -n ${NUM_HAPS} --mu ${MUT_RATE} --blockpenalty 50,100 \
-	--windowsize 25,50 --logfile ${OUTDIR}/datafiles/recombination_map/ --tablefile ${OUTDIR}/datafiles/recombination_map/${POP}.hdf \
-	--num_sims 3 --num_threads ${THREADS}\
-	--smcpp_file ${SMCFILE} --outfile ${OUTDIR}/datafiles/recombination_map/${POP}_hyperparam_results.txt
-
+echo "Current script: A2.5.3_pyrho_recombination_mapping.sh"
 
 for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt); do
     echo "Optimizing $chr map"
     pyrho optimize --tablefile ${OUTDIR}/datafiles/recombination_map/${POP}.hdf \
         --vcffile ${VCFDIR}/${POP}_${chr}.vcf.gz \
         --outfile ${OUTDIR}/datafiles/recombination_map/${POP}_${chr}.rmap \
-        --blockpenalty 50 --windowsize 50 \
+        --blockpenalty ${BLOCK} --windowsize ${WINDOW} \
         --logfile ${OUTDIR}/datafiles/recombination_map/pyrho_optimize_${chr}_log.txt \
         --ploidy 2;
 done
