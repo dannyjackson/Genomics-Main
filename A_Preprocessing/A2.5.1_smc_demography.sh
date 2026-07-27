@@ -4,6 +4,7 @@ if [ $# -lt 1 ]; then
     echo "Usage: $0 -p <parameter_file> -v <vcf_file> -s <sample_list_file> -i <population_prefix> [-d] -m <mask_file>
 
 This script generates demography estimates for a population using SMC++. This is a prerequisite for generating recombination maps using pyrho in A2.5.1_recombination_mapping.sh
+The model csv output can be converted to demes format for other analyses/preprocessing using convert_to_demes.py in general_scripts.
 
 Required argument:
   -p  Path to a parameter file (e.g., params_preprocessing.sh in the GitHub repository).
@@ -11,21 +12,22 @@ Required argument:
   -s  Path to Population Sample List File
   -i  Population prefix
 Optional argument:
-  -d  Boolean argument specifying whether to convert a copy of SMC++ output to demes YAML file (Default to false). Needed if want to use downstream Flexsweep analysis
+  -d  Specifying pair of distinguished lineages. If left blank, SMC++ will default to first samples in list. Should be a space separated string of two sample names
   -m  Path to a bgzipped and indexed bed file containing uncalled/lowcoverage regions not present in the VCF file (recommended)"
     exit 1
 fi
 
-DEMES=false
+DIST=""
+MASK=""
 
 # Parse command-line arguments
-while getopts ":p:v:s:i:m:d" option; do
+while getopts ":p:v:s:i:m:d:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG} ;;
         v) VCF=${OPTARG} ;;
         s) SAMPLES=${OPTARG} ;;
         i) POP=${OPTARG} ;;
-        d) DEMES=true ;;
+        d) DIST=${OPTARG} ;;
         m) MASK=${OPTARG} ;;
         *) echo "Invalid option: -${OPTARG}" >&2; usage ;;
     esac
@@ -43,21 +45,30 @@ printf "\n\n\n\n"
 date
 echo "Current script: A2.5.1_smc_demography.sh"
 
-if [ -d "${OUTDIR}/datafiles/demography/smc_inputs/${POP}" ];
+if [ -d "${OUTDIR}/datafiles/demography/${POP}/smc_inputs/" ];
         then
-            echo "demography directory already exists, moving on!"
+            echo "demography directory for ${POP} already exists, moving on!"
         else
-            mkdir -p "${OUTDIR}/datafiles/demography/smc_inputs/${POP}"
+            mkdir -p "${OUTDIR}/datafiles/demography/${POP}/smc_inputs/"
 fi
 
 bcftools index ${VCF}
 # Check for bed mask file
 if [[ -n "$MASK" ]]; then
-    echo "Mask File provided."
+    echo "Mask File provided in path: ${MASK}."
     mask_flag="--mask ${MASK}"
 else
     echo "No mask for uncalled regions provided. Proceeding without it, but note that you probably want a mask to account for uncalled regions."
     mask_flag=""
+fi
+
+# Check for dstinguished lineages
+if [[ -n "$DIST" ]]; then
+    echo "Distinguished Lineages provided as follows: ${DIST}"
+    dist_flag="-d ${DIST}"
+else
+    echo "No distinguished lineages provided. Proceeding without it. SMC will choose the first samples in your sample list."
+    dist_flag=""
 fi
 
 POPSAMPLES="$(cat ${SAMPLES} | paste -sd ",")"
@@ -65,25 +76,19 @@ POPSAMPLES="$(cat ${SAMPLES} | paste -sd ",")"
 for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt);
 do
     echo "Processing $chr into SMC++ Input"
-    COMMAND="$VCF ${OUTDIR}/datafiles/demography/smc_inputs/${POP}/${POP}_${chr}.smc.gz $chr $POP:$POPSAMPLES ${mask_flag}"
+    COMMAND="$VCF ${OUTDIR}/datafiles/demography/${POP}/smc_inputs/${POP}_${chr}.smc.gz $chr $POP:$POPSAMPLES ${mask_flag} ${dist_flag}"
     apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc $COMMAND --ignore-missing # After VCF filtering, some samples may be thrown out. Passing --ignore-missing to proceed with smc without them and log the sample names
 done
 
 echo "Making SMC Input List"
-ls ${OUTDIR}/datafiles/demography/smc_inputs/${POP}/*.smc.gz > ${OUTDIR}/datafiles/demography/smc_inputs/${POP}/smc_input_lst.txt
-mapfile -t smc_input_lst < ${OUTDIR}/datafiles/demography/smc_inputs/${POP}/smc_input_lst.txt
+ls ${OUTDIR}/datafiles/demography/${POP}/smc_inputs/*.smc.gz > ${OUTDIR}/datafiles/demography/${POP}/smc_inputs/smc_input_lst.txt
+mapfile -t smc_input_lst < ${OUTDIR}/datafiles/demography/${POP}/smc_inputs/smc_input_lst.txt
 smc_inputs=$(echo "${smc_input_lst[@]}")
 
 
 echo "Estimating Model"
-apptainer run ${PROGDIR}/smcpp_latest.sif estimate ${MUT_RATE} ${smc_inputs} -o ${OUTDIR}/datafiles/demography
+apptainer run ${PROGDIR}/smcpp_latest.sif estimate ${MUT_RATE} ${smc_inputs} -o ${OUTDIR}/datafiles/demography/${POP}
 
 echo "Plotting Model"
-apptainer run ${PROGDIR}/smcpp_latest.sif plot ${OUTDIR}/datafiles/demography/${POP} ${OUTDIR}/datafiles/demography/model.final.json -c # Also output model info to csv for recombination mapping later
+apptainer run ${PROGDIR}/smcpp_latest.sif plot ${OUTDIR}/datafiles/demography/${POP} ${OUTDIR}/datafiles/demography/${POP}/model.final.json -c # Also output model info to csv for recombination mapping later
 echo "Raw SMC++ Model outputted to model.final.json. CSV outputted to ${POP}.csv"
-
-if [ "$DEMES" = true ]; then
-    echo "Converting model CSV file to Demes YAML file"
-    python3 ${SCRIPTDIR}/Genomics-Main/general_scripts/convert_to_demes.py -c ${OUTDIR}/datafiles/demography/${POP}.csv -t "years" -d "SMC++ ${POP} popsizes" -g 5 -o ${POP}
-    echo "Demes YAML outputted to ${POP}.yaml"
-fi

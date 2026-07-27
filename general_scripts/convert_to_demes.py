@@ -3,6 +3,7 @@
 
 import os
 import demes
+import demesdraw
 import pandas as pd
 
 import argparse
@@ -33,3 +34,5 @@ demes_graph = b.resolve()
 
 outdir = os.path.split(args.csv_file)[0]
 demes.dump(demes_graph, os.path.join(outdir, f'{args.outfname}.yaml'))
+tubes = demesdraw.tubes(demes_graph)
+tubes.figure.savefig(os.path.join(outdir, f'{args.outfname}.png'))
