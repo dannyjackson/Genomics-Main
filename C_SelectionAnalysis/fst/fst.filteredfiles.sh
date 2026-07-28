@@ -5,10 +5,8 @@
 
 # Ensure at least one argument is provided
 if [ $# -lt 1 ]; then
-    echo "Usage: $(basename $0) -p <param_file> [-w <window_size>] [-s <step_size>]"
-    echo "\nThis script computes Fst between two genome groups using ANGSD."
-    echo "It requires SAF files as input and produces genome-wide Fst estimates,"
-    echo "as well as sliding window Fst statistics.\n"
+    echo "Usage: $(basename $0) -p <param_file> -f <filtered_fst_file>"
+    echo "FST plotting for depth and map filteed windowed analyses"
     echo "Required Argument:"
     echo "  -p   Path to parameter file (see example params_fst.sh in the repository)\n"
     echo "  -f   Path to filtered FST file"
