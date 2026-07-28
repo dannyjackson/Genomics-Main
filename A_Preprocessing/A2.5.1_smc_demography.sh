@@ -31,7 +31,7 @@ while getopts ":p:v:s:i:d:m:c" option; do
         i) POP=${OPTARG} ;;
         d) DIST=${OPTARG} ;;
         m) MASK=${OPTARG} ;;
-        c) CV=true
+        c) CV=true ;;
         *) echo "Invalid option: -${OPTARG}" >&2; usage ;;
     esac
 done
