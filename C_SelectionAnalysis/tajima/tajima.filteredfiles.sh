@@ -1,0 +1,59 @@
+#!/bin/sh
+
+# Tajima plotting and outlier identification script for the output of depth and mapping filtered windowed Theta analyses
+
+
+# Ensure at least one argument is provided
+if [ $# -lt 1 ]; then
+    echo "Usage: $(basename $0) -p <param_file> -f <filtered_tajima_diff_file>"
+    echo "Tajima D plotting for depth and map filteed windowed analyses"
+    echo "Required Argument:"
+    echo "  -p   Path to parameter file (see example params_fst.sh in the repository)\n"
+    echo "  -f   Path to filtered tajima-diff file between two populations"
+    exit 1
+fi
+
+# Parse arguments
+while getopts "p:f:" option; do
+    case "${option}" in
+        p) PARAMS=${OPTARG} ;;
+        f) FILE=${OPTARG} ;;
+        *) echo "Invalid option: -${OPTARG}" >&2; exit 1 ;;
+    esac
+done
+
+# Ensure required parameter file is provided
+if [ -z "${PARAMS}" ]; then
+    echo "Error: No parameter file provided." >&2
+    exit 1
+fi
+
+# Load parameters
+source "${PARAMS}"
+
+cp ${FILE} "${FILE}.numchrom" 
+
+# Replace chromosome names if conversion file is provided
+if [ -n "$CHR_FILE" ]; then
+    echo "Replacing chromosome names based on conversion file..."
+    while IFS=',' read -r first second; do
+        sed -i "s/$second/$first/g" "${FILE}.numchrom" 
+    done < "$CHR_FILE"
+fi
+
+# z transform windowed data
+Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/ztransform_windows.filteredfiles.r" \
+"${OUTDIR}" "${CUTOFF}" "${FILE}.numchrom" 
+
+cp ${FILE} "${FILE}.numchrom" 
+
+Z_OUT="${FILE}.numchrom.Ztransformed.csv"
+
+# sed -i 's/\"//g' ${Z_OUT}
+
+# Run R script for plotting
+echo "Generating Manhattan plot from ${Z_OUT}..."
+Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.filteredfiles.tajimadiff.r" \
+    "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${Z_OUT}" "Tajima" 
+
+echo "Script completed successfully!"
