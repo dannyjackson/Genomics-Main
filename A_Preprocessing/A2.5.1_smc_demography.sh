@@ -85,6 +85,7 @@ do
             echo "Processing $chr into SMC++ Input"
             COMMAND="$VCF ${OUTDIR}/datafiles/demography/${POP}/smc_inputs/${POP}_${chr}.smc.gz $chr $POP:$POPSAMPLES ${mask_flag} ${dist_flag}"
             apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc $COMMAND --ignore-missing # After VCF filtering, some samples may be thrown out. Passing --ignore-missing to proceed with smc without them and log the sample names
+    fi
 done
 
 echo "Making SMC Input List"
@@ -97,7 +98,9 @@ if [ "$CV" = true ]
         echo "Estimating Model using cross validation strategy"
         apptainer run ${PROGDIR}/smcpp_latest.sif cv ${MUT_RATE} ${smc_inputs} -o ${OUTDIR}/datafiles/demography/${POP}
     else
+        echo "Estimating Model using standard estimation strategy"
         apptainer run ${PROGDIR}/smcpp_latest.sif estimate ${MUT_RATE} ${smc_inputs} -o ${OUTDIR}/datafiles/demography/${POP} --folds 8 --cores ${THREADS}
+fi
 
 echo "Plotting Model"
 apptainer run ${PROGDIR}/smcpp_latest.sif plot ${OUTDIR}/datafiles/demography/${POP} ${OUTDIR}/datafiles/demography/${POP}/model.final.json -c # Also output model info to csv for recombination mapping later
