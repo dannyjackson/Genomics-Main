@@ -2,7 +2,7 @@
 
 # This script first adds chrom_id column first to all rmaps
 # Then it calculates the CM units using a file mapping some conversion rates for specific scaffolds. This assumes you have some external reference of recommended reference rates.
-# These outputs can be easily concatenated together in a terminal (as in A2.5.1). These outputs are designed to be used in flexsweep with columns: [CHR_ID, Interval_start, Interval_end, CM/Mb, CM_distance]
+# These outputs can be easily concatenated together (as in A2.5.1). These outputs are designed to be used in flexsweep with columns: [CHR_ID, Interval_start, Interval_end, CM/Mb, CM_distance]
 
 import pandas as pd
 import argparse

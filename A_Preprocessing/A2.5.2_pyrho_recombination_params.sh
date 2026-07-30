@@ -15,7 +15,7 @@ Required argument:
 fi
 
 # Parse command-line arguments
-while getopts ":p:v:s:i:n:c" option; do
+while getopts ":p:v:s:i:n:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
         v) VCFDIR=${OPTARG} ;;
@@ -53,7 +53,7 @@ if [ -f "${OUTDIR}/datafiles/recombination_map/${POP}.hdf" ];
             --outfile ${OUTDIR}/datafiles/recombination_map/${POP}.hdf --smcpp_file ${SMCFILE} --decimate_rel_tol 0.1 --numthreads ${THREADS}
 fi
 
-# Run this to get probably better estimates of hyperparameters prior to running optimize
+# Run this to get probably better estimates of hyperparameters prior to running optimize (A2.5.3)
 pyrho hyperparam -n ${NUM_HAPS} --mu ${MUT_RATE} --blockpenalty 25,50,75,100 \
 	--windowsize 25,50,75,100 --logfile ${OUTDIR}/datafiles/recombination_map/ --tablefile ${OUTDIR}/datafiles/recombination_map/${POP}.hdf \
 	--num_sims 5 --num_threads ${THREADS} \
