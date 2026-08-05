@@ -96,12 +96,14 @@ smc_inputs=$(echo "${smc_input_lst[@]}")
 if [ "$CV" = true ]
     then
         echo "Estimating Model using cross validation strategy"
-        apptainer run ${PROGDIR}/smcpp_latest.sif cv ${MUT_RATE} ${smc_inputs} -o ${OUTDIR}/datafiles/demography/${POP}
+        apptainer run ${PROGDIR}/smcpp_latest.sif cv ${MUT_RATE} ${smc_inputs} -o ${OUTDIR}/datafiles/demography/${POP} --folds 5 --cores ${THREADS}
+        SMC_OUTDIR=${OUTDIR}/datafiles/demography/${POP}/fold0
     else
         echo "Estimating Model using standard estimation strategy"
-        apptainer run ${PROGDIR}/smcpp_latest.sif estimate ${MUT_RATE} ${smc_inputs} -o ${OUTDIR}/datafiles/demography/${POP} --folds 8 --cores ${THREADS}
+        apptainer run ${PROGDIR}/smcpp_latest.sif estimate ${MUT_RATE} ${smc_inputs} -o ${OUTDIR}/datafiles/demography/${POP} --cores ${THREADS}
+        SMC_OUTDIR=${OUTDIR}/datafiles/demography/${POP}
 fi
 
 echo "Plotting Model"
-apptainer run ${PROGDIR}/smcpp_latest.sif plot ${OUTDIR}/datafiles/demography/${POP} ${OUTDIR}/datafiles/demography/${POP}/model.final.json -c # Also output model info to csv for recombination mapping later
+apptainer run ${PROGDIR}/smcpp_latest.sif plot ${SMC_OUTDIR} ${SMC_OUTDIR}/model.final.json -c # Also output model info to csv for recombination mapping later
 echo "Raw SMC++ Model outputted to model.final.json. CSV outputted to ${POP}.csv"
