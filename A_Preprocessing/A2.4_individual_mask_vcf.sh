@@ -48,11 +48,11 @@ echo "Individual: ${IND}"
 echo "BAM file prefix: ${BAMFILE}"
 
 # Check and create BAM index if needed
-if [[ -f "${BAMFILE}.bai" ]]; then
+if [[ -f "${BAMFILE}.bam.bai" ]]; then
     echo "BAM index found, proceeding..."
 else
     echo "BAM index not found, creating index..."
-    samtools index "${BAMFILE}.bai"
+    samtools index "${BAMFILE}.bam"
 fi
 
 # Ensure scaffold list file exists
