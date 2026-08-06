@@ -41,4 +41,4 @@ if [ -z "$OUTDIR" ] || [ -z "$REF" ]; then
 fi
 
 
-bcftools mpileup -Ou -f ${REF} -a FORMAT/AD,DP,INFO/AD,SP --bam-list ${BAMLIST} | bcftools call --threads ${THREADS} -mv -V indels -o ${OUTDIR}/datafiles/genotype_calls/"${RUNNAME}"_snps_multiallelic.vcf.gz
+bcftools mpileup -Ou -f ${REF} -a FORMAT/AD,DP,INFO/AD,SP --bam-list ${BAMLIST} | bcftools call -mv -V indels -o ${OUTDIR}/datafiles/genotype_calls/"${RUNNAME}"_snps_multiallelic.vcf
