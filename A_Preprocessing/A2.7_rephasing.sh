@@ -56,6 +56,8 @@ else
     mkdir -p ${REPHASE_DIR}/bcfs
 fi
 
+echo "Minor Allele Frequency set to: ${MAF}"
+
 echo "Polishing phased BCF for $CHR with SAPPHIRE..."
 
 # Key File Paths
