@@ -87,7 +87,7 @@ if [ "$SPLITREGIONS" = false ]
 
         # concat vcf files in required .fai order
         #bcftools concat -f vcf_list_order.txt -Ou | \
-        #bcftools norm -m -any -f "$REF" -Ou -o "${OUTDIR}/datafiles/genotype_calls/${RUNNAME}_snps_multiallelic_merged.vcf"
+        #bcftools norm -f "$REF" -Ou -o "${OUTDIR}/datafiles/genotype_calls/${RUNNAME}_snps_multiallelic_merged.vcf"
 
 fi
 

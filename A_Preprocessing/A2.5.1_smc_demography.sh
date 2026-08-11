@@ -76,6 +76,8 @@ fi
 
 POPSAMPLES="$(cat ${SAMPLES} | paste -sd ",")"
 
+cd ${OUTDIR}/datafiles/demography/${POP} # Move to output directory here so that iterate.dat intermediate file is stored here.
+
 for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt);
 do
     if [ -f "${OUTDIR}/datafiles/demography/${POP}/smc_inputs/${POP}_${chr}.smc.gz" ]
@@ -93,19 +95,19 @@ ls ${OUTDIR}/datafiles/demography/${POP}/smc_inputs/*.smc.gz > ${OUTDIR}/datafil
 mapfile -t smc_input_lst < ${OUTDIR}/datafiles/demography/${POP}/smc_inputs/smc_input_lst.txt
 smc_inputs=$(echo "${smc_input_lst[@]}")
 
-cd ${OUTDIR}/datafiles/demography/${POP} # Move to output directory here so that iterate.dat intermediate file is stored here.
-
 if [ "$CV" = true ]
     then
         echo "Estimating Model using cross validation strategy"
-        apptainer run ${PROGDIR}/smcpp_latest.sif cv ${MUT_RATE} ${smc_inputs} -o ${OUTDIR}/datafiles/demography/${POP} --folds 5 --cores ${THREADS}
+        apptainer run ${PROGDIR}/smcpp_latest.sif cv ${MUT_RATE} ${smc_inputs} -o ${OUTDIR}/datafiles/demography/${POP} --folds 5 --cores ${THREADS} --thinning 3000
         SMC_OUTDIR=${OUTDIR}/datafiles/demography/${POP}/fold0
     else
         echo "Estimating Model using standard estimation strategy"
-        apptainer run ${PROGDIR}/smcpp_latest.sif estimate ${MUT_RATE} ${smc_inputs} -o ${OUTDIR}/datafiles/demography/${POP} --cores ${THREADS}
+        apptainer run ${PROGDIR}/smcpp_latest.sif estimate ${MUT_RATE} ${smc_inputs} -o ${OUTDIR}/datafiles/demography/${POP} --cores ${THREADS} --thinning 3000
         SMC_OUTDIR=${OUTDIR}/datafiles/demography/${POP}
 fi
 
 echo "Plotting Model"
 apptainer run ${PROGDIR}/smcpp_latest.sif plot ${SMC_OUTDIR} ${SMC_OUTDIR}/model.final.json -c # Also output model info to csv for recombination mapping later
 echo "Raw SMC++ Model outputted to model.final.json. CSV outputted to ${POP}.csv"
+
+echo "Done"
