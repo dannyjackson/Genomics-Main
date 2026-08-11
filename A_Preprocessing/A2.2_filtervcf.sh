@@ -38,7 +38,7 @@ if [ -f "${OUTDIR}/datafiles/genotype_calls/${ID}_qualitysort.vcf" ]
             echo "qualitysort vcf file is present in genotype_calls directory, assuming it is already generated and moving on!"
         else
             echo "filtering VCF file by quality greater than 100"
-            bcftools view -i 'QUAL>100' "${OUTDIR}/datafiles/genotype_calls/${ID}_snps_multiallelic.vcf.gz" > "${OUTDIR}/datafiles/genotype_calls/${ID}_qualitysort.vcf"
+            bcftools view -i 'QUAL>100' "${OUTDIR}/datafiles/genotype_calls/${ID}_snps_multiallelic.vcf" > "${OUTDIR}/datafiles/genotype_calls/${ID}_qualitysort.vcf"
 
 fi
 
@@ -74,7 +74,7 @@ if [ "$FILLTAGS" = true ]; then
     fi
 
     echo "Filling INFO tags for AD, AC, and AN"
-    bcftools +fill-tags "${OUTDIR}/datafiles/genotype_calls/${ID}_plinkfiltered".vcf -Oz \
+    bcftools +fill-tags "${OUTDIR}/datafiles/genotype_calls/${ID}_plinkfiltered.vcf" -Oz \
         -o "${OUTDIR}/datafiles/genotype_calls/${ID}_tagfilled.vcf.gz" -- -t AF,AC,AN
     bcftools index "${OUTDIR}/datafiles/genotype_calls/${ID}_tagfilled.vcf.gz"
 fi
