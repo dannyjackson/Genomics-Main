@@ -93,6 +93,8 @@ ls ${OUTDIR}/datafiles/demography/${POP}/smc_inputs/*.smc.gz > ${OUTDIR}/datafil
 mapfile -t smc_input_lst < ${OUTDIR}/datafiles/demography/${POP}/smc_inputs/smc_input_lst.txt
 smc_inputs=$(echo "${smc_input_lst[@]}")
 
+cd ${OUTDIR}/datafiles/demography/${POP} # Move to output directory here so that iterate.dat intermediate file is stored here.
+
 if [ "$CV" = true ]
     then
         echo "Estimating Model using cross validation strategy"
