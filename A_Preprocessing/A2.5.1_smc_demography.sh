@@ -86,7 +86,7 @@ do
         else
             echo "Processing $chr into SMC++ Input"
             COMMAND="$VCF ${OUTDIR}/datafiles/demography/${POP}/smc_inputs/${POP}_${chr}.smc.gz $chr $POP:$POPSAMPLES ${mask_flag} ${dist_flag}"
-            apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc $COMMAND --ignore-missing # After VCF filtering, some samples may be thrown out. Passing --ignore-missing to proceed with smc without them and log the sample names
+            apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc $COMMAND -c 50000 --ignore-missing # After VCF filtering, some samples may be thrown out. Passing --ignore-missing to proceed with smc without them and log the sample names
     fi
 done
 
