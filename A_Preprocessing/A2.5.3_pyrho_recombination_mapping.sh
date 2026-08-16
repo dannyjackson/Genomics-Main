@@ -18,7 +18,7 @@ BLOCK=50
 WINDOW=50
 
 # Parse command-line arguments
-while getopts ":p:v:i:b:w" option; do
+while getopts ":p:v:i:b:w:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
         v) VCFDIR=${OPTARG} ;;
