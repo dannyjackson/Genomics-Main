@@ -7,7 +7,6 @@ This script generates pyrho lookup tables and outputs stats on optimal hyperpara
 
 Required argument:
   -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository).
-  -v  Path to chromosome-split vcfs
   -s  Path to SMC++ output file
   -i  Population prefix
   -n  Maximum haplotypes present (2x sample size)"
@@ -15,10 +14,9 @@ Required argument:
 fi
 
 # Parse command-line arguments
-while getopts ":p:v:s:i:n:" option; do
+while getopts ":p:s:i:n:" option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
-        v) VCFDIR=${OPTARG} ;;
         s) SMCFILE=${OPTARG} ;;
         i) POP=${OPTARG} ;;
         n) NUM_HAPS=${OPTARG} ;;

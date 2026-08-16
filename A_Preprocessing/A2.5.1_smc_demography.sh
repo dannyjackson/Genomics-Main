@@ -13,7 +13,7 @@ Required argument:
   -i  Population prefix
 Optional argument:
   -d  Specifying pair of distinguished lineages. If left blank, SMC++ will default to first samples in list. Should be a space separated string of two sample names
-  -m  Path to a bgzipped and indexed bed file containing uncalled/lowcoverage regions not present in the VCF file (recommended)
+  -m  Path to a bgzipped and indexed bed file containing uncalled/lowcoverage regions not present in the VCF file (recommended). Defaults to using --missing-cutoff 50000
   -c Optional boolean flag to do cv (SMC cross-validation model estimation)"
     exit 1
 fi
@@ -48,11 +48,13 @@ printf "\n\n\n\n"
 date
 echo "Current script: A2.5.1_smc_demography.sh"
 
-if [ -d "${OUTDIR}/datafiles/demography/${POP}/smc_inputs/" ];
+SMC_OUTDIR=${OUTDIR}/datafiles/demography/${POP}
+
+if [ -d "${SMC_OUTDIR}/smc_inputs/" ];
         then
             echo "demography directory for ${POP} already exists, moving on!"
         else
-            mkdir -p "${OUTDIR}/datafiles/demography/${POP}/smc_inputs/"
+            mkdir -p "${SMC_OUTDIR}/smc_inputs/"
 fi
 
 bcftools index ${VCF}
@@ -61,8 +63,8 @@ if [[ -n "$MASK" ]]; then
     echo "Mask File provided in path: ${MASK}."
     mask_flag="--mask ${MASK}"
 else
-    echo "No mask for uncalled regions provided. Proceeding without it, but note that you probably want a mask to account for uncalled regions."
-    mask_flag=""
+    echo "No mask for uncalled regions provided. Proceeding without it using --missing cutoff 50000. Note that you probably want a mask to account for uncalled regions better."
+    mask_flag="-c 50000"
 fi
 
 # Check for dstinguished lineages
@@ -76,38 +78,38 @@ fi
 
 POPSAMPLES="$(cat ${SAMPLES} | paste -sd ",")"
 
-cd ${OUTDIR}/datafiles/demography/${POP} # Move to output directory here so that iterate.dat intermediate file is stored here.
+cd ${SMC_OUTDIR} # Move to output directory here so that iterate.dat intermediate file is stored here.
 
 for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt);
 do
-    if [ -f "${OUTDIR}/datafiles/demography/${POP}/smc_inputs/${POP}_${chr}.smc.gz" ]
+    if [ -f "${SMC_OUTDIR}/smc_inputs/${POP}_${chr}.smc.gz" ]
         then
             echo "SMC input file for ${POP} ${chr} found, skipping..."
         else
             echo "Processing $chr into SMC++ Input"
-            COMMAND="$VCF ${OUTDIR}/datafiles/demography/${POP}/smc_inputs/${POP}_${chr}.smc.gz $chr $POP:$POPSAMPLES ${dist_flag}" #${mask_flag}"
-            apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc $COMMAND -c 50000 --ignore-missing # After VCF filtering, some samples may be thrown out. Passing --ignore-missing to proceed with smc without them and log the sample names
+            COMMAND="$VCF ${SMC_OUTDIR}/smc_inputs/${POP}_${chr}.smc.gz $chr $POP:$POPSAMPLES ${dist_flag} ${mask_flag}"
+            apptainer run ${PROGDIR}/smcpp_latest.sif vcf2smc $COMMAND --ignore-missing # After VCF filtering, some samples may be thrown out. Passing --ignore-missing to proceed with smc without them and log the sample names
     fi
 done
 
 echo "Making SMC Input List"
-ls ${OUTDIR}/datafiles/demography/${POP}/smc_inputs/*.smc.gz > ${OUTDIR}/datafiles/demography/${POP}/smc_inputs/smc_input_lst.txt
-mapfile -t smc_input_lst < ${OUTDIR}/datafiles/demography/${POP}/smc_inputs/smc_input_lst.txt
+ls ${SMC_OUTDIR}/smc_inputs/*.smc.gz > ${SMC_OUTDIR}/smc_inputs/smc_input_lst.txt
+mapfile -t smc_input_lst < ${SMC_OUTDIR}/smc_inputs/smc_input_lst.txt
 smc_inputs=$(echo "${smc_input_lst[@]}")
 
 if [ "$CV" = true ]
     then
         echo "Estimating Model using cross validation strategy"
-        apptainer run ${PROGDIR}/smcpp_latest.sif cv ${MUT_RATE} ${smc_inputs} -o ${OUTDIR}/datafiles/demography/${POP} --folds 5 --cores ${THREADS} --thinning 3000
-        SMC_OUTDIR=${OUTDIR}/datafiles/demography/${POP}/fold0
+        apptainer run ${PROGDIR}/smcpp_latest.sif cv ${MUT_RATE} ${smc_inputs} -o ${SMC_OUTDIR} --folds 5 --cores ${THREADS} --thinning 3000
+        MODEL_FLST="${SMC_OUTDIR}/fold0/model.final.json ${SMC_OUTDIR}/fold1/model.final.json ${SMC_OUTDIR}/fold2/model.final.json ${SMC_OUTDIR}/fold3/model.final.json ${SMC_OUTDIR}/fold4/model.final.json"
     else
         echo "Estimating Model using standard estimation strategy"
-        apptainer run ${PROGDIR}/smcpp_latest.sif estimate ${MUT_RATE} ${smc_inputs} -o ${OUTDIR}/datafiles/demography/${POP} --cores ${THREADS} --thinning 3000
-        SMC_OUTDIR=${OUTDIR}/datafiles/demography/${POP}
+        apptainer run ${PROGDIR}/smcpp_latest.sif estimate ${MUT_RATE} ${smc_inputs} -o ${SMC_OUTDIR} --cores ${THREADS} --thinning 3000
+        MODEL_FLST=${SMC_OUTDIR}/model.final.json
 fi
 
 echo "Plotting Model"
-apptainer run ${PROGDIR}/smcpp_latest.sif plot ${SMC_OUTDIR} ${SMC_OUTDIR}/model.final.json -c # Also output model info to csv for recombination mapping later
+apptainer run ${PROGDIR}/smcpp_latest.sif plot ${SMC_OUTDIR}/${POP} ${MODEL_FLST} -c # Also output model info to csv for recombination mapping later
 echo "Raw SMC++ Model outputted to model.final.json. CSV outputted to ${POP}.csv"
 
 echo "Done"
