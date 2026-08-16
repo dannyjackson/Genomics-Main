@@ -47,7 +47,7 @@ for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt); do
         --vcffile ${VCFDIR}/${POP}_${chr}.vcf.gz \
         --outfile ${OUTDIR}/datafiles/recombination_map/${POP}_${chr}.rmap \
         --blockpenalty ${BLOCK} --windowsize ${WINDOW} \
-        --logfile ${OUTDIR}/datafiles/recombination_map/pyrho_optimize_${chr}_log.txt \
+        --logfile ${OUTDIR}/datafiles/recombination_map/${POP}_pyrho_optimize_${chr}_log.txt \
         --ploidy 2;
 done
 
