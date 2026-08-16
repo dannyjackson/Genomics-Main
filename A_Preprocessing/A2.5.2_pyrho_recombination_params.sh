@@ -53,7 +53,7 @@ fi
 
 # Run this to get probably better estimates of hyperparameters prior to running optimize (A2.5.3)
 pyrho hyperparam -n ${NUM_HAPS} --mu ${MUT_RATE} --blockpenalty 25,50,75,100 \
-	--windowsize 25,50,75,100 --logfile ${OUTDIR}/datafiles/recombination_map/ --tablefile ${OUTDIR}/datafiles/recombination_map/${POP}.hdf \
+	--windowsize 25,50,75,100 --logfile ${OUTDIR}/datafiles/recombination_map/${POP}_hyperparam.log --tablefile ${OUTDIR}/datafiles/recombination_map/${POP}.hdf \
 	--num_sims 5 --numthreads ${THREADS} \
 	--smcpp_file ${SMCFILE} --outfile ${OUTDIR}/datafiles/recombination_map/${POP}_hyperparam_results.txt
 
