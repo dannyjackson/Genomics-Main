@@ -71,7 +71,6 @@ while read -r SCAFFOLD; do
     fi
 
 
-
     echo "Phasing VCF for scaffold $SCAFFOLD..."
     beagle gt=${VCF_IN} out=${VCF_OUT} ${map_flag}
     bcftools index ${VCF_OUT}.vcf.gz

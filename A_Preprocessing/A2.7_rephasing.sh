@@ -4,8 +4,9 @@
 usage() {
     echo "Usage: $0 -p <parameter_file> -c <chromosome> -b <bcf_file> -m <minor_allele_freq_threshold> -o <output_dir>"
     echo ""
-    echo "This script rephases low confidence variants in a BCF file with SAPPHIRE using Minor Allele Frequency metrics. This is meant to be used with BEAGLE-phased inputs."
-    echo "It is best run as a Slurm array that calls this script for each chromosome within a population." Meant to be used after stat-based phasing in step A2.6
+    echo "This script rephases low confidence variants in a BCF file with SAPPHIRE using Minor Allele Frequency metrics. Can be used on BOTH population vcfs and ind-chr vcfs for MSMC."
+    echo "This script is modelled from examples in SAPPHIRE git repo. Modified specifically for BEAGLE phased BCF inputs (will not update fields PP fields)"
+    echo "It is best run as a Slurm array that calls this script for each chromosome within a population."
     echo "PUMA CLUSTER REQUIRED FOR THIS SCRIPT."
     echo "Prior to running, you should:
             1) Convert your phased VCF to BCF. NOTE: You must have allele frequency (AF) INFO field populated (A2.2).
@@ -15,8 +16,8 @@ usage() {
     echo "Required arguments:"
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository)."
     echo "  -c  Name of chromosome present in BCF file."
-    echo "  -b  Path to the BCF file to rephase. This file should contain sites from only a single chromosome. NOTE: You must have allele frequency (AF) INFO field populated (A2.2)."
-    echo "  -m  Minor Allele Frequnency Threshold. Defaults to 0.01"
+    echo "  -b  Path to the BCF file to rephase. Should contain sites from only a single chromosome. NOTE: You must have allele frequency (AF) INFO field populated (A2.2)."
+    echo "  -m  Minor Allele Frequency Threshold. Defaults to 0.01"
     echo "  -o  Path to preferred outdirectory."
 
     exit 1
