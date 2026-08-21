@@ -71,7 +71,7 @@ EXTRACTED_PP="${REPHASE_DIR}/${PREFIX}_phased_PP_extract.bin"
 ANNOTATED_CSV="${REPHASE_DIR}/${PREFIX}_phased_PP_annotated_samples.csv"
 PP_INFO="${REPHASE_DIR}/${PREFIX}_pp_info.tsv"
 HEADER="${REPHASE_DIR}/header.txt"
-CRAM_PATH="${OUTDIR}/datafiles/crams" # Should be a directory containing all individual CRAM files
+CRAM_PATH="${OUTDIR}/datafiles/crams/" # Should be a directory containing all individual CRAM files
 
 # Extract all variants with AF < inputted MAF and replace heterozygous by "0.5" and homozygous by "."
 filter_str="INFO/AF<${MAF}"
@@ -97,7 +97,7 @@ cp "$EXTRACTED_PP" "${EXTRACTED_PP}.original"
 
 echo "Saving PP INFO to CSV"
 bcftools query --list-samples $BCF_ANNOTATED | \
-awk -v c=$CRAM_PATH '{ print NR-1 "," $0 "," c $0 ".cram" }' > $ANNOTATED_CSV
+awk -v c=$CRAM_PATH '{ print NR-1 "," $0 "," c $0 ".realigned.cram" }' > $ANNOTATED_CSV
 
 
 echo "Beginning Phase Calling"
