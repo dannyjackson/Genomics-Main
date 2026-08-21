@@ -36,25 +36,23 @@ fi
 
 # Load parameters
 source "${PARAMS}"
+module load parallel
 
 printf "\n\n\n\n"
 date
 echo "Current script: A2.5.3_pyrho_recombination_mapping.sh"
 
-for chr in $(cat ${OUTDIR}/referencelists/SCAFFOLDS.txt); do
-    echo "Optimizing $chr map"
+CHROMS=${OUTDIR}/referencelists/SCAFFOLDS.txt
+
+
+echo "Parallel map optimization..."
+echo "Processing ${THREADS} chromosomes at a time..."
+cat ${CHROMS} | parallel --jobs "$THREADS" "
     pyrho optimize --tablefile ${OUTDIR}/datafiles/recombination_map/${POP}.hdf \
-        --vcffile ${VCFDIR}/${POP}_${chr}.vcf.gz \
-        --outfile ${OUTDIR}/datafiles/recombination_map/${POP}_${chr}.rmap \
-        --blockpenalty ${BLOCK} --windowsize ${WINDOW} \
-        --logfile ${OUTDIR}/datafiles/recombination_map/${POP}_pyrho_optimize_${chr}_log.txt \
-        --ploidy 2;
-done
-
-echo "Computing Recombination Map Stats"
-pyrho compute_r2 --quantiles .25,.5,.75 --compute_mean --samplesize ${NUM_HAPS} \
-	--tablefile ${OUTDIR}/datafiles/recombination_map/${POP}.hdf \
-	--outfile ${OUTDIR}/datafiles/recombination_map/${POP}_r2.txt
-
+    --vcffile ${VCFDIR}/${POP}_{}.vcf.gz \
+    --outfile ${OUTDIR}/datafiles/recombination_map/${POP}_{}.rmap \
+    --blockpenalty ${BLOCK} --windowsize ${WINDOW} \
+    --logfile ${OUTDIR}/datafiles/recombination_map/${POP}_pyrho_optimize_{}_log.txt \
+    --ploidy 2"
 
 echo "Done"

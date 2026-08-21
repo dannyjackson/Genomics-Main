@@ -58,4 +58,9 @@ pyrho hyperparam -n ${NUM_HAPS} --mu ${MUT_RATE} --blockpenalty 25,50,75,100 \
 	--smcpp_file ${SMCFILE} --outfile ${OUTDIR}/datafiles/recombination_map/${POP}_hyperparam_results.txt
 
 
+echo "Computing theoretical Recombination Map Stats"
+pyrho compute_r2 --quantiles .25,.5,.75 --compute_mean --samplesize ${NUM_HAPS} \
+	--tablefile ${OUTDIR}/datafiles/recombination_map/${POP}.hdf \
+	--outfile ${OUTDIR}/datafiles/recombination_map/${POP}_r2.txt
+
 echo "Done"

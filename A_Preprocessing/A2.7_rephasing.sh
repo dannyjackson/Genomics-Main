@@ -60,13 +60,15 @@ echo "Minor Allele Frequency set to: ${MAF}"
 
 echo "Polishing phased BCF for $CHR with SAPPHIRE..."
 
-# Key File Paths
-BCF_ANNOTATED="${REPHASE_DIR}/${CHR}_phased_PP_annotated.bcf"
-BCF_REPHASED="${REPHASE_DIR}/bcfs/${CHR}_rephased.bcf"
+PREFIX=$( basename ${BCF} .phased.bcf )
 
-EXTRACTED_PP="${REPHASE_DIR}/${CHR}_phased_PP_extract.bin"
-ANNOTATED_CSV="${REPHASE_DIR}/${CHR}_phased_PP_annotated_samples.csv"
-PP_INFO="${REPHASE_DIR}/${CHR}_pp_info.tsv"
+# Key File Paths
+BCF_ANNOTATED="${REPHASE_DIR}/${PREFIX}_phased_PP_annotated.bcf"
+BCF_REPHASED="${REPHASE_DIR}/bcfs/${PREFIX}.rephased.bcf"
+
+EXTRACTED_PP="${REPHASE_DIR}/${PREFIX}_phased_PP_extract.bin"
+ANNOTATED_CSV="${REPHASE_DIR}/${PREFIX}_phased_PP_annotated_samples.csv"
+PP_INFO="${REPHASE_DIR}/${PREFIX}_pp_info.tsv"
 HEADER="${REPHASE_DIR}/header.txt"
 CRAM_PATH="${OUTDIR}/datafiles/crams" # Should be a directory containing all individual CRAM files
 

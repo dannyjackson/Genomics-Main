@@ -109,7 +109,7 @@ if [ "$CV" = true ]
 fi
 
 echo "Plotting Model"
-apptainer run ${PROGDIR}/smcpp_latest.sif plot ${SMC_OUTDIR}/${POP} ${MODEL_FLST} -c # Also output model info to csv for recombination mapping later
+apptainer run ${PROGDIR}/smcpp_latest.sif plot ${SMC_OUTDIR} ${MODEL_FLST} -c # Also output model info to csv for recombination mapping later
 echo "Raw SMC++ Model outputted to model.final.json. CSV outputted to ${POP}.csv"
 
 echo "Done"
