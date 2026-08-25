@@ -11,7 +11,7 @@ usage() {
     echo "Prior to running, you should:
             1) Convert your phased VCF to BCF. NOTE: You must have allele frequency (AF) INFO field populated (A2.2).
             2) Split your phased BCF by chromosome.
-            3) Convert your individual BAM files into CRAM files. This script assumes that they are in a directory called datafiles/crams"
+            3) Convert your individual BAM files into CRAM files. This script assumes that they are in a directory called datafiles/crams named in the format SAMPLE.realigned.cram"
     echo ""
     echo "Required arguments:"
     echo "  -p  Path to the parameter file (e.g., params_preprocessing.sh in the GitHub repository)."
@@ -61,7 +61,7 @@ echo "Minor Allele Frequency set to: ${MAF}"
 
 echo "Polishing phased BCF for $CHR with SAPPHIRE..."
 
-PREFIX=$( basename ${BCF} .phased.bcf )
+PREFIX=$( basename ${BCF} .bcf )
 
 # Key File Paths
 BCF_ANNOTATED="${REPHASE_DIR}/${PREFIX}_phased_PP_annotated.bcf"

@@ -116,7 +116,10 @@ Z_OUT="${OUTDIR}/analyses/fst/${POP1}_${POP2}/${POP1}_${POP2}.fst.${WIN}.Ztransf
 
 # Run R script for plotting
 echo "Generating Manhattan plot from ${Z_OUT}..."
+
+CHR_NUMS=$(awk -F"," '{print $1}' ${CHR_FILE})
+
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" \
-    "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${Z_OUT}" "${WIN}" "fst" "${POP1}" "${POP2}"
+    "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${Z_OUT}" "${WIN}" "fst" "${CHR_NUMS}" "${POP1}" "${POP2}"
 
 echo "Script completed successfully!"

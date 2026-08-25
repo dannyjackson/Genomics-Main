@@ -128,7 +128,10 @@ sed -i 's/\"//g' $Z_OUT
 
 # Run R script for plotting
 echo "Generating Manhattan plot from ${Z_OUT}..."
+
+CHR_NUMS=$(awk -F"," '{print $1}' ${CHR_FILE})
+
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" \
-    "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${Z_OUT}" "${WIN}" "Tajima" "${POP}"
+    "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${Z_OUT}" "${WIN}" "Tajima" "${CHR_NUMS}" "${POP}"
 
 echo "Script completed successfully!"

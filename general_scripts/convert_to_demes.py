@@ -1,5 +1,4 @@
-# Helper script to convert popsize CSV outputs from SMC++ to demes YAML format.
-# Not a one-size-fits-all script. Edit as needed. This is just the basic idea
+# Convert popsize CSV outputs from SMC++ to demes YAML format.
 
 import os
 import demes
@@ -34,5 +33,5 @@ demes_graph = b.resolve()
 
 outdir = os.path.split(args.csv_file)[0]
 demes.dump(demes_graph, os.path.join(outdir, f'{args.outfname}.yaml'))
-tubes = demesdraw.tubes(demes_graph)
-tubes.figure.savefig(os.path.join(outdir, f'{args.outfname}.png'))
+#tubes = demesdraw.tubes(demes_graph)
+#tubes.figure.savefig(os.path.join(outdir, f'{args.outfname}.png'))

@@ -55,7 +55,10 @@ sed -i 's/\"//g' $WIN_OUT
 
 # Run R script for plotting
 echo "Generating Manhattan plot from ${WIN_OUT}..."
+
+CHR_NUMS=$(awk -F"," '{print $1}' ${CHR_FILE})
+
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.r" \
-    "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${METRIC}" "${POP}"
+    "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${WIN_OUT}" "${WIN}" "${METRIC}" "${CHR_NUMS}" "${POP}"
 
 echo "Script completed successfully!"

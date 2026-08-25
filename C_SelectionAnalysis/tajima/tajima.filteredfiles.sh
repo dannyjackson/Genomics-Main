@@ -53,7 +53,10 @@ Z_OUT="${FILE}.numchrom.Ztransformed.csv"
 
 # Run R script for plotting
 echo "Generating Manhattan plot from ${Z_OUT}..."
+
+CHR_NUMS=$(awk -F"," '{print $1}' ${CHR_FILE})
+
 Rscript "${SCRIPTDIR}/Genomics-Main/general_scripts/manhattanplot.filteredfiles.tajimadiff.r" \
-    "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${Z_OUT}" "Tajima" 
+    "${OUTDIR}" "${COLOR1}" "${COLOR2}" "${CUTOFF}" "${Z_OUT}" "Tajima" "${CHR_NUMS}"
 
 echo "Script completed successfully!"
