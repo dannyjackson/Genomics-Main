@@ -22,7 +22,7 @@ cutoff <- as.numeric(args[4])  # Convert to numeric
 input <- args[5]
 win <- args[6]
 metric <- args[7]
-chr_nums <- args[8]
+chrfile <- args[8]
 pop1 <- args[9]
 pop2 <- ifelse(length(args) > 9 && args[10] != "", args[10], NA)
 
@@ -67,8 +67,8 @@ write.csv(top_snps_dt, outlier_file, row.names = FALSE)
 
 # Prepare data for plotting
 cat("Preparing data for plotting...\n")
-chr_levels <- strsplit(chr_nums, "\n")
-data$chromo <- factor(data$chromo, levels = chr_levels)
+chr_ids <- read.csv(chrfile, header = FALSE)
+data$chromo <- factor(data$chromo, levels = chr_ids$V1)
 
 plot_data <- data %>%
   group_by(chromo) %>%

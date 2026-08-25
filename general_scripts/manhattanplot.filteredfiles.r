@@ -21,7 +21,7 @@ color2 <- args[3]
 cutoff <- as.numeric(args[4])  # Convert to numeric
 input <- args[5]
 metric <- args[6]
-chr_nums <- args[7]
+chrfile <- args[7]
 
 # Define parameters
 cat("Reading in file...\n")
@@ -63,8 +63,8 @@ write.csv(top_snps_dt, outlier_file, row.names = FALSE)
 
 # Prepare data for plotting
 cat("Preparing data for plotting...\n")
-chr_levels <- strsplit(chr_nums, "\n")
-data$chromo <- factor(data$chromo, levels = chr_nums)
+chr_ids <- read.csv(chrfile, header = FALSE)
+data$chromo <- factor(data$chromo, levels = chr_ids$V1)
 
 plot_data <- data %>%
   group_by(chromo) %>%
