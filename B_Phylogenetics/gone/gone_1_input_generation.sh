@@ -3,22 +3,27 @@ n#!/bin/bash
 if [ $# -lt 1 ]; then
     echo "Usage: $0 -p <parameter_file>
 
-This uses VCFtools and PLINK to generate input files for GONE2
-I recommend running it as a slurm array to pass individuals to sbatch jobs for maximum efficiency
+Use VCFtools and PLINK 1.9 to generate some basic input files for GONE2
+This step often requires trial-and-error with subsetting chromosomes/samples/snps and various filtering of missing data and MAF. Customize as needed
+You may consider looking into the following filtering steps if gone throws issues about missing data or memory requirements
+    VCFTOOLS: --max-missing
+    PLINK: --thin-count / --maf
 
 Required argument:
   -p  Path to the main parameter file (e.g., params_base.sh in the GitHub repository).
-  -s  Population specific-parameter file.
-  -r  Run name, required for providing a unique name to output files (especially when using in an array)."
+  -v  Path to raw VCF file
+  -s  Path to file containing scaffold subset to include
+  -o  Output name to assign to files"
     exit 1
 fi
 
 # Parse command-line arguments
-while getopts p:s:r:m option; do
+while getopts p:v:s:o: option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
-        s) POPPARAMS=${OPTARG};;
-        r) RUNNAME=${OPTARG};;
+        v) VCF=${OPTARG};;
+        s) SCAFFOLD_LIST=${OPTARG};;
+        o) OUTNAME=${OPTARG};;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done
@@ -30,42 +35,25 @@ fi
 
 # Load parameters
 source "${PARAMS}"
-source "${POPPARAMS}"
 
 printf "\n\n\n\n"
 date
 echo "Current script: gone_1_input_generation.sh"
 
+CHR_SUBSET=$(for name in $(cat $SCAFFOLD_LIST); do echo --chr $name; done)
 
-echo ARRAY NAME: $RUNNAME
-
-echo VCF FILE PATH: $VCFFILE
-echo SCAFFOLD SUBSET: $SCAFFOLD_LIST
-echo POPULATION: $POPNAME
-echo MAX MISSING DATA: $MAX_MISSING
-echo MINOR ALLELE FREQ: $MAF
-
-CHR_SUBSET_FLAGS=$(for name in $(cat $SCAFFOLD_LIST); do echo --chr $name; done)
-
-RESULT_DIR=${OUTDIR}/datafiles/gone2_inputs/${RUNNAME}/${POPNAME}
-
+RESULT_DIR=${OUTDIR}/datafiles/gone2_inputs/${OUTNAME}
 if [ ! -d "$RESULT_DIR" ]; then
-  echo "Directory for gone2 input for ${RUNNAME} with ${POPNAME} does not exist. Creating it now..."
+  echo "Directory for gone2 input for ${OUTNAME} does not exist. Creating it now..."
   mkdir -p "$RESULT_DIR" # -p creates parent directories if they don't exist
 else
-  echo "Directory for gone2 input for ${RUNNAME} with ${POPNAME} already exists. WARNING: Existing files in this directory may be overwritten."
+  echo "Directory for gone2 input for ${OUTNAME} already exists. Moving on..."
 fi
 
 # Create a filtered VCF to only include a specific subset of chromosomes
-# --max-missing to set proportion of missing data you'll permit.
-vcftools $CHR_SUBSET_FLAGS --vcf $VCFFILE --recode --recode-INFO-all --max-missing $MAX_MISSING --out ${RESULT_DIR}/${POPNAME}
+vcftools $CHR_SUBSET --vcf $VCF --recode --recode-INFO-all --out ${RESULT_DIR}/${OUTNAME}
+mv ${RESULT_DIR}/${OUTNAME}.recode.vcf ${RESULT_DIR}/${OUTNAME}.vcf 
 
 # Convert VCF to plink formats
-# --allow-extra-chr to deal with non-standard chromosome names
-# --thin-count to randomly sample a subset of SNPs from the VCF (add only if you are limiting GONE2 memory requirements)
-plink --vcf ${RESULT_DIR}/${POPNAME}.recode.vcf --maf $MAF --allow-extra-chr --recode --out ${RESULT_DIR}/${POPNAME}
-# Note that if you don't have info on SNP position in a genetic map (cM), you'll probably need to set a fixed recombination rate when running GONE2 or do some extra analyses to find this info yourself. (In this case the .map file is not useful)
-
-# Due to not having standard chromosome names and that outputted files aren't always consistent with what GONE2 wants, we use these python scripts to reformat the data. (No filtering or analyses done here, just moving the numbers around)
-python $SCRIPTDIR/Genomics-Main/B_Phylogenetics/gone/map_clean.py --map ${RESULT_DIR}/${POPNAME}.map
-python $SCRIPTDIR/Genomics-Main/B_Phylogenetics/gone/ped_clean.py --ped ${RESULT_DIR}/${POPNAME}.ped
+plink --vcf ${RESULT_DIR}/${OUTNAME}.vcf --allow-extra-chr --recode --out ${RESULT_DIR}/${POPNAME}
+# NOTE: PLINK .map file will not generate with required cM distances for GONE2 analysis.

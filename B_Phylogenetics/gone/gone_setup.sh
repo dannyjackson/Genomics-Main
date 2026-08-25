@@ -4,7 +4,7 @@
 source ../../../params_base.sh
 
 mkdir -p "${OUTDIR}/datafiles/gone2_inputs"
-mkdir -p "${OUTDIR}/analyses/gone2_outputs"
+mkdir -p "${OUTDIR}/analyses/gone2"
 
 echo "Getting GONE2 scripts from Github..."
 date
