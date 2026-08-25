@@ -54,6 +54,7 @@ if [ "$GENO_DTYPE" == "2" ]; then
 else
     echo "Assuming Input file is PLINK .ped"
     INPUTFILE=$(find ${INPUTDIR}/*.ped)
+fi
 
 
 RECOMB_OPT=""
