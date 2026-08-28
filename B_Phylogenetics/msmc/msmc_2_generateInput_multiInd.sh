@@ -45,48 +45,23 @@ for SCAFFOLD in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
         echo "Individuals: ${INDFILE}"
         echo "Population: ${POPNAME}"
         echo "Scaffold: ${SCAFFOLD}"
-        echo "Method: ${METHOD}"
         echo "MSMC input file: ${MSMC_INPUT}"
+        echo "Genome Mask: ${MASK_GENOME}"
 
         for ind in $(cat ${INDFILE})
-                do INDMASK=`ls ${OUTDIR}/datafiles/msmc/mask/ind/ind_mask.${ind}.${SCAFFOLD}.bed.gz`
-                echo "--mask=$INDMASK " >> ${OUTDIR}/datafiles/msmc/mask/ind/${POPNAME}.mask_file.$SCAFFOLD
-                INDVCF=`ls ${OUTDIR}/datafiles/split_vcfs/${POPNAME}_${ind}_${SCAFFOLD}.vcf.gz`
-                echo $INDVCF >> ${OUTDIR}/datafiles/split_vcfs/${POPNAME}.vcf_file.${SCAFFOLD}
+                do INDMASK=`ls ${OUTDIR}/datafiles/msmc/mask/ind/${ind}.${SCAFFOLD}.bed.gz`
+                echo "--mask=$INDMASK " >> ${OUTDIR}/datafiles/msmc/mask/ind/${POPNAME}.mask_file.${SCAFFOLD}
+                INDVCF=`ls ${OUTDIR}/datafiles/msmc/vcf/${ind}.${SCAFFOLD}.vcf`
+                echo $INDVCF >> ${OUTDIR}/datafiles/msmc/vcf/${POPNAME}.vcf_file.${SCAFFOLD}
         done
 
-### Generate MSMC input files:
-        if [ $METHOD == samtools ]
-                then
-                MASK_GENOME=${OUTDIR}/datafiles/msmc/mask/genom/${prefix}_revised_${SCAFFOLD}_mask.${k}.50.bed.gz
+        # Generate MSMC input files:
+        #MASK_GENOME=${OUTDIR}/datafiles/msmc/mask/genom/${prefix}_revised_${SCAFFOLD}_mask.${k}.50.bed.gz
 
-                echo "MAPPABILITY MASK: ${MASK_GENOME}"
-                echo "Creating MSMC input file WITH individual mask (samtools)"
-                #${MSMCTOOLS}/generate_multihetsep.py --negative_mask=$MASK_REPEATS --mask=$MASK_INDIV $VCF > $MSMC_INPUT # with repeat mask
-                ${PROGDIR}/msmc-tools/generate_multihetsep.py `cat ${OUTDIR}/datafiles/msmc/mask/ind/${POPNAME}.mask_file.${SCAFFOLD}` --mask=$MASK_GENOME `cat ${OUTDIR}/datafiles/split_vcfs/${POPNAME}.vcf_file.${SCAFFOLD}` > ${MSMC_INPUT} # without repeat mask
-
-
-        # WARNING: THIS CODE HAS BEEN NEGLECTED AND NOT TESTED
-        elif [ $METHOD == gatk ]
-                then
-                echo "Creating MSMC input file WITHOUT individual mask (gatk)"
-                MASK_GENOME=`ls ${MSMCDIR}/mask/${prefix}_${SCAFFOLD}.mask.${k}.50.bed.gz`
-                #msmc-tools/generate_multihetsep.py --negative_mask=$MASK_REPEATS $VCF > $MSMC_INPUT # with repeat mask
-                ${MSMCTOOLS}/generate_multihetsep.py --mask=$MASK_GENOME `cat ${MSMCDIR}/vcf/${POP}.vcf_file.${SCAFFOLD}` > $MSMC_INPUT # without repeat mask
-
-                # NOTE THAT THIS WAS CHANGED 10 FEB 2024
-                # AND HAS NOT YET BEEN TESTED TO MAKE SURE IT WORKS
-                                
-                echo "Creating individual mask. Note that your input VCF should include ALL sites (variant & invariant)."
-                MASK_INDIV=${OUTDIR}/mask/ind_mask.${IND}.${SCAFFOLD}.${METHOD}.bed.gz
-                                
-                VCF_OUT=${VCF}.parsed.vcf
-                ${MSMCTOOLS}/vcfAllSiteParser.py $SCAFFOLD $MASK_INDIV $VCF_OUT
-                                
-                echo "Creating MSMC input file with new individual mask"
-                                
-                ${MSMCTOOLS}/generate_multihetsep.py --mask=$MASK_INDIV --mask=$MASK_GENOME $VCF > $MSMC_INPUT # with new repeat mask
-        fi
+        echo "GENOME MAPPABILITY MASK: ${MASK_GENOME}"
+        echo "Creating MSMC input file WITH individual mask (samtools)"
+        #${MSMCTOOLS}/generate_multihetsep.py --negative_mask=$MASK_REPEATS --mask=$MASK_INDIV $VCF > $MSMC_INPUT # with repeat mask
+        ${PROGDIR}/msmc-tools/generate_multihetsep.py `cat ${OUTDIR}/datafiles/msmc/mask/ind/${POPNAME}.mask_file.${SCAFFOLD}` --mask=$MASK_GENOME `cat ${OUTDIR}/datafiles/msmc/vcf/${POPNAME}.vcf_file.${SCAFFOLD}` > ${MSMC_INPUT} # without repeat mask
 
 done
 

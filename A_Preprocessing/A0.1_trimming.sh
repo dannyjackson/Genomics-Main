@@ -65,7 +65,7 @@ elif [ "$METHOD" = "trimgalore" ]; then
 
 elif [ "$METHOD" = "fastp" ]; then
     echo "Beginning trimming for "$IND "using fastp"
-    fastp --in1 ${FASTAS}/"${IND}"_R1.fastq.gz --in2 ${FASTAS}/"${IND}"_R2.fastq.gz -q 5 -n 15 \
+    fastp --in1 ${FASTAS}/"${IND}"_R1.fastq.gz --in2 ${FASTAS}/"${IND}"_R2.fastq.gz \
     --out1 ${OUTDIR}/datafiles/trimmed_fastas/"${IND}"_R1_trimmed.fq.gz --out2 ${OUTDIR}/datafiles/trimmed_fastas/"${IND}"_R2_trimmed.fq.gz
 
 fi
