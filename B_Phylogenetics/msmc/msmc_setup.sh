@@ -6,13 +6,13 @@
 
 source ../../params_base.sh
 
-mkdir -p ${OUTDIR}/analyses/msmc/outputs/
-mkdir -p ${OUTDIR}/analyses/msmc/bootstraps/
+mkdir -p ${OUTDIR}/analyses/msmc/output/
+mkdir -p ${OUTDIR}/analyses/msmc/bootstrap/
 mkdir -p ${OUTDIR}/datafiles/msmc/input/
 mkdir -p ${OUTDIR}/datafiles/msmc/mask/ind/
 mkdir -p ${OUTDIR}/datafiles/msmc/mask/genom/
 mkdir -p ${OUTDIR}/datafiles/msmc/vcf/
-mkdir -p ${OUTDIR}/datafiles/msmc/bootstraps/boots_file_lsts/
+mkdir -p ${OUTDIR}/datafiles/msmc/bootstrap/boots_file_lsts/
 
 
 # Clone required repositories if not already present
