@@ -8,7 +8,7 @@ if [ $# -lt 1 ]; then
     echo "Usage: $0 -p <path_to_parameter_file>"
     echo "This script generates input files for MSMC."
     echo "Required Argument:"
-    echo "  -p   Path to parameter file (example in GitHub repository as params.sh)"
+    echo "  -p   Path to msmc parameter file (must source params_base.sh)"
     exit 1
 fi
 
@@ -31,8 +31,6 @@ fi
 
 # Source the parameter file
 source "${PARAMS}"
-# Check available modules (useful for debugging environment)
-module list
 
 for SCAFFOLD in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
         do
@@ -59,9 +57,10 @@ for SCAFFOLD in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
         #MASK_GENOME=${OUTDIR}/datafiles/msmc/mask/genom/${prefix}_revised_${SCAFFOLD}_mask.${k}.50.bed.gz
 
         echo "GENOME MAPPABILITY MASK: ${MASK_GENOME}"
-        echo "Creating MSMC input file WITH individual mask (samtools)"
+        echo "Creating MSMC input file WITH individual mask"
         #${MSMCTOOLS}/generate_multihetsep.py --negative_mask=$MASK_REPEATS --mask=$MASK_INDIV $VCF > $MSMC_INPUT # with repeat mask
-        ${PROGDIR}/msmc-tools/generate_multihetsep.py `cat ${OUTDIR}/datafiles/msmc/mask/ind/${POPNAME}.mask_file.${SCAFFOLD}` --mask=$MASK_GENOME `cat ${OUTDIR}/datafiles/msmc/vcf/${POPNAME}.vcf_file.${SCAFFOLD}` > ${MSMC_INPUT} # without repeat mask
+        ${PROGDIR}/msmc-tools/generate_multihetsep.py `cat ${OUTDIR}/datafiles/msmc/mask/ind/${POPNAME}.mask_file.${SCAFFOLD}` \
+            --mask=$MASK_GENOME `cat ${OUTDIR}/datafiles/msmc/vcf/${POPNAME}.vcf_file.${SCAFFOLD}` > ${MSMC_INPUT} # without repeat mask
 
 done
 

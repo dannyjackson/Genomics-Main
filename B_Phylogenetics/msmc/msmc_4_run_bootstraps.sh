@@ -35,10 +35,7 @@ elif [ ! -f "${PARAMS}" ]; then
     exit 1
 fi
 
-# Source the parameter file
 source "${PARAMS}"
-# Check available modules (useful for debugging environment)
-module list
 
 
 
@@ -58,7 +55,6 @@ else
 fi
 
 echo "INDEX: ${INDEX}"
-
 echo "running msmc2 on bootstraps for ${BOOT}"
 
 msmc2_Linux -t $THREADS -p $P_PAR -i $NUM_OPT -o ${MSMC_OUTPUT} -I `echo $INDEX` $MSMC_BS

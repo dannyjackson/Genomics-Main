@@ -36,29 +36,24 @@ fi
 
 # Source/list needed param files and modules
 source "${PARAMS}"
-module list
 
 
 if [ $NR_IND == 1 ]; then
 
 	find ${OUTDIR}/datafiles/msmc/input/msmc_input.${POP_OR_IND}.*.txt -size 0 -delete
-	ls ${OUTDIR}/datafiles/msmc/input/msmc_input.${POP_OR_IND}.*.txt | grep -v $sex_chr > ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}
+	ls ${OUTDIR}/datafiles/msmc/input/msmc_input.${POP_OR_IND}.*.txt | grep -v $SEXCHR > ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}
 else
-    # Overwrites any existing text (we do this to in case the file has been appended to before and prevent endlessly appending upon reruns)
     echo "" > ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}
 
     for s in `cat /xdisk/mcnew/finches/ljvossler/finches/referencelists/SCAFFOLDS.txt`
-        do echo $s
         ls ${OUTDIR}/datafiles/msmc/input/msmc_input.${POP_OR_IND}.${s}.txt >> ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}
     done
 fi
 
 
-### Report settings/parameters:
 date
 echo "Script: msmc_3_runMSMC.sh"
 echo "Run name: $RUN_NAME"
-echo "SNP calling method: $METHOD"
 echo "Period setting: $P_PAR"
 echo "Nr of individuals (1 or 2+): $NUMIND"
 echo "Haplotype Indices Used: ${INDEX}"
@@ -75,7 +70,7 @@ if [ $NUMIND == 1 ]
 
         if [ -f "${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}" ]
                 then
-                        echo "MSMC_INPUTS: SCAFS_INPUT_${POP_OR_IND}_noLG9"
+                        echo "MSMC_INPUTS: SCAFS_INPUT_${POP_OR_IND}"
                         echo "MSMC_OUTPUT: $MSMC_OUTPUT"
                 else
                         echo "MSMC_INPUT does not exist! Exiting now"
@@ -98,7 +93,7 @@ if [ -d "${OUTDIR}/analyses/msmc/output/log_and_loop/" ]; then
         mkdir -p "${OUTDIR}/analyses/msmc/output/log_and_loop/"
     fi
 
-# Run MSMC now that all necessary params are set
+# Running precompiled program in environment
 msmc2_Linux -t $THREADS -p $P_PAR -i $NUM_OPT -o ${MSMC_OUTPUT} -I `echo $INDEX` $MSMC_INPUT 
 
 mv $MSMC_OUTPUT*loop.txt ${OUTDIR}/analyses/msmc/output/log_and_loop/

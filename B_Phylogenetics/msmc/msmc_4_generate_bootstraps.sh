@@ -33,18 +33,13 @@ elif [ ! -f "${PARAMS}" ]; then
     exit 1
 fi
 
-# Source the parameter file
 source "${PARAMS}"
-# Check available modules (useful for debugging environment)
-module list
 
 
-# Verify that input location for msmc_outputs exists
-if [ -d ${OUTDIR}/datafiles/bootstraps/${POP_OR_IND} ]; then
-    echo ${POP_OR_IND} 'bootstrap input directory exists'
+if [ -d "${OUTDIR}/datafiles/bootstraps/${POP_OR_IND}" ]; then
+    echo "${POP_OR_IND} bootstrap input directory found"
 else
     mkdir -p ${OUTDIR}/datafiles/bootstraps/${POP_OR_IND}/log_and_loop
-    echo ${POP_OR_IND} 'bootstrap input directory created'
 fi
 
 #input for the bootstrapping
