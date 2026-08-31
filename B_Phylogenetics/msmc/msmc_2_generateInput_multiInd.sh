@@ -34,8 +34,12 @@ source "${PARAMS}"
 
 for SCAFFOLD in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
         do
+        # Ensure list files are empty
+        echo "" > ${OUTDIR}/datafiles/msmc/mask/ind/${POPNAME}.mask_file.${SCAFFOLD}
+        echo "" > ${OUTDIR}/datafiles/msmc/vcf/${POPNAME}.vcf_file.${SCAFFOLD}
 
         MSMC_INPUT=${OUTDIR}/datafiles/msmc/input/msmc_input.${POPNAME}.${SCAFFOLD}.txt
+        MASK_GENOME=${OUTDIR}/datafiles/snpable/${REF_ACC}_revised_${SCAFFOLD}.mask.bed.gz
 
         printf "\n \n \n \n"
         date
@@ -54,9 +58,6 @@ for SCAFFOLD in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
         done
 
         # Generate MSMC input files:
-        #MASK_GENOME=${OUTDIR}/datafiles/msmc/mask/genom/${prefix}_revised_${SCAFFOLD}_mask.${k}.50.bed.gz
-
-        echo "GENOME MAPPABILITY MASK: ${MASK_GENOME}"
         echo "Creating MSMC input file WITH individual mask"
         #${MSMCTOOLS}/generate_multihetsep.py --negative_mask=$MASK_REPEATS --mask=$MASK_INDIV $VCF > $MSMC_INPUT # with repeat mask
         ${PROGDIR}/msmc-tools/generate_multihetsep.py `cat ${OUTDIR}/datafiles/msmc/mask/ind/${POPNAME}.mask_file.${SCAFFOLD}` \
