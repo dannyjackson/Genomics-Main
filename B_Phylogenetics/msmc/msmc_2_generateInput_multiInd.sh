@@ -39,7 +39,7 @@ for SCAFFOLD in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
         echo "" > ${OUTDIR}/datafiles/msmc/vcf/${POPNAME}.vcf_file.${SCAFFOLD}
 
         MSMC_INPUT=${OUTDIR}/datafiles/msmc/input/msmc_input.${POPNAME}.${SCAFFOLD}.txt
-        MASK_GENOME=${OUTDIR}/datafiles/snpable/${REF_ACC}_revised_${SCAFFOLD}.mask.bed.gz
+        MASK_GENOME=${OUTDIR}/datafiles/snpable/${REF_ACC}_revised_mask.${SCAFFOLD}.mask.bed.gz
 
         printf "\n \n \n \n"
         date
