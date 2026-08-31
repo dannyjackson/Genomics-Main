@@ -45,7 +45,8 @@ if [ $NR_IND == 1 ]; then
 else
     echo "" > ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}
 
-    for s in `cat /xdisk/mcnew/finches/ljvossler/finches/referencelists/SCAFFOLDS.txt`
+    for s in `cat ${OUTDIR}/referencelists/SCAFFOLDS.txt`
+        do
         ls ${OUTDIR}/datafiles/msmc/input/msmc_input.${POP_OR_IND}.${s}.txt >> ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}
     done
 fi
