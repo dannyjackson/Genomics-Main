@@ -56,14 +56,14 @@ date
 echo "Script: msmc_3_runMSMC.sh"
 echo "Run name: $POP_OR_IND"
 echo "Period setting: $P_PAR"
-echo "Nr of individuals (1 or 2+): $NUMIND"
+echo "Nr of individuals (1 or 2+): $NR_IND"
 echo "Haplotype Indices Used: ${INDEX}"
 echo "Population or Individuals ID: $POP_OR_IND"
 echo "MSMC Inputs Read from: ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}"
 echo "Iterations: ${NUM_OPT}"
 
 
-if [ $NUMIND == 1 ]
+if [ $NR_IND == 1 ]
         then
         echo "Running MSMC for one individual"
         MSMC_INPUT=`cat ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}`
@@ -79,7 +79,7 @@ if [ $NUMIND == 1 ]
         fi
 
 else
-        echo "Running MSMC for $NUMIND individuals"
+        echo "Running MSMC for $NR_IND individuals"
         MSMC_INPUT=`cat ${OUTDIR}/datafiles/msmc/input/SCAFS_INPUT_${POP_OR_IND}`
         MSMC_OUTPUT=${OUTDIR}/analyses/msmc/output/msmc_output.${POP_OR_IND}
 
