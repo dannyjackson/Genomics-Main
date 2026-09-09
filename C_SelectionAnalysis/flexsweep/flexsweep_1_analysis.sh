@@ -8,7 +8,7 @@ This script uses FlexSweep to estimate various selection statistics and predict 
 I recommend running it as a slurm array to pass individuals to sbatch jobs for maximum efficiency (see github.com/dannyjackson/BioinformaticTutorials/SubmittingJobs.txt for an explanation of running slurm arrays).
 
 Required argument:
-  -p  Path to the population parameter file (must source from params_base.sh)."
+  -p  Path to flexsweep parameter file (must source from params_base.sh)."
     exit 1
 fi
 
@@ -32,25 +32,25 @@ printf "\n\n\n\n"
 date
 echo "Current script: flexsweep_1_analysis.sh"
 
-if [ ! -d "${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}" ]; then
+if [ ! -d "${OUTDIR}/analyses/flexsweep/${POPNAME}" ]; then
   echo "Directory for flexsweep output for ${POPNAME} does not exist. Creating it now..."
-  mkdir -p "${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}" # -p creates parent directories if they don't exist
+  mkdir -p "${OUTDIR}/analyses/flexsweep/${POPNAME}" # -p creates parent directories if they don't exist
 else
-  echo "Directory for flexsweep output for ${POPNAME} already exists. WARNING: Existing files in this directory may be overwritten."
+  echo "Directory for flexsweep output for ${POPNAME} already exists."
 fi
 
 echo "Starting Simulations"
-flexsweep simulator --sample_size ${NUM_HAPS} --demes ${DEMES} --output_folder ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}  --nthreads ${THREADS} --num_simulations ${NUM_SIMULATIONS}
+flexsweep simulator --sample_size ${NUM_HAPS} --demes ${DEMES} --output_folder ${OUTDIR}/analyses/flexsweep/${POPNAME}  --nthreads ${THREADS} --num_simulations ${SIMULATIONS}
 
 echo "Estimating feature vectors from simulations"
-flexsweep fvs-discoal --simulations_path ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}  --nthreads ${THREADS}
+flexsweep fvs-discoal --simulations_path ${OUTDIR}/analyses/flexsweep/${POPNAME}  --nthreads ${THREADS}
 
 echo "Estmating feature vectors from vcfs"
-# Note that flexsweep is looking for bgzip compressed vcf or bcf files. When you index the compressed files, you MUST use tabix (samtools)
+# BCF or GZipped VCF files required. Tabix (samtools) required for indexing.
 # can comment out recombination map flag if do not have one
 flexsweep fvs-vcf --vcf_path ${VCFDIR} --recombination_map ${REC_MAP} --nthreads ${THREADS} --suffix ${POPNAME}
 
 echo "Starting CNN"
-flexsweep cnn  --train_data ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}/fvs.parquet --predict_data ${VCFDIR}/fvs_${POPNAME}.parquet --output_folder ${OUTDIR}/analyses/flexsweep_outputs/${POPNAME}
+flexsweep cnn  --train_data ${OUTDIR}/analyses/flexsweep/${POPNAME}/fvs.parquet --predict_data ${VCFDIR}/fvs_${POPNAME}.parquet --output_folder ${OUTDIR}/analyses/flexsweep/${POPNAME}
 
 echo "Done"
