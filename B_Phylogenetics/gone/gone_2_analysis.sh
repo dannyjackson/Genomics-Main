@@ -75,7 +75,7 @@ else
   echo "Directory for gone2 output for ${OUTNAME} already exists. Moving on..."
 fi
 
-${PROGDIR}/GONE2/gone2 ${INPUTFILE} -g $GENO_DTYPE -i $NUMIND -t ${THREADS} -o ${RESULT_DIR}/${OUTNAME} $RECOMB_OPT
+${PROGDIR}/GONE2/gone2 ${INPUTFILE} -g $GENO_DTYPE -i $NUMIND -t ${THREADS} -o ${RESULT_DIR}/${OUTNAME} $RECOMB_OPT -s 2000000 -S 1762
 
 
 echo "Completed GONE Analysis for $OUTNAME"
