@@ -11,7 +11,7 @@ num_gens <- args[3] # Number of generations
 color_pre <- args[4]
 color_post <- args[5]
 
-
+ 
 df_pre <- read.csv(out_path_pre, sep = '\t')
 df_post <- read.csv(out_path_post, sep = '\t')
 
