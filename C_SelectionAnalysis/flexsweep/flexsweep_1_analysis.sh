@@ -50,6 +50,7 @@ else
 
     echo "Estimating feature vectors from simulations"
     flexsweep fvs-discoal --simulations_path ${OUTDIR}/analyses/flexsweep/${POPNAME}  --nthreads ${THREADS}
+fi
 
 echo "Estmating feature vectors from vcfs"
 if [ "$USE_RECMAP" = "true" ]; then
@@ -57,6 +58,7 @@ if [ "$USE_RECMAP" = "true" ]; then
 else
     rec_map_flag=""
     echo "No recombination map passed"
+fi
 # BCF or GZipped VCF files required. Tabix (samtools) required for indexing.
 flexsweep fvs-vcf --vcf_path ${VCFDIR} ${rec_map_flag} --nthreads ${THREADS} --suffix ${POPNAME}
 
