@@ -1,18 +1,12 @@
 #!/bin/bash
 
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 -p <parameter_file> -p </path/to/input/dir> -n <num_individuals> -o <outputname> -r <recombination_rate> -g <genotype_data>
+    echo "Usage: $0 -p <parameter_file>
 
 Use GONE2 to generate estimates of recent Ne from variant data. All input files should be placed into a single input directory and named with the same prefix (as required by GONE2).
 
 Required argument:
-  -p  Path to the main parameter file (e.g., params_base.sh in the GitHub repository).
-  -i  Path to directory containing required input files
-  -n  Int to specify number of samples
-  -o  Output name to assign to files
-Optional argument:
-  -r  Float argument. Use this only to specify a constant recombination rate (usually in the absence of a recombination map). Defaults to NONE
-  -g  Int argument specifying type of genotyping data. Defaults to 0. Argument of 2 assumes VCF file input."
+  -p  Path to the gone parameter file (must reference base parameter file)."
     exit 1
 fi
 
@@ -20,14 +14,9 @@ REC_RATE=NONE
 GENO_DTYPE=0
 
 # Parse command-line arguments
-while getopts p:i:g:r:n:o: option; do
+while getopts p: option; do
     case "${option}" in
         p) PARAMS=${OPTARG};;
-        i) INPUTDIR=${OPTARG};;
-        g) GENO_DTYPE=${OPTARG};;
-        r) REC_RATE=${OPTARG};;
-        n) NUMIND=${OPTARG};;
-        o) OUTNAME=${OPTARG};;
         *) echo "Invalid option: -${OPTARG}" >&2; exit 1;;
     esac
 done
@@ -62,7 +51,7 @@ if [ "$REC_RATE" == "NONE" ]; then
     echo "Assuming properly named recombination map provided in input directory..."
     echo "Running GONE with ${NUMIND} individuals with recombination map..."
 else
-    echo "User-specified no recombination map. Using provided constant recombination rate ${REC_RATE}."
+    echo "User provided constant recombination rate ${REC_RATE}. Proceeding without recombination map"
     echo "Running GONE with ${NUMIND} individuals with constant recombination rate of ${REC_RATE}..."
     RECOMB_OPT="-r $RECOMB_RATE"
 fi
@@ -75,7 +64,10 @@ else
   echo "Directory for gone2 output for ${OUTNAME} already exists. Moving on..."
 fi
 
-${PROGDIR}/GONE2/gone2 ${INPUTFILE} -g $GENO_DTYPE -i $NUMIND -t ${THREADS} -o ${OUTNAME} $RECOMB_OPT -s 2000000 -S 1762
+${PROGDIR}/GONE2/gone2 ${INPUTFILE} -g $GENO_DTYPE -i $NUMIND -t ${THREADS} $RECOMB_OPT -s ${NUM_SNPS} -S ${SEED}
 
+mv ${INPUTFILE}_GONE2_Ne ${RESULT_DIR}/${OUTNAME}_GONE2_Ne
+mv ${INPUTFILE}_GONE2_d2 ${RESULT_DIR}/${OUTNAME}_GONE2_d2
+mv ${INPUTFILE}_GONE2_STATS ${RESULT_DIR}/${OUTNAME}_GONE2_STATS
 
 echo "Completed GONE Analysis for $OUTNAME"

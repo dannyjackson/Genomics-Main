@@ -47,10 +47,12 @@ if [ -f "${OUTDIR}/datafiles/recombination_map/${POP}.hdf" ];
         then 
             echo "lookup table already exists, moving on!"
         else
+            echo "Making Lookup Table..."
             pyrho make_table -n ${NUM_HAPS} --approx -N ${NUM_HAPS} --mu ${MUT_RATE} --logfile ${OUTDIR}/datafiles/recombination_map/${POP}_table.log \
             --outfile ${OUTDIR}/datafiles/recombination_map/${POP}.hdf --smcpp_file ${SMCFILE} --decimate_rel_tol 0.1 --numthreads ${THREADS}
 fi
 
+echo "Computing Hyperparams..."
 # Run this to get probably better estimates of hyperparameters prior to running optimize (A2.5.3)
 pyrho hyperparam -n ${NUM_HAPS} --mu ${MUT_RATE} --blockpenalty 25,50,75,100 \
 	--windowsize 25,50,75,100 --logfile ${OUTDIR}/datafiles/recombination_map/${POP}_hyperparam.log --tablefile ${OUTDIR}/datafiles/recombination_map/${POP}.hdf \
@@ -58,7 +60,7 @@ pyrho hyperparam -n ${NUM_HAPS} --mu ${MUT_RATE} --blockpenalty 25,50,75,100 \
 	--smcpp_file ${SMCFILE} --outfile ${OUTDIR}/datafiles/recombination_map/${POP}_hyperparam_results.txt
 
 
-echo "Computing theoretical Recombination Map Stats"
+echo "Computing theoretical Recombination Map Stats..."
 pyrho compute_r2 --quantiles .25,.5,.75 --compute_mean --samplesize ${NUM_HAPS} \
 	--tablefile ${OUTDIR}/datafiles/recombination_map/${POP}.hdf \
 	--outfile ${OUTDIR}/datafiles/recombination_map/${POP}_r2.txt

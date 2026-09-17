@@ -28,13 +28,3 @@ df_full %>%
   ggplot(aes(x=Generation, y=Ne_diploids, color = time)) +
   geom_step() +
   scale_color_manual(values = color_codes, name='Time') #+coord_cartesian(ylim = c(0,20))
-
-df_post %>%
-  ggplot(aes(x=Generation, y=Ne_diploids, color = time)) +
-  geom_step() +
-  scale_color_manual(values = color_codes, name='Time') #+coord_cartesian(ylim = c(0,20))
-
-df_pre %>%
-  ggplot(aes(x=Generation, y=Ne_diploids, color = time)) +
-  geom_step() +
-  scale_color_manual(values = color_codes, name='Time') #+coord_cartesian(ylim = c(0,20))

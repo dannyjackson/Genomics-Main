@@ -52,7 +52,7 @@ else
     flexsweep fvs-discoal --simulations_path ${OUTDIR}/analyses/flexsweep/${POPNAME}  --nthreads ${THREADS}
 fi
 
-echo "Estmating feature vectors from vcfs"
+echo "Estimating feature vectors from vcfs"
 if [ "$USE_RECMAP" = "true" ]; then
     rec_map_flag="--recombination_map ${RECMAP}"
 else
