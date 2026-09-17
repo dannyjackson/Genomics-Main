@@ -42,7 +42,7 @@ else
   echo "Directory for flexsweep output for ${POPNAME} already exists."
 fi
 
-if [[ -d "${OUTDIR}/analyses/flexsweep/${POPNAME}/neutral" && "${OUTDIR}/analyses/flexsweep/${POPNAME}/sweep" ]];
+if [[ -d "${OUTDIR}/analyses/flexsweep/${POPNAME}/neutral" && "${OUTDIR}/analyses/flexsweep/${POPNAME}/sweep" ]]; then
     echo "Neutral and Sweep simulation directories found. Assuming simulations are done and feature vectors estimated. Moving on..."
 else
     echo "Starting Simulations"
