@@ -54,7 +54,7 @@ fi
 
 echo "Estmating feature vectors from vcfs"
 if [ "$USE_RECMAP" = "true" ]; then
-    rec_map_flag="--recombination_map ${REC_MAP}"
+    rec_map_flag="--recombination_map ${RECMAP}"
 else
     rec_map_flag=""
     echo "No recombination map passed"
