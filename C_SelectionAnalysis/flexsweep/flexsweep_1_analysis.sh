@@ -42,16 +42,6 @@ else
   echo "Directory for flexsweep output for ${POPNAME} already exists."
 fi
 
-if [[ -d "${OUTDIR}/analyses/flexsweep/${POPNAME}/neutral" && "${OUTDIR}/analyses/flexsweep/${POPNAME}/sweep" ]]; then
-    echo "Neutral and Sweep simulation directories found. Assuming simulations are done and feature vectors estimated. Moving on..."
-else
-    echo "Starting Simulations"
-    flexsweep simulator --sample_size ${NUM_HAPS} --demes ${DEMES} --output_folder ${OUTDIR}/analyses/flexsweep/${POPNAME}  --nthreads ${THREADS} --num_simulations ${SIMULATIONS}
-
-    echo "Estimating feature vectors from simulations"
-    flexsweep fvs-discoal --simulations_path ${OUTDIR}/analyses/flexsweep/${POPNAME}  --nthreads ${THREADS}
-fi
-
 echo "Estimating feature vectors from vcfs"
 if [ "$USE_RECMAP" = "true" ]; then
     rec_map_flag="--recombination_map ${RECMAP}"
@@ -61,6 +51,17 @@ else
 fi
 # BCF or GZipped VCF files required. Tabix (samtools) required for indexing.
 flexsweep fvs-vcf --vcf_path ${VCFDIR} ${rec_map_flag} --nthreads ${THREADS} --suffix ${POPNAME}
+
+
+if [[ -d "${OUTDIR}/analyses/flexsweep/${POPNAME}/neutral" && "${OUTDIR}/analyses/flexsweep/${POPNAME}/sweep" ]]; then
+    echo "Neutral and Sweep simulation directories found. Assuming simulations are done and feature vectors estimated. Moving on..."
+else
+    echo "Starting Simulations"
+    flexsweep simulator --sample_size ${NUM_HAPS} --demes ${DEMES} --output_folder ${OUTDIR}/analyses/flexsweep/${POPNAME}  --nthreads ${THREADS} --num_simulations ${SIMULATIONS}
+
+    echo "Estimating feature vectors from simulations"
+    flexsweep fvs-discoal --simulations_path ${OUTDIR}/analyses/flexsweep/${POPNAME}  --nthreads ${THREADS}
+fi
 
 echo "Starting CNN"
 flexsweep cnn  --train_data ${OUTDIR}/analyses/flexsweep/${POPNAME}/fvs.parquet --predict_data ${VCFDIR}/fvs_${POPNAME}.parquet --output_folder ${OUTDIR}/analyses/flexsweep/${POPNAME}
