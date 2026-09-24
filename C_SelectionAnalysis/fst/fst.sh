@@ -55,7 +55,7 @@ if [ -f "$MLS_FILE" ]; then
     echo "MLS file already exists, skipping SFS prior computation."
 else
     echo "Computing 2D SFS prior..."
-    ${ANGSD}/misc/realSFS "${OUTDIR}/datafiles/safs/${POP1}.saf.idx" "${OUTDIR}/datafiles/safs/${POP2}.saf.idx" > "$MLS_FILE"
+    realSFS "${OUTDIR}/datafiles/safs/${POP1}.saf.idx" "${OUTDIR}/datafiles/safs/${POP2}.saf.idx" > "$MLS_FILE"
 fi
 
 # Compute FST index
@@ -64,7 +64,7 @@ if [ -f "$FST_INDEX" ]; then
     echo "FST index already exists, skipping computation."
 else
     echo "Computing FST index..."
-    ${ANGSD}/misc/realSFS fst index "${OUTDIR}/datafiles/safs/${POP1}.saf.idx" "${OUTDIR}/datafiles/safs/${POP2}.saf.idx" \
+    realSFS fst index "${OUTDIR}/datafiles/safs/${POP1}.saf.idx" "${OUTDIR}/datafiles/safs/${POP2}.saf.idx" \
         -sfs "$MLS_FILE" -fstout "${OUTDIR}/analyses/fst/${POP1}_${POP2}"
 fi
 
@@ -75,7 +75,7 @@ if [ -f "$GLOBAL_FST_FILE" ]; then
 else
     echo "Computing global FST estimate..."
     echo -e "FST.Unweight\tFST.Weight" > "$GLOBAL_FST_FILE"
-    ${ANGSD}/misc/realSFS fst stats "$FST_INDEX" >> "$GLOBAL_FST_FILE"
+    realSFS fst stats "$FST_INDEX" >> "$GLOBAL_FST_FILE"
 fi
 
 
@@ -86,7 +86,7 @@ if [ -f "$WIN_OUT" ]; then
     echo "Sliding window FST output already exists, skipping computation."
 else
     echo "Computing sliding window FST..."
-    ${ANGSD}/misc/realSFS fst stats2 "$FST_INDEX" -win "$WIN" -step "$STEP" > "$WIN_OUT"
+    realSFS fst stats2 "$FST_INDEX" -win "$WIN" -step "$STEP" > "$WIN_OUT"
 fi
 
 grep 'NC_' "$WIN_OUT" > "${WIN_OUT}.chrom"

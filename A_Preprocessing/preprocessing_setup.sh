@@ -102,3 +102,9 @@ apptainer pull docker://terhorst/smcpp
 echo "Installing BEAGLE5.5..."
 micromamba create -n beagle_env -c bioconda beagle
 #======================================================
+
+
+# Note that some scripts may still call on a user-compiled version of ANGSD
+echo "Installing ANGSD from bioconda..."
+micromamba create -n angsd_env -c bioconda angsd
+#======================================================

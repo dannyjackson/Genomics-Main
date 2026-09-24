@@ -70,7 +70,7 @@ if [ -f "${SFS_FILE}" ]; then
     echo "Skipping SFS generation; file already exists: ${SFS_FILE}"
 else
     echo "Generating SFS file..."
-    "${ANGSD}/misc/realSFS" -P 24 "${OUTDIR}/datafiles/safs/${POP}.saf.idx" > "${SFS_FILE}"
+    realSFS -P 24 "${OUTDIR}/datafiles/safs/${POP}.saf.idx" > "${SFS_FILE}"
 fi
 
 # Calculate per-site thetas if they don't exist
@@ -79,7 +79,7 @@ if [ -f "${THETA_OUT}" ]; then
     echo "Skipping theta calculation; file already exists: ${THETA_OUT}"
 else
     echo "Calculating thetas per site..."
-    "${ANGSD}/misc/realSFS" saf2theta "${OUTDIR}/datafiles/safs/${POP}.saf.idx" \
+    realSFS saf2theta "${OUTDIR}/datafiles/safs/${POP}.saf.idx" \
         -outname "${OUTDIR}/analyses/thetas/${POP}/${POP}" \
         -sfs "${SFS_FILE}"
 fi
@@ -90,7 +90,7 @@ if [ -f "${TAJIMA_OUT}" ]; then
     echo "Skipping genome-wide Tajima's D estimation; file already exists: ${TAJIMA_OUT}"
 else
     echo "Estimating genome-wide Tajima's D..."
-    "${ANGSD}/misc/thetaStat" do_stat "${THETA_OUT}"
+    thetaStat do_stat "${THETA_OUT}"
 fi
 
 WINDOW_OUT="${OUTDIR}/analyses/thetas/${POP}/${WIN}/${POP}.theta.thetasWindow"
@@ -101,7 +101,7 @@ if [ -f "${WIN_OUT}" ]; then
     echo "Skipping sliding-window Tajima's D estimation; file already exists: ${WIN_OUT}"
 else
     echo "Estimating sliding window Tajima's D..."
-    "${ANGSD}/misc/thetaStat" do_stat "${THETA_OUT}" \
+    thetaStat do_stat "${THETA_OUT}" \
         -win "${WIN}" -step "${STEP}" \
         -outnames "${WINDOW_OUT}"
 fi
