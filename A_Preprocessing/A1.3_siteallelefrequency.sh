@@ -42,7 +42,7 @@ if [ -f "${OUTDIR}/datafiles/safs/${POP}"* ]
             echo "${POP} files present in SAFs directory, assuming they are already generated and moving on!"
         else
             echo "Computing SAFs for ${POP}"
-            ${ANGSD}/angsd -bam ${OUTDIR}/referencelists/${POP}.bamlist.txt -out ${OUTDIR}/datafiles/safs/${POP} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 \
+            angsd -bam ${OUTDIR}/referencelists/${POP}.bamlist.txt -out ${OUTDIR}/datafiles/safs/${POP} -dosaf 1 -GL 1 -doGlf 2 -doMaf 1 -doMajorMinor 3 -doCounts 1 -doDepth 1 \
             -setMinDepthInd ${MINDEPTHIND} -minInd ${MININD} -minQ ${MINQ} -minMapQ ${MINMAPQ} -sites ${MAFFILE} -anc ${REF} -nThreads ${THREADS} 
 fi
 
