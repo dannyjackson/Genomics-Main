@@ -92,7 +92,7 @@ ggplot(plot_data, aes(x = BPcum, y = !!sym(metric))) +
   scale_x_continuous(labels = axisdf$chromo, breaks = axisdf$center, guide = guide_axis(n.dodge = 2)) +
   scale_y_continuous(expand = c(0, 0)) +
   labs(x = "Chromosome", y = metric) +
-  geom_hline(yintercept = metric_cutoff) +
+  geom_hline(yintercept = cutoff) +
   theme_bw(base_size = 22) +
   theme(
     plot.title = element_text(hjust = 0.5),
