@@ -53,7 +53,7 @@ if [ "$REC_RATE" == "NONE" ]; then
 else
     echo "User provided constant recombination rate ${REC_RATE}. Proceeding without recombination map"
     echo "Running GONE with ${NUMIND} individuals with constant recombination rate of ${REC_RATE}..."
-    RECOMB_OPT="-r $RECOMB_RATE"
+    RECOMB_OPT="-r ${REC_RATE}"
 fi
 
 RESULT_DIR=${OUTDIR}/analyses/gone2/${OUTNAME}
@@ -64,7 +64,7 @@ else
   echo "Directory for gone2 output for ${OUTNAME} already exists. Moving on..."
 fi
 
-${PROGDIR}/GONE2/gone2 -g $GENO_DTYPE -i $NUMIND -t ${THREADS} $RECOMB_OPT -s ${NUM_SNPS} ${INPUTFILE} # -S ${SEED}
+${PROGDIR}/GONE2/gone2 -g $GENO_DTYPE -i $NUMIND -t ${THREADS} ${RECOMB_OPT} -s ${NUM_SNPS} ${INPUTFILE} # -S ${SEED}
 
 mv ${INPUTFILE}_GONE2_Ne ${RESULT_DIR}/${OUTNAME}_GONE2_Ne
 mv ${INPUTFILE}_GONE2_d2 ${RESULT_DIR}/${OUTNAME}_GONE2_d2
