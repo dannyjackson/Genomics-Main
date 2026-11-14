@@ -37,14 +37,14 @@ echo "Pulling input files from directory: ${INPUTDIR}"
 echo "Using genotype data type option: ${GENO_DTYPE}"
 
 
-if [ "$GENO_DTYPE" == "2" ]; then
-    echo "Assuming Input file is VCF"
-    INPUTFILE=$(find ${INPUTDIR}/*.vcf)
-else
-    echo "Assuming Input file is PLINK .ped"
-    INPUTFILE=$(find ${INPUTDIR}/*.ped)
-fi
-
+#if [ "$GENO_DTYPE" == "2" ]; then
+#    echo "Assuming Input file is VCF"
+#    INPUTFILE=$(find ${INPUTDIR}/*.vcf)
+#else
+#    echo "Assuming Input file is PLINK .ped"
+#    INPUTFILE=$(find ${INPUTDIR}/*.ped)
+#fi
+INPUTFILE=$(find ${INPUTDIR}/*.vcf)
 
 RECOMB_OPT=""
 if [ "$REC_RATE" == "NONE" ]; then
