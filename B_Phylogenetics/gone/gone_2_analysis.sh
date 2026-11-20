@@ -56,6 +56,14 @@ else
     RECOMB_OPT="-r ${REC_RATE}"
 fi
 
+SNP_OPT=""
+if [ "$NUM_SNPS" == "ALL" ]; then
+    echo "Using all SNPs in input file..."
+else
+    echo "User provided SNP count ${NUM_SNPS}..."
+    SNP_OPT="-s ${NUM_SNPS}"
+fi
+
 RESULT_DIR=${OUTDIR}/analyses/gone2/${OUTNAME}
 if [ ! -d "$RESULT_DIR" ]; then
   echo "Directory for gone2 output for ${OUTNAME} does not exist. Creating it now..."
@@ -64,7 +72,7 @@ else
   echo "Directory for gone2 output for ${OUTNAME} already exists. Moving on..."
 fi
 
-${PROGDIR}/GONE2/gone2 -g $GENO_DTYPE -i $NUMIND -t ${THREADS} ${RECOMB_OPT} -s ${NUM_SNPS} ${INPUTFILE} # -S ${SEED}
+${PROGDIR}/GONE2/gone2 -g $GENO_DTYPE -i $NUMIND -t ${THREADS} ${RECOMB_OPT} ${SNP_OPT} ${INPUTFILE} # -S ${SEED}
 
 mv ${INPUTFILE}_GONE2_Ne ${RESULT_DIR}/${OUTNAME}_GONE2_Ne
 mv ${INPUTFILE}_GONE2_d2 ${RESULT_DIR}/${OUTNAME}_GONE2_d2
