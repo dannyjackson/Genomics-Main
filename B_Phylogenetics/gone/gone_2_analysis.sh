@@ -72,7 +72,7 @@ else
   echo "Directory for gone2 output for ${OUTNAME} already exists. Moving on..."
 fi
 
-${PROGDIR}/GONE2/gone2 -g $GENO_DTYPE -i $NUMIND -t ${THREADS} ${RECOMB_OPT} ${SNP_OPT} ${INPUTFILE} # -S ${SEED}
+${PROGDIR}/GONE2/gone2 -g $GENO_DTYPE -i $NUMIND -t ${THREADS} ${RECOMB_OPT} ${SNP_OPT} ${INPUTFILE} -o ${RESULT_DIR}/${OUTNAME} # -S ${SEED}
 
 mv ${INPUTFILE}_GONE2_Ne ${RESULT_DIR}/${OUTNAME}_GONE2_Ne
 mv ${INPUTFILE}_GONE2_d2 ${RESULT_DIR}/${OUTNAME}_GONE2_d2
